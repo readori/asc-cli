@@ -62,6 +62,42 @@ function showEditor(locale, screenshotId) {
   requestAnimationFrame(() => rerender());
 }
 
+// ─── Locale metadata ─────────────────────────────────────────────────────────
+
+const LOCALE_FLAGS = {
+  'en-US':'🇺🇸','en-GB':'🇬🇧','en-AU':'🇦🇺','en-CA':'🇨🇦',
+  'ja':'🇯🇵','zh-Hans':'🇨🇳','zh-Hant':'🇹🇼','ko':'🇰🇷',
+  'fr':'🇫🇷','de':'🇩🇪','es':'🇪🇸','es-MX':'🇲🇽','it':'🇮🇹',
+  'pt-BR':'🇧🇷','pt-PT':'🇵🇹','ru':'🇷🇺','ar':'🇸🇦',
+  'hi':'🇮🇳','tr':'🇹🇷','nl':'🇳🇱','sv':'🇸🇪','da':'🇩🇰',
+  'fi':'🇫🇮','nb':'🇳🇴','pl':'🇵🇱','cs':'🇨🇿','hu':'🇭🇺',
+  'el':'🇬🇷','th':'🇹🇭','id':'🇮🇩','ms':'🇲🇾','vi':'🇻🇳','uk':'🇺🇦',
+};
+
+const LOCALE_NAMES = {
+  'en-US':'English (US)','en-GB':'English (UK)','en-AU':'English (Australia)','en-CA':'English (Canada)',
+  'ja':'Japanese','zh-Hans':'Chinese (Simplified)','zh-Hant':'Chinese (Traditional)','ko':'Korean',
+  'fr':'French','de':'German','es':'Spanish','es-MX':'Spanish (Mexico)','it':'Italian',
+  'pt-BR':'Portuguese (Brazil)','pt-PT':'Portuguese (Portugal)','ru':'Russian','ar':'Arabic',
+  'hi':'Hindi','tr':'Turkish','nl':'Dutch','sv':'Swedish','da':'Danish',
+  'fi':'Finnish','nb':'Norwegian','pl':'Polish','cs':'Czech','hu':'Hungarian',
+  'el':'Greek','th':'Thai','id':'Indonesian','ms':'Malay','vi':'Vietnamese','uk':'Ukrainian',
+};
+
+const DISPLAY_TYPE_SHORT = {
+  'APP_IPHONE_67':'iPhone 6.7"','APP_IPHONE_65':'iPhone 6.5"','APP_IPHONE_61':'iPhone 6.1"',
+  'APP_IPHONE_58':'iPhone 5.8"','APP_IPHONE_55':'iPhone 5.5"','APP_IPHONE_47':'iPhone 4.7"',
+  'APP_IPHONE_40':'iPhone 4"',
+  'APP_IPAD_PRO_3GEN_129':'iPad Pro 12.9"','APP_IPAD_PRO_3GEN_11':'iPad Pro 11"',
+  'APP_IPAD_PRO_129':'iPad Pro 12.9" (Gen 1-2)','APP_IPAD_105':'iPad 10.5"','APP_IPAD_97':'iPad 9.7"',
+  'APP_WATCH_ULTRA':'Apple Watch Ultra','APP_WATCH_SERIES_10':'Apple Watch Series 10',
+  'APP_DESKTOP':'Mac','IMESSAGE_APP_IPHONE_67':'iMessage 6.7"',
+};
+
+function localeName(code)  { return LOCALE_NAMES[code]  || code; }
+function localeFlag(code)  { return LOCALE_FLAGS[code]  || '🌐'; }
+function displayShort(dt)  { return DISPLAY_TYPE_SHORT[dt] || dt; }
+
 // ─── Gallery rendering ────────────────────────────────────────────────────────
 
 function renderGallery() {
@@ -71,26 +107,34 @@ function renderGallery() {
   const localeEntries = Object.entries(state.locales);
   if (localeEntries.length === 0) return;
 
+  // Update topbar stats
+  const totalShots   = localeEntries.reduce((n, [, d]) => n + d.screenshots.length, 0);
+  const statsEl      = document.getElementById('galleryStats');
+  if (statsEl) statsEl.textContent = `${localeEntries.length} locale${localeEntries.length > 1 ? 's' : ''} · ${totalShots} capture${totalShots !== 1 ? 's' : ''}`;
+
   const primaryLocale = localeEntries[0][0];
 
   for (const [locale, locData] of localeEntries) {
     const isPrimary = locale === primaryLocale;
     const outSize   = DISPLAY_TYPE_SIZES[locData.displayType] || { width: 1290, height: 2796 };
     const ar        = outSize.width / outSize.height;
+    const shotCount = locData.screenshots.length;
 
     const section = document.createElement('div');
-    section.className = 'locale-section' + (isPrimary ? ' locale-section-primary' : '');
+    section.className = 'locale-section';
 
     // ── Header ──
     const header = document.createElement('div');
     header.className = 'locale-section-header';
     header.innerHTML = `
       <div class="locale-section-title">
-        <span class="locale-code">${locale}</span>
+        <span class="locale-flag">${localeFlag(locale)}</span>
+        <span class="locale-name">${localeName(locale)}</span>
         ${isPrimary ? '<span class="locale-primary-badge">Primary</span>' : ''}
+        <span class="locale-shot-badge">${shotCount} shot${shotCount !== 1 ? 's' : ''}</span>
       </div>
       <div class="locale-section-actions">
-        ${!isPrimary ? `<button class="btn-locale-action danger" data-action="delete" data-locale="${locale}">Delete</button>` : ''}
+        ${!isPrimary ? `<button class="btn-locale-delete" data-locale="${locale}" title="Delete locale">Delete</button>` : ''}
       </div>
     `;
 
@@ -101,6 +145,8 @@ function renderGallery() {
     for (const ss of locData.screenshots) {
       const card = document.createElement('div');
       card.className = 'screenshot-gallery-card';
+      card.dataset.locale = locale;
+      card.dataset.id     = ss.id;
       card.style.setProperty('--ar', ar.toString());
 
       const bg    = ss.background || { type: 'gradient', colors: ['#1a1a2e', '#0f3460'], angle: 135 };
@@ -108,20 +154,25 @@ function renderGallery() {
         ? `background:${bg.color || '#1a1a2e'};`
         : `background:linear-gradient(${bg.angle || 135}deg,${(bg.colors||['#1a1a2e','#0f3460'])[0]},${(bg.colors||['#1a1a2e','#0f3460'])[1]});`;
 
-      const imgHTML = ss.sourceImage
-        ? `<img class="gallery-card-img" src="${ss.sourceImage.src}" alt="">`
-        : '';
+      const hasImage  = !!ss.sourceImage;
+      const imgHTML   = hasImage ? `<img class="gallery-card-img" src="${ss.sourceImage.src}" alt="">` : '';
+      const emptyHTML = hasImage ? '' : `
+        <div class="gallery-card-empty">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>Add image</span>
+        </div>`;
 
       card.innerHTML = `
         <div class="gallery-card-thumb" style="${bgCSS}">
-          ${imgHTML}
-          <div class="gallery-card-hover">
-            <button class="btn-edit-screenshot"
-                    data-locale="${locale}"
-                    data-id="${ss.id}">Edit</button>
-          </div>
+          ${imgHTML}${emptyHTML}
         </div>
-        <div class="gallery-card-label">${ss.order}</div>
+        <div class="gallery-card-meta">
+          <span class="gallery-card-title">Screenshot ${ss.order}</span>
+          <span class="gallery-card-dims">${outSize.width} × ${outSize.height}</span>
+        </div>
       `;
       grid.appendChild(card);
     }
@@ -136,7 +187,9 @@ function renderGallery() {
         <div class="gallery-card-thumb gallery-card-thumb-add">
           <span class="add-thumb-icon">+</span>
         </div>
-        <div class="gallery-card-label">Add</div>
+        <div class="gallery-card-meta">
+          <span class="gallery-card-title">Add</span>
+        </div>
       `;
       grid.appendChild(addCard);
     }
@@ -147,19 +200,19 @@ function renderGallery() {
   }
 
   // ── Bind events ──
-  container.querySelectorAll('.btn-edit-screenshot').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      showEditor(btn.dataset.locale, btn.dataset.id);
-    });
+  container.querySelectorAll('.screenshot-gallery-card:not(.screenshot-gallery-card-add)').forEach(card => {
+    card.addEventListener('click', () => showEditor(card.dataset.locale, card.dataset.id));
   });
 
   container.querySelectorAll('.screenshot-gallery-card-add').forEach(card => {
     card.addEventListener('click', () => addScreenshotToLocale(card.dataset.locale));
   });
 
-  container.querySelectorAll('[data-action="delete"]').forEach(btn => {
-    btn.addEventListener('click', () => deleteLocale(btn.dataset.locale));
+  container.querySelectorAll('.btn-locale-delete').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      deleteLocale(btn.dataset.locale);
+    });
   });
 }
 
