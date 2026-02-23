@@ -32,11 +32,21 @@ const textLayersList = document.getElementById('textLayersList');
 const addTextBtn = document.getElementById('addTextBtn');
 const exportBtn = document.getElementById('exportBtn');
 
-let zoom = 40;
+let zoom = 75;          // bezel scale % — how large the device is within the canvas
+let displayScale = 0.33; // CSS scale to fit canvas in viewport (auto-calculated)
 
 // Bezel drag state
 let bezelDrag = null;
 let rafPending = false;
+
+function calcDisplayScale() {
+  const viewport = document.getElementById('canvasViewport');
+  const outSize = getOutSize();
+  if (!viewport || !viewport.clientWidth) return 0.33;
+  const availW = viewport.clientWidth  - 48;
+  const availH = viewport.clientHeight - 48;
+  return Math.min(availW / outSize.width, availH / outSize.height, 1.0);
+}
 
 function getLocale() {
   return state.currentLocale ? state.locales[state.currentLocale] : null;
@@ -210,19 +220,19 @@ async function renderCanvas() {
     ctx.fillRect(0, 0, outSize.width, outSize.height);
     canvasInfo.textContent = 'No screenshot selected';
   } else {
-    await compositeScreenshot(canvasEl, ss, outSize);
+    await compositeScreenshot(canvasEl, ss, outSize, zoom);
     canvasInfo.textContent = `${outSize.width} \u00D7 ${outSize.height}`;
   }
   applyZoom();
   const ss2 = getCurrentScreenshot();
-  renderTextOverlay(ss2, canvasWrapper, outSize, zoom, rerender);
+  renderTextOverlay(ss2, canvasWrapper, outSize, displayScale, rerender);
 }
 
 function applyZoom() {
-  const scale = zoom / 100;
-  canvasWrapper.style.transform = `scale(${scale})`;
+  displayScale = calcDisplayScale();
+  canvasWrapper.style.transform = `scale(${displayScale})`;
   const outSize = getOutSize();
-  canvasWrapper.style.width = outSize.width + 'px';
+  canvasWrapper.style.width  = outSize.width  + 'px';
   canvasWrapper.style.height = outSize.height + 'px';
 }
 
@@ -305,8 +315,12 @@ addScreenshotBtn.addEventListener('click', addScreenshot);
 zoomSlider.addEventListener('input', () => {
   zoom = parseInt(zoomSlider.value);
   zoomValue.textContent = zoom + '%';
+  renderCanvas();  // re-composites bezel at new scale; applyZoom() called inside
+});
+
+window.addEventListener('resize', () => {
   applyZoom();
-  renderTextOverlay(getCurrentScreenshot(), canvasWrapper, getOutSize(), zoom, rerender);
+  renderTextOverlay(getCurrentScreenshot(), canvasWrapper, getOutSize(), displayScale, rerender);
 });
 
 displayTypeSelect.addEventListener('change', () => {
@@ -419,11 +433,10 @@ canvasWrapper.addEventListener('pointerdown', (e) => {
 
 canvasWrapper.addEventListener('pointermove', (e) => {
   if (!bezelDrag) return;
-  const scale = zoom / 100;
   const ss = getCurrentScreenshot();
   if (!ss) return;
-  ss.frameOffsetX = bezelDrag.ox + (e.clientX - bezelDrag.px) / scale;
-  ss.frameOffsetY = bezelDrag.oy + (e.clientY - bezelDrag.py) / scale;
+  ss.frameOffsetX = bezelDrag.ox + (e.clientX - bezelDrag.px) / displayScale;
+  ss.frameOffsetY = bezelDrag.oy + (e.clientY - bezelDrag.py) / displayScale;
   // RAF-throttled re-render (mask cache makes this fast after first composite)
   if (!rafPending) {
     rafPending = true;

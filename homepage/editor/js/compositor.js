@@ -115,7 +115,8 @@ function drawBackground(ctx, w, h, bg) {
 // screenshot: { sourceImage, device, background, texts }
 // canvasEl: <canvas> element
 // outSize: { width, height } — App Store output dimensions
-async function compositeScreenshot(canvasEl, screenshot, outSize) {
+// bezelZoom: 0–200 — controls how large the device bezel is within the canvas (default 75)
+async function compositeScreenshot(canvasEl, screenshot, outSize, bezelZoom = 75) {
   const { width: cw, height: ch } = outSize;
   canvasEl.width = cw;
   canvasEl.height = ch;
@@ -142,7 +143,7 @@ async function compositeScreenshot(canvasEl, screenshot, outSize) {
 
     if (frameImg) {
       // Scale frame to fit output canvas, then apply user drag offset
-      const scaleF = Math.min(cw / frameImg.width, ch / frameImg.height) * 0.85;
+      const scaleF = Math.min(cw / frameImg.width, ch / frameImg.height) * (bezelZoom / 100);
       const fw = frameImg.width * scaleF;
       const fh = frameImg.height * scaleF;
       const fx = (cw - fw) / 2 + offsetX;

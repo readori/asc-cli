@@ -147,13 +147,13 @@ body {
   overflow: auto;
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 24px;
 }
 
 .canvas-wrapper {
   position: relative;
-  transform-origin: top left;
+  transform-origin: top center;
   display: inline-block;
   box-shadow: 0 8px 40px rgba(0,0,0,.6);
   border-radius: 2px;
