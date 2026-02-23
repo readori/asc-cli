@@ -30,9 +30,10 @@ function activeOutSize() {
 // ── Navigation ────────────────────────────────────────────────────────────────
 
 function showGallery() {
-  // Invalidate thumbnail for the shot that was just edited so it regenerates
-  const editedShot = activeShot();
-  if (editedShot) editedShot._thumbnailUrl = null;
+  // Invalidate all thumbnails so they regenerate at the current zoom/settings
+  for (const locale of project.locales) {
+    for (const shot of locale.screenshots) shot._thumbnailUrl = null;
+  }
 
   ui.view = 'gallery';
   document.getElementById('editorView').classList.add('hidden');

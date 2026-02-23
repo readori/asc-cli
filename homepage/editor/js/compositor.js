@@ -136,7 +136,9 @@ function applyBezelZoom(bezelLayer, zoom) {
 
 // Update bezel layer content (screenCanvas + frameImg).
 // Call when device, screenshot image, or drag offset changes — NOT on zoom.
-async function updateBezelLayer(bezelLayer, screenshot, displayW, displayH) {
+// outSizeW: full-res canvas width (e.g. 1290) — needed to convert frameOffset
+// bezelZoomPct: current zoom slider value (e.g. 75) — needed to invert CSS scale
+async function updateBezelLayer(bezelLayer, screenshot, displayW, displayH, outSizeW, bezelZoomPct) {
   const screenCanvas = bezelLayer.querySelector('#screenCanvas');
   const frameImgEl   = bezelLayer.querySelector('#frameImg');
   const deviceName   = screenshot.device || null;
@@ -215,10 +217,14 @@ async function updateBezelLayer(bezelLayer, screenshot, displayW, displayH) {
   frameImgEl.style.left = '0';
   frameImgEl.style.top  = '0';
 
-  // Centre the frame group inside the bezel layer
-  // (bezelLayer is 100%×100% of canvasWrapper)
-  const offsetX = Math.round((displayW - fw) / 2 + (screenshot.frameOffsetX || 0) * scaleF);
-  const offsetY = Math.round((displayH - fh) / 2 + (screenshot.frameOffsetY || 0) * scaleF);
+  // Centre the frame group inside the bezel layer (bezelLayer is 100%×100% of
+  // canvasWrapper).  frameOffset is stored in full-res output pixels; convert to
+  // layer CSS pixels, then invert the CSS zoom so the net screen displacement
+  // equals exactly frameOffsetX * displayScale regardless of zoom level.
+  const dScale  = displayW / (outSizeW || displayW);  // CSS px per full-res px
+  const zScale  = (bezelZoomPct ?? 100) / 100;        // CSS zoom factor
+  const offsetX = Math.round((displayW - fw) / 2 + (screenshot.frameOffsetX || 0) * dScale / zScale);
+  const offsetY = Math.round((displayH - fh) / 2 + (screenshot.frameOffsetY || 0) * dScale / zScale);
   screenCanvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
   frameImgEl.style.transform   = `translate(${offsetX}px, ${offsetY}px)`;
 }
@@ -295,7 +301,7 @@ async function exportScreenshotToPNG(screenshot, outSize) {
       ctx.font = `${fontStyle}${t.fontSize || 48}px -apple-system, "SF Pro Display", sans-serif`;
       ctx.fillStyle = t.color || '#ffffff';
       ctx.textAlign = t.align || 'center';
-      ctx.textBaseline = 'top';
+      ctx.textBaseline = 'middle';   // matches CSS translate(-50%,-50%) anchor
       const tx = (t.x / 100) * outSize.width;
       const ty = (t.y / 100) * outSize.height;
       ctx.fillText(t.content || '', tx, ty);

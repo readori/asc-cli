@@ -135,44 +135,52 @@ async function generateComposedThumbnails() {
   }
 }
 
-// Renders a shot as a thumbnail by compositing at FULL App Store resolution and
-// then scaling down.  This guarantees the thumbnail matches the editor exactly:
+// Renders a shot as a thumbnail by compositing at 2× thumbnail size, then
+// scaling down.  Rendering at a proportional size (not full 1290×2796) keeps
+// all coordinates correct without a massive intermediate canvas:
 //
-//   - frameOffsetX/Y is in full-res coordinates → correct at full-res, wrong if
-//     applied unchanged to a small canvas
-//   - text baseline: CSS overlay uses translate(-50%,-50%) so the anchor is the
-//     CENTER of the text box → textBaseline:'middle' matches that
-//   - font rendering at tiny px sizes can look bad → scale-down produces better AA
+//   - frameOffsetX/Y is scaled by ratio = (thumbW*2) / outSize.width
+//   - font sizes are scaled by the same ratio so text lands at the right spot
+//   - textBaseline:'middle' matches the CSS translate(-50%,-50%) anchor
+//   - final 2→1 scale-down gives smoother anti-aliasing than 6.5→1
 //
 async function composeShotThumbnail(shot, outSize, thumbSize, bezelZoom) {
-  // 1. Composite at full App Store resolution
-  const full = document.createElement('canvas');
-  await compositeScreenshot(full, shot, outSize, bezelZoom);
+  // Render at 2× thumbnail size so coordinates are proportional
+  const W     = thumbSize.width  * 2;
+  const H     = thumbSize.height * 2;
+  const ratio = W / outSize.width;   // full-res → render-space scale
 
-  // 2. Bake text layers at full resolution with correct vertical centering
+  // Scale frameOffset from full-res to render-space pixels
+  const renderShot = (shot.frameOffsetX || shot.frameOffsetY)
+    ? { ...shot,
+        frameOffsetX: (shot.frameOffsetX || 0) * ratio,
+        frameOffsetY: (shot.frameOffsetY || 0) * ratio }
+    : shot;
+
+  const full = document.createElement('canvas');
+  await compositeScreenshot(full, renderShot, { width: W, height: H }, bezelZoom);
+
+  // Bake text at render scale — textBaseline:'middle' matches CSS translate(-50%,-50%)
   if (shot.texts?.length) {
     const ctx = full.getContext('2d');
-    ctx.textBaseline = 'middle';   // matches CSS: transform translate(-50%,-50%)
+    ctx.textBaseline = 'middle';
     for (const t of shot.texts) {
       const fontStyle = t.fontWeight === 'bold' ? 'bold ' : '';
-      ctx.font      = `${fontStyle}${t.fontSize || 48}px -apple-system, "SF Pro Display", sans-serif`;
+      const fontSize  = Math.max(4, Math.round((t.fontSize || 48) * ratio));
+      ctx.font      = `${fontStyle}${fontSize}px -apple-system, "SF Pro Display", sans-serif`;
       ctx.fillStyle = t.color || '#ffffff';
       ctx.textAlign = t.align || 'center';
-      ctx.fillText(
-        t.content || '',
-        (t.x / 100) * outSize.width,
-        (t.y / 100) * outSize.height,
-      );
+      ctx.fillText(t.content || '', (t.x / 100) * W, (t.y / 100) * H);
     }
   }
 
-  // 3. Scale down to thumbnail size with high-quality interpolation
+  // Scale down to thumbnail size
   const thumb = document.createElement('canvas');
   thumb.width  = thumbSize.width;
   thumb.height = thumbSize.height;
   const tCtx  = thumb.getContext('2d');
-  tCtx.imageSmoothingEnabled  = true;
-  tCtx.imageSmoothingQuality  = 'high';
+  tCtx.imageSmoothingEnabled = true;
+  tCtx.imageSmoothingQuality = 'high';
   tCtx.drawImage(full, 0, 0, thumbSize.width, thumbSize.height);
   return thumb;
 }

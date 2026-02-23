@@ -135,7 +135,7 @@ async function renderCanvas() {
                     sw * s, sh * s);
     }
   } else {
-    await updateBezelLayer(bezelLayerEl, shot, cssW, cssH);
+    await updateBezelLayer(bezelLayerEl, shot, cssW, cssH, outSize.width, zoom);
     applyBezelZoom(bezelLayerEl, zoom);
   }
 
