@@ -1,0 +1,2302 @@
+{
+  "MacBook Air 13\" - 4th Gen - Midnight": {
+    "category": "Mac",
+    "model": "MacBook Air 13 4th Gen",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 3220,
+    "outputHeight": 2100,
+    "screenInsetX": 322,
+    "screenInsetY": 199,
+    "path": "MacBook/MacBook Air 13 - 4th Gen.imageset/MacBook Air 13\" - 4th Gen - Midnight.png"
+  },
+  "MacBook Pro 14\" - 5th Gen - Silver": {
+    "category": "Mac",
+    "model": "MacBook Pro 14 5th Gen",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 3944,
+    "outputHeight": 2564,
+    "screenInsetX": 394,
+    "screenInsetY": 243,
+    "path": "MacBook/MacBook Pro 14 - 5th Gen.imageset/MacBook Pro 14\" - 5th Gen - Silver.png"
+  },
+  "MacBook Pro 15\" - 4th Gen": {
+    "category": "Mac",
+    "model": "MacBook Pro 15 4th Gen",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 3500,
+    "outputHeight": 2100,
+    "screenInsetX": 350,
+    "screenInsetY": 199,
+    "path": "MacBook/MacBook Pro 15 - 4th Gen.imageset/MacBook Pro 15\" - 4th Gen.png"
+  },
+  "MacBook Pro 16\" - 4th Gen (2019)": {
+    "category": "Mac",
+    "model": "MacBook Pro 16 4th Gen",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 3900,
+    "outputHeight": 2260,
+    "screenInsetX": 390,
+    "screenInsetY": 214,
+    "path": "MacBook/MacBook Pro 16 - 4th Gen.imageset/MacBook Pro 16\" - 4th Gen (2019).png"
+  },
+  "MacBook Pro 16\" - 5th Gen - Silver": {
+    "category": "Mac",
+    "model": "MacBook Pro 16 5th Gen",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 4340,
+    "outputHeight": 2860,
+    "screenInsetX": 434,
+    "screenInsetY": 271,
+    "path": "MacBook/MacBook Pro 16 - 5th Gen.imageset/MacBook Pro 16\" - 5th Gen - Silver.png"
+  },
+  "MacBook Pro M4 14-inch Silver": {
+    "category": "Mac",
+    "model": "MacBook Pro M4 14-inch Silver",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 3944,
+    "outputHeight": 2564,
+    "screenInsetX": 394,
+    "screenInsetY": 243,
+    "path": "MacBook/MacBook Pro M4 14-inch Silver.imageset/MacBook Pro M4 14-inch Silver.png"
+  },
+  "MacBook Pro M4 16-inch Silver": {
+    "category": "Mac",
+    "model": "MacBook Pro M4 16-inch Silver",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 4340,
+    "outputHeight": 2860,
+    "screenInsetX": 434,
+    "screenInsetY": 271,
+    "path": "MacBook/MacBook Pro M4 16-inch Silver.imageset/MacBook Pro M4 16-inch Silver.png"
+  },
+  "iMac 24\" - Silver": {
+    "category": "Mac",
+    "model": "iMac 24",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 4760,
+    "outputHeight": 4040,
+    "screenInsetX": 476,
+    "screenInsetY": 383,
+    "path": "iMac/iMac 24.imageset/iMac 24\" - Silver.png"
+  },
+  "iMac 27\" - Silver": {
+    "category": "Mac",
+    "model": "iMac 27",
+    "displayType": "APP_DESKTOP",
+    "outputWidth": 5640,
+    "outputHeight": 4540,
+    "screenInsetX": 564,
+    "screenInsetY": 431,
+    "path": "iMac/iMac 27.imageset/iMac 27\" - Silver.png"
+  },
+  "iPad - Silver - Portrait": {
+    "category": "iPad",
+    "model": "iPad 9th Gen",
+    "displayType": "APP_IPAD_97",
+    "outputWidth": 1840,
+    "outputHeight": 2660,
+    "screenInsetX": 110,
+    "screenInsetY": 250,
+    "path": "iPad/iPad 9th Gen.imageset/iPad - Silver - Portrait.png"
+  },
+  "iPad Air 11\" - M2 - Blue - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2620,
+    "outputHeight": 1900,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Blue - Landscape.imageset/iPad Air 11\" - M2 - Blue - Landscape.png"
+  },
+  "iPad Air 11\" - M2 - Blue - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1900,
+    "outputHeight": 2620,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Blue - Portrait.imageset/iPad Air 11\" - M2 - Blue - Portrait.png"
+  },
+  "iPad Air 11\" - M2 - Purple - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2620,
+    "outputHeight": 1900,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Purple - Landscape.imageset/iPad Air 11\" - M2 - Purple - Landscape.png"
+  },
+  "iPad Air 11\" - M2 - Purple - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1900,
+    "outputHeight": 2620,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Purple - Portrait.imageset/iPad Air 11\" - M2 - Purple - Portrait.png"
+  },
+  "iPad Air 11\" - M2 - Space Gray - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2620,
+    "outputHeight": 1900,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Space Gray - Landscape.imageset/iPad Air 11\" - M2 - Space Gray - Landscape.png"
+  },
+  "iPad Air 11\" - M2 - Space Gray - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1900,
+    "outputHeight": 2620,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Space Gray - Portrait.imageset/iPad Air 11\" - M2 - Space Gray - Portrait.png"
+  },
+  "iPad Air 11\" - M2 - Stardust - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 11 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2620,
+    "outputHeight": 1900,
+    "screenInsetX": 116,
+    "screenInsetY": 116,
+    "path": "iPad/iPad Air - M2/iPad Air 11 - M2 - Stardust - Landscape.imageset/iPad Air 11\" - M2 - Stardust - Landscape.png"
+  },
+  "iPad Air 11\" - M2 - Stardust - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 11",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1900,
+    "outputHeight": 2620,
+    "screenInsetX": 114,
+    "screenInsetY": 157,
+    "path": "iPad/iPad Air 11.imageset/iPad Air 11\" - M2 - Stardust - Portrait.png"
+  },
+  "iPad Air 13\" - M2 - Blue - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2980,
+    "outputHeight": 2300,
+    "screenInsetX": 124,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Blue - Landscape.imageset/iPad Air 13\" - M2 - Blue - Landscape.png"
+  },
+  "iPad Air 13\" - M2 - Blue - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2300,
+    "outputHeight": 2980,
+    "screenInsetX": 126,
+    "screenInsetY": 124,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Blue - Portrait.imageset/iPad Air 13\" - M2 - Blue - Portrait.png"
+  },
+  "iPad Air 13\" - M2 - Purple - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2980,
+    "outputHeight": 2300,
+    "screenInsetX": 124,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Purple - Landscape.imageset/iPad Air 13\" - M2 - Purple - Landscape.png"
+  },
+  "iPad Air 13\" - M2 - Purple - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2300,
+    "outputHeight": 2980,
+    "screenInsetX": 126,
+    "screenInsetY": 124,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Purple - Portrait.imageset/iPad Air 13\" - M2 - Purple - Portrait.png"
+  },
+  "iPad Air 13\" - M2 - Space Gray - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2980,
+    "outputHeight": 2300,
+    "screenInsetX": 124,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Space Gray - Landscape.imageset/iPad Air 13\" - M2 - Space Gray - Landscape.png"
+  },
+  "iPad Air 13\" - M2 - Space Gray - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2300,
+    "outputHeight": 2980,
+    "screenInsetX": 126,
+    "screenInsetY": 124,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Space Gray - Portrait.imageset/iPad Air 13\" - M2 - Space Gray - Portrait.png"
+  },
+  "iPad Air 13\" - M2 - Stardust - Landscape": {
+    "category": "iPad",
+    "model": "iPad Air 13 M2",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2980,
+    "outputHeight": 2300,
+    "screenInsetX": 124,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Air - M2/iPad Air 13 - M2 - Stardust - Landscape.imageset/iPad Air 13\" - M2 - Stardust - Landscape.png"
+  },
+  "iPad Air 13\" - M2 - Stardust - Portrait": {
+    "category": "iPad",
+    "model": "iPad Air 13",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2300,
+    "outputHeight": 2980,
+    "screenInsetX": 138,
+    "screenInsetY": 178,
+    "path": "iPad/iPad Air 13.imageset/iPad Air 13\" - M2 - Stardust - Portrait.png"
+  },
+  "iPad mini - Starlight - Portrait": {
+    "category": "iPad",
+    "model": "iPad mini",
+    "displayType": "APP_IPAD_97",
+    "outputWidth": 1780,
+    "outputHeight": 2550,
+    "screenInsetX": 146,
+    "screenInsetY": 142,
+    "path": "iPad/iPad mini - Starlight - Portrait.imageset/iPad mini - Starlight - Portrait.png"
+  },
+  "iPad Pro 11 - M4 - Silver - Landscape": {
+    "category": "iPad",
+    "model": "iPad Pro 11 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2640,
+    "outputHeight": 1880,
+    "screenInsetX": 126,
+    "screenInsetY": 106,
+    "path": "iPad/iPad Pro - M4/iPad Pro 11 - M4 - Silver - Landscape.imageset/iPad Pro 11 - M4 - Silver - Landscape.png"
+  },
+  "iPad Pro 11 - M4 - Silver - Portrait": {
+    "category": "iPad",
+    "model": "iPad Pro 11 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1880,
+    "outputHeight": 2640,
+    "screenInsetX": 106,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Pro 11 M4.imageset/iPad Pro 11 - M4 - Silver - Portrait.png"
+  },
+  "iPad Pro 11 - M4 - Space Gray - Landscape": {
+    "category": "iPad",
+    "model": "iPad Pro 11 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 2640,
+    "outputHeight": 1880,
+    "screenInsetX": 126,
+    "screenInsetY": 106,
+    "path": "iPad/iPad Pro - M4/iPad Pro 11 - M4 - Space Gray - Landscape.imageset/iPad Pro 11 - M4 - Space Gray - Landscape.png"
+  },
+  "iPad Pro 11 - M4 - Space Gray - Portrait": {
+    "category": "iPad",
+    "model": "iPad Pro 11 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_11",
+    "outputWidth": 1880,
+    "outputHeight": 2640,
+    "screenInsetX": 106,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Pro - M4/iPad Pro 11 - M4 - Space Gray - Portrait.imageset/iPad Pro 11 - M4 - Space Gray - Portrait.png"
+  },
+  "iPad Pro 13 - M4 - Silver - Landscape": {
+    "category": "iPad",
+    "model": "iPad Pro 13 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 3000,
+    "outputHeight": 2300,
+    "screenInsetX": 134,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Pro - M4/iPad Pro 13 - M4 - Silver - Landscape.imageset/iPad Pro 13 - M4 - Silver - Landscape.png"
+  },
+  "iPad Pro 13 - M4 - Silver - Portrait": {
+    "category": "iPad",
+    "model": "iPad Pro 13 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2300,
+    "outputHeight": 3000,
+    "screenInsetX": 126,
+    "screenInsetY": 134,
+    "path": "iPad/iPad Pro 13 M4.imageset/iPad Pro 13 - M4 - Silver - Portrait.png"
+  },
+  "iPad Pro 13 - M4 - Space Gray - Landscape": {
+    "category": "iPad",
+    "model": "iPad Pro 13 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 3000,
+    "outputHeight": 2300,
+    "screenInsetX": 134,
+    "screenInsetY": 126,
+    "path": "iPad/iPad Pro - M4/iPad Pro 13 - M4 - Space Gray - Landscape.imageset/iPad Pro 13 - M4 - Space Gray - Landscape.png"
+  },
+  "iPad Pro 13 - M4 - Space Gray - Portrait": {
+    "category": "iPad",
+    "model": "iPad Pro 13 M4",
+    "displayType": "APP_IPAD_PRO_3GEN_129",
+    "outputWidth": 2300,
+    "outputHeight": 3000,
+    "screenInsetX": 126,
+    "screenInsetY": 134,
+    "path": "iPad/iPad Pro - M4/iPad Pro 13 - M4 - Space Gray - Portrait.imageset/iPad Pro 13 - M4 - Space Gray - Portrait.png"
+  },
+  "iPad mini - Starlight - Landscape": {
+    "category": "iPad",
+    "model": "iPad mini",
+    "displayType": "APP_IPAD_97",
+    "outputWidth": 2550,
+    "outputHeight": 1780,
+    "screenInsetX": 142,
+    "screenInsetY": 146,
+    "path": "iPad/iPad mini - Starlight - Landscape.imageset/iPad mini - Starlight - Landscape.png"
+  },
+  "iPhone 11 Pro Max - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 11 Pro Max",
+    "displayType": "APP_IPHONE_65",
+    "outputWidth": 1463,
+    "outputHeight": 2888,
+    "screenInsetX": 110,
+    "screenInsetY": 100,
+    "path": "iPhone/iPhone 11 Pro Max.imageset/iPhone 11 Pro Max - Portrait.png"
+  },
+  "iPhone 11 Pro - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 11 Pro",
+    "displayType": "APP_IPHONE_58",
+    "outputWidth": 1365,
+    "outputHeight": 2656,
+    "screenInsetX": 120,
+    "screenInsetY": 110,
+    "path": "iPhone/iPhone 11 Pro.imageset/iPhone 11 Pro - Portrait.png"
+  },
+  "iPhone 11 - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 11",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1008,
+    "outputHeight": 1952,
+    "screenInsetX": 90,
+    "screenInsetY": 80,
+    "path": "iPhone/iPhone 11.imageset/iPhone 11 - Portrait.png"
+  },
+  "iPhone 12 Mini - White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 12 Mini",
+    "displayType": "APP_IPHONE_58",
+    "outputWidth": 1325,
+    "outputHeight": 2616,
+    "screenInsetX": 122,
+    "screenInsetY": 138,
+    "path": "iPhone/iPhone 12 Mini.imageset/iPhone 12 Mini - White - Portrait.png"
+  },
+  "iPhone 12 Pro Max - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 12 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1484,
+    "outputHeight": 2978,
+    "screenInsetX": 100,
+    "screenInsetY": 100,
+    "path": "iPhone/iPhone 12 Pro Max.imageset/iPhone 12 Pro Max - Silver - Portrait.png"
+  },
+  "iPhone 12 Pro - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 12 Pro",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1370,
+    "outputHeight": 2712,
+    "screenInsetX": 100,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 12 Pro.imageset/iPhone 12 Pro - Silver - Portrait.png"
+  },
+  "iPhone 12 - White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 12",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1370,
+    "outputHeight": 2712,
+    "screenInsetX": 100,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 12.imageset/iPhone 12 - White - Portrait.png"
+  },
+  "iPhone 13 Pro Max - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 13 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1500,
+    "outputHeight": 3000,
+    "screenInsetX": 108,
+    "screenInsetY": 111,
+    "path": "iPhone/iPhone 13 Pro Max.imageset/iPhone 13 Pro Max - Silver - Portrait.png"
+  },
+  "iPhone 13 Pro - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 13 Pro",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1400,
+    "outputHeight": 2700,
+    "screenInsetX": 115,
+    "screenInsetY": 84,
+    "path": "iPhone/iPhone 13 Pro.imageset/iPhone 13 Pro - Silver - Portrait.png"
+  },
+  "iPhone 13 mini - Starlight": {
+    "category": "iPhone",
+    "model": "iPhone 13 mini",
+    "displayType": "APP_IPHONE_58",
+    "outputWidth": 1240,
+    "outputHeight": 2500,
+    "screenInsetX": 80,
+    "screenInsetY": 80,
+    "path": "iPhone/iPhone 13 mini.imageset/iPhone 13 mini - Starlight.png"
+  },
+  "iPhone 13 - Starlight": {
+    "category": "iPhone",
+    "model": "iPhone 13",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1400,
+    "outputHeight": 2700,
+    "screenInsetX": 115,
+    "screenInsetY": 84,
+    "path": "iPhone/iPhone 13.imageset/iPhone 13 - Starlight.png"
+  },
+  "iPhone 14 Plus - Starlight - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 14 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1464,
+    "outputHeight": 2978,
+    "screenInsetX": 90,
+    "screenInsetY": 100,
+    "path": "iPhone/iPhone 14 Plus.imageset/iPhone 14 Plus - Starlight - Portrait.png"
+  },
+  "iPhone 14 Pro Max - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 14 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1450,
+    "outputHeight": 2936,
+    "screenInsetX": 80,
+    "screenInsetY": 70,
+    "path": "iPhone/iPhone 14 Pro Max.imageset/iPhone 14 Pro Max - Silver - Portrait.png"
+  },
+  "iPhone 14 Pro - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 14 Pro",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1339,
+    "outputHeight": 2716,
+    "screenInsetX": 80,
+    "screenInsetY": 80,
+    "path": "iPhone/iPhone 14 Pro.imageset/iPhone 14 Pro - Silver - Portrait.png"
+  },
+  "iPhone 14 - Starlight - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 14",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1370,
+    "outputHeight": 2732,
+    "screenInsetX": 100,
+    "screenInsetY": 100,
+    "path": "iPhone/iPhone 14.imageset/iPhone 14 - Starlight - Portrait.png"
+  },
+  "iPhone 15 Plus - Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 15 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1530,
+    "outputHeight": 3036,
+    "screenInsetX": 120,
+    "screenInsetY": 120,
+    "path": "iPhone/iPhone 15 Plus.imageset/iPhone 15 Plus - Blue - Portrait.png"
+  },
+  "iPhone 15 Pro Max - White Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 15 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1530,
+    "outputHeight": 3036,
+    "screenInsetX": 120,
+    "screenInsetY": 120,
+    "path": "iPhone/iPhone 15 Pro Max.imageset/iPhone 15 Pro Max - White Titanium - Portrait.png"
+  },
+  "iPhone 15 Pro - White Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 15 Pro",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1419,
+    "outputHeight": 2796,
+    "screenInsetX": 120,
+    "screenInsetY": 120,
+    "path": "iPhone/iPhone 15 Pro.imageset/iPhone 15 Pro - White Titanium - Portrait.png"
+  },
+  "iPhone 15 - Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 15",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1419,
+    "outputHeight": 2796,
+    "screenInsetX": 120,
+    "screenInsetY": 120,
+    "path": "iPhone/iPhone 15.imageset/iPhone 15 - Blue - Portrait.png"
+  },
+  "iPhone 16 - Black - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2736,
+    "outputHeight": 1359,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Black - Landscape.imageset/iPhone 16 - Black - Landscape.png"
+  },
+  "iPhone 16 - Black - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1359,
+    "outputHeight": 2736,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16.imageset/iPhone 16 - Black - Portrait.png"
+  },
+  "iPhone 16 - Pink - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2736,
+    "outputHeight": 1359,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Pink - Landscape.imageset/iPhone 16 - Pink - Landscape.png"
+  },
+  "iPhone 16 - Pink - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1359,
+    "outputHeight": 2736,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Pink - Portrait.imageset/iPhone 16 - Pink - Portrait.png"
+  },
+  "iPhone 16 - Teal - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2736,
+    "outputHeight": 1359,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Teal - Landscape.imageset/iPhone 16 - Teal - Landscape.png"
+  },
+  "iPhone 16 - Teal - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1359,
+    "outputHeight": 2736,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Teal - Portrait.imageset/iPhone 16 - Teal - Portrait.png"
+  },
+  "iPhone 16 - Ultramarine - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2736,
+    "outputHeight": 1359,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Ultramarine - Landscape.imageset/iPhone 16 - Ultramarine - Landscape.png"
+  },
+  "iPhone 16 - Ultramarine - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1359,
+    "outputHeight": 2736,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - Ultramarine - Portrait.imageset/iPhone 16 - Ultramarine - Portrait.png"
+  },
+  "iPhone 16 - White - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2736,
+    "outputHeight": 1359,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - White - Landscape.imageset/iPhone 16 - White - Landscape.png"
+  },
+  "iPhone 16 - White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1359,
+    "outputHeight": 2736,
+    "screenInsetX": 90,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16/iPhone 16 - White - Portrait.imageset/iPhone 16 - White - Portrait.png"
+  },
+  "iPhone 16 Plus - Black - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2970,
+    "outputHeight": 1470,
+    "screenInsetX": 87,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Black - Landscape.imageset/iPhone 16 Plus - Black - Landscape.png"
+  },
+  "iPhone 16 Plus - Black - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 2970,
+    "screenInsetX": 90,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone 16 Plus.imageset/iPhone 16 Plus - Black - Portrait.png"
+  },
+  "iPhone 16 Plus - Pink - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2970,
+    "outputHeight": 1470,
+    "screenInsetX": 87,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Pink - Landscape.imageset/iPhone 16 Plus - Pink - Landscape.png"
+  },
+  "iPhone 16 Plus - Pink - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 2970,
+    "screenInsetX": 90,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Pink - Portrait.imageset/iPhone 16 Plus - Pink - Portrait.png"
+  },
+  "iPhone 16 Plus - Teal - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2970,
+    "outputHeight": 1470,
+    "screenInsetX": 87,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Teal - Landscape.imageset/iPhone 16 Plus - Teal - Landscape.png"
+  },
+  "iPhone 16 Plus - Teal - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 2970,
+    "screenInsetX": 90,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Teal - Portrait.imageset/iPhone 16 Plus - Teal - Portrait.png"
+  },
+  "iPhone 16 Plus - Ultramarine - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2970,
+    "outputHeight": 1470,
+    "screenInsetX": 87,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Ultramarine - Landscape.imageset/iPhone 16 Plus - Ultramarine - Landscape.png"
+  },
+  "iPhone 16 Plus - Ultramarine - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 2970,
+    "screenInsetX": 90,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - Ultramarine - Portrait.imageset/iPhone 16 Plus - Ultramarine - Portrait.png"
+  },
+  "iPhone 16 Plus - White - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2970,
+    "outputHeight": 1470,
+    "screenInsetX": 87,
+    "screenInsetY": 90,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - White - Landscape.imageset/iPhone 16 Plus - White - Landscape.png"
+  },
+  "iPhone 16 Plus - White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Plus",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 2970,
+    "screenInsetX": 90,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone 16 Plus/iPhone 16 Plus - White - Portrait.imageset/iPhone 16 Plus - White - Portrait.png"
+  },
+  "iPhone 16 Pro - Black Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - Black Titanium - Landscape.imageset/iPhone 16 Pro - Black Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro - Black Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 16 Pro.imageset/iPhone 16 Pro - Black Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro - Desert Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - Desert Titanium - Landscape.imageset/iPhone 16 Pro - Desert Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro - Desert Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - Desert Titanium - Portrait.imageset/iPhone 16 Pro - Desert Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro - Natural Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - Natural Titanium - Landscape.imageset/iPhone 16 Pro - Natural Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro - Natural Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - Natural Titanium - Portrait.imageset/iPhone 16 Pro - Natural Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro - White Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - White Titanium - Landscape.imageset/iPhone 16 Pro - White Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro - White Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 16 Pro/iPhone 16 Pro - White Titanium - Portrait.imageset/iPhone 16 Pro - White Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro Max - Black Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - Black Titanium - Landscape.imageset/iPhone 16 Pro Max - Black Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro Max - Black Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 16 Pro Max.imageset/iPhone 16 Pro Max - Black Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro Max - Desert Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - Desert Titanium - Landscape.imageset/iPhone 16 Pro Max - Desert Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro Max - Desert Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - Desert Titanium - Portrait.imageset/iPhone 16 Pro Max - Desert Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro Max - Natural Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - Natural Titanium - Landscape.imageset/iPhone 16 Pro Max - Natural Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro Max - Natural Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - Natural Titanium - Portrait.imageset/iPhone 16 Pro Max - Natural Titanium - Portrait.png"
+  },
+  "iPhone 16 Pro Max - White Titanium - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - White Titanium - Landscape.imageset/iPhone 16 Pro Max - White Titanium - Landscape.png"
+  },
+  "iPhone 16 Pro Max - White Titanium - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 16 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 16 Pro Max/iPhone 16 Pro Max - White Titanium - Portrait.imageset/iPhone 16 Pro Max - White Titanium - Portrait.png"
+  },
+  "iPhone 17 - Black - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 102,
+    "screenInsetY": 85,
+    "path": "iPhone/iPhone 17/iPhone 17 - Black - Landscape.imageset/iPhone 17 - Black - Landscape.png"
+  },
+  "iPhone 17 - Black - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 85,
+    "screenInsetY": 102,
+    "path": "iPhone/iPhone 17/iPhone 17 - Black - Portrait.imageset/iPhone 17 - Black - Portrait.png"
+  },
+  "iPhone 17 - Lavender - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 102,
+    "screenInsetY": 85,
+    "path": "iPhone/iPhone 17/iPhone 17 - Lavender - Landscape.imageset/iPhone 17 - Lavender - Landscape.png"
+  },
+  "iPhone 17 - Lavender - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 85,
+    "screenInsetY": 102,
+    "path": "iPhone/iPhone 17/iPhone 17 - Lavender - Portrait.imageset/iPhone 17 - Lavender - Portrait.png"
+  },
+  "iPhone 17 - Mist Blue - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 102,
+    "screenInsetY": 85,
+    "path": "iPhone/iPhone 17/iPhone 17 - Mist Blue - Landscape.imageset/iPhone 17 - Mist Blue - Landscape.png"
+  },
+  "iPhone 17 - Mist Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 85,
+    "screenInsetY": 102,
+    "path": "iPhone/iPhone 17/iPhone 17 - Mist Blue - Portrait.imageset/iPhone 17 - Mist Blue - Portrait.png"
+  },
+  "iPhone 17 - Sage - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 102,
+    "screenInsetY": 85,
+    "path": "iPhone/iPhone 17/iPhone 17 - Sage - Landscape.imageset/iPhone 17 - Sage - Landscape.png"
+  },
+  "iPhone 17 - Sage - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 85,
+    "screenInsetY": 102,
+    "path": "iPhone/iPhone 17/iPhone 17 - Sage - Portrait.imageset/iPhone 17 - Sage - Portrait.png"
+  },
+  "iPhone 17 - White - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 102,
+    "screenInsetY": 85,
+    "path": "iPhone/iPhone 17/iPhone 17 - White - Landscape.imageset/iPhone 17 - White - Landscape.png"
+  },
+  "iPhone 17 - White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17",
+    "displayType": "APP_IPHONE_61",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 85,
+    "screenInsetY": 102,
+    "path": "iPhone/iPhone 17/iPhone 17 - White - Portrait.imageset/iPhone 17 - White - Portrait.png"
+  },
+  "iPhone 17 Pro - Cosmic Orange - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Cosmic Orange - Landscape.imageset/iPhone 17 Pro - Cosmic Orange - Landscape.png"
+  },
+  "iPhone 17 Pro - Cosmic Orange - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Cosmic Orange - Portrait.imageset/iPhone 17 Pro - Cosmic Orange - Portrait.png"
+  },
+  "iPhone 17 Pro - Deep Blue - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Deep Blue - Landscape.imageset/iPhone 17 Pro - Deep Blue - Landscape.png"
+  },
+  "iPhone 17 Pro - Deep Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Deep Blue - Portrait.imageset/iPhone 17 Pro - Deep Blue - Portrait.png"
+  },
+  "iPhone 17 Pro - Silver - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2760,
+    "outputHeight": 1350,
+    "screenInsetX": 69,
+    "screenInsetY": 72,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Silver - Landscape.imageset/iPhone 17 Pro - Silver - Landscape.png"
+  },
+  "iPhone 17 Pro - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1350,
+    "outputHeight": 2760,
+    "screenInsetX": 72,
+    "screenInsetY": 69,
+    "path": "iPhone/iPhone 17 Pro/iPhone 17 Pro - Silver - Portrait.imageset/iPhone 17 Pro - Silver - Portrait.png"
+  },
+  "iPhone 17 Pro Max - Cosmic Orange - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Cosmic Orange - Landscape.imageset/iPhone 17 Pro Max - Cosmic Orange - Landscape.png"
+  },
+  "iPhone 17 Pro Max - Cosmic Orange - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Cosmic Orange - Portrait.imageset/iPhone 17 Pro Max - Cosmic Orange - Portrait.png"
+  },
+  "iPhone 17 Pro Max - Deep Blue - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Deep Blue - Landscape.imageset/iPhone 17 Pro Max - Deep Blue - Landscape.png"
+  },
+  "iPhone 17 Pro Max - Deep Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Deep Blue - Portrait.imageset/iPhone 17 Pro Max - Deep Blue - Portrait.png"
+  },
+  "iPhone 17 Pro Max - Silver - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 3000,
+    "outputHeight": 1470,
+    "screenInsetX": 66,
+    "screenInsetY": 75,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Silver - Landscape.imageset/iPhone 17 Pro Max - Silver - Landscape.png"
+  },
+  "iPhone 17 Pro Max - Silver - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone 17 Pro Max",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1470,
+    "outputHeight": 3000,
+    "screenInsetX": 75,
+    "screenInsetY": 66,
+    "path": "iPhone/iPhone 17 Pro Max/iPhone 17 Pro Max - Silver - Portrait.imageset/iPhone 17 Pro Max - Silver - Portrait.png"
+  },
+  "iPhone Air - Cloud White - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2880,
+    "outputHeight": 1380,
+    "screenInsetX": 129,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone Air/iPhone Air - Cloud White - Landscape.imageset/iPhone Air - Cloud White - Landscape.png"
+  },
+  "iPhone Air - Cloud White - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1380,
+    "outputHeight": 2880,
+    "screenInsetX": 87,
+    "screenInsetY": 129,
+    "path": "iPhone/iPhone Air/iPhone Air - Cloud White - Portrait.imageset/iPhone Air - Cloud White - Portrait.png"
+  },
+  "iPhone Air - Light Gold - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2880,
+    "outputHeight": 1380,
+    "screenInsetX": 129,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone Air/iPhone Air - Light Gold - Landscape.imageset/iPhone Air - Light Gold - Landscape.png"
+  },
+  "iPhone Air - Light Gold - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1380,
+    "outputHeight": 2880,
+    "screenInsetX": 87,
+    "screenInsetY": 129,
+    "path": "iPhone/iPhone Air/iPhone Air - Light Gold - Portrait.imageset/iPhone Air - Light Gold - Portrait.png"
+  },
+  "iPhone Air - Sky Blue - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2880,
+    "outputHeight": 1380,
+    "screenInsetX": 129,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone Air/iPhone Air - Sky Blue - Landscape.imageset/iPhone Air - Sky Blue - Landscape.png"
+  },
+  "iPhone Air - Sky Blue - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1380,
+    "outputHeight": 2880,
+    "screenInsetX": 87,
+    "screenInsetY": 129,
+    "path": "iPhone/iPhone Air/iPhone Air - Sky Blue - Portrait.imageset/iPhone Air - Sky Blue - Portrait.png"
+  },
+  "iPhone Air - Space Black - Landscape": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 2880,
+    "outputHeight": 1380,
+    "screenInsetX": 129,
+    "screenInsetY": 87,
+    "path": "iPhone/iPhone Air/iPhone Air - Space Black - Landscape.imageset/iPhone Air - Space Black - Landscape.png"
+  },
+  "iPhone Air - Space Black - Portrait": {
+    "category": "iPhone",
+    "model": "iPhone Air",
+    "displayType": "APP_IPHONE_67",
+    "outputWidth": 1380,
+    "outputHeight": 2880,
+    "screenInsetX": 87,
+    "screenInsetY": 129,
+    "path": "iPhone/iPhone Air/iPhone Air - Space Black - Portrait.imageset/iPhone Air - Space Black - Portrait.png"
+  },
+  "mockupSE": {
+    "category": "iPhone",
+    "model": "iPhone SE",
+    "displayType": "APP_IPHONE_47",
+    "outputWidth": 1050,
+    "outputHeight": 1934,
+    "screenInsetX": 150,
+    "screenInsetY": 300,
+    "path": "iPhone/iPhone SE.imageset/mockupSE.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Band Black.imageset/Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Band Black.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Loop Ink": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Loop Ink.imageset/Apple Watch S10 - 42mm - Aluminum Jet Black + Sport Loop Ink.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Band Light Blush.imageset/Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Loop Plum": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Loop Plum.imageset/Apple Watch S10 - 42mm - Aluminum Rose Gold + Sport Loop Plum.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Silver + Sport Band Denim": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Silver + Sport Band Denim.imageset/Apple Watch S10 - 42mm - Aluminum Silver + Sport Band Denim.png"
+  },
+  "Apple Watch S10 - 42mm - Aluminum Silver + Sport Loop Blue Cloud": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 42mm - Aluminum Silver + Sport Loop Blue Cloud.imageset/Apple Watch S10 - 42mm - Aluminum Silver + Sport Loop Blue Cloud.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Band Black.imageset/Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Band Black.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Loop Ink": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Loop Ink.imageset/Apple Watch S10 - 46mm - Aluminum Jet Black + Sport Loop Ink.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Band Light Blush.imageset/Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Loop Plum": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Loop Plum.imageset/Apple Watch S10 - 46mm - Aluminum Rose Gold + Sport Loop Plum.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Silver + Sport Band Denim": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Silver + Sport Band Denim.imageset/Apple Watch S10 - 46mm - Aluminum Silver + Sport Band Denim.png"
+  },
+  "Apple Watch S10 - 46mm - Aluminum Silver + Sport Loop Blue Cloud": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Aluminum/Apple Watch S10 - 46mm - Aluminum Silver + Sport Loop Blue Cloud.imageset/Apple Watch S10 - 46mm - Aluminum Silver + Sport Loop Blue Cloud.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Gold + Magnetic Link Blackberry": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Gold + Magnetic Link Blackberry.imageset/Apple Watch S10 - 42mm - Titanium Gold + Magnetic Link Blackberry.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Gold + Milanese Loop Titanium Gold": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Gold + Milanese Loop Titanium Gold.imageset/Apple Watch S10 - 42mm - Titanium Gold + Milanese Loop Titanium Gold.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Natural + Magnetic Link Dark Taupe": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Natural + Magnetic Link Dark Taupe.imageset/Apple Watch S10 - 42mm - Titanium Natural + Magnetic Link Dark Taupe.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Natural + Milanese Loop Titanium Natural": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Natural + Milanese Loop Titanium Natural.imageset/Apple Watch S10 - 42mm - Titanium Natural + Milanese Loop Titanium Natural.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Slate + Magnetic Link Black": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Slate + Magnetic Link Black.imageset/Apple Watch S10 - 42mm - Titanium Slate + Magnetic Link Black.png"
+  },
+  "Apple Watch S10 - 42mm - Titanium Slate + Milanese Loop Titanium Slate": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 500,
+    "outputHeight": 780,
+    "screenInsetX": 45,
+    "screenInsetY": 139,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 42mm - Titanium Slate + Milanese Loop Titanium Slate.imageset/Apple Watch S10 - 42mm - Titanium Slate + Milanese Loop Titanium Slate.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Gold + Magnetic Link Blackberry": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Gold + Magnetic Link Blackberry.imageset/Apple Watch S10 - 46mm - Titanium Gold + Magnetic Link Blackberry.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Gold + Milanese Loop Titanium Gold": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Gold + Milanese Loop Titanium Gold.imageset/Apple Watch S10 - 46mm - Titanium Gold + Milanese Loop Titanium Gold.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Natural + Magnetic Link Dark Taupe": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Natural + Magnetic Link Dark Taupe.imageset/Apple Watch S10 - 46mm - Titanium Natural + Magnetic Link Dark Taupe.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Natural + Milanese Loop Titanium Natural": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Natural + Milanese Loop Titanium Natural.imageset/Apple Watch S10 - 46mm - Titanium Natural + Milanese Loop Titanium Natural.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Slate + Magnetic Link Black": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Slate + Magnetic Link Black.imageset/Apple Watch S10 - 46mm - Titanium Slate + Magnetic Link Black.png"
+  },
+  "Apple Watch S10 - 46mm - Titanium Slate + Milanese Loop Titanium Slate": {
+    "category": "Watch",
+    "model": "Apple Watch S10",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 75,
+    "screenInsetY": 189,
+    "path": "iWatch/Apple Watch S10 Titanium/Apple Watch S10 - 46mm - Titanium Slate + Milanese Loop Titanium Slate.imageset/Apple Watch S10 - 46mm - Titanium Slate + Milanese Loop Titanium Slate.png"
+  },
+  "Apple Watch Series 6 - 44mm - Space Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 6",
+    "displayType": "APP_WATCH_SERIES_4",
+    "outputWidth": 1100,
+    "outputHeight": 1800,
+    "screenInsetX": 366,
+    "screenInsetY": 676,
+    "path": "iWatch/Apple Watch Series 6.imageset/Apple Watch Series 6 - 44mm - Space Gray.png"
+  },
+  "Apple Watch Series 7 - 45mm - Midnight": {
+    "category": "Watch",
+    "model": "Apple Watch Series 7",
+    "displayType": "APP_WATCH_SERIES_7",
+    "outputWidth": 1080,
+    "outputHeight": 1720,
+    "screenInsetX": 342,
+    "screenInsetY": 618,
+    "path": "iWatch/Apple Watch Series 7.imageset/Apple Watch Series 7 - 45mm - Midnight.png"
+  },
+  "Apple Watch S8 - 41mm - SS - Graphite + Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 8-41mm",
+    "displayType": "APP_WATCH_SERIES_7",
+    "outputWidth": 480,
+    "outputHeight": 760,
+    "screenInsetX": 28,
+    "screenInsetY": 45,
+    "path": "iWatch/Apple Watch Series 8-41mm.imageset/Apple Watch S8 - 41mm - SS - Graphite + Gray.png"
+  },
+  "Apple Watch S8 - 45mm - SS - Graphite + Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 8-45mm",
+    "displayType": "APP_WATCH_SERIES_7",
+    "outputWidth": 540,
+    "outputHeight": 860,
+    "screenInsetX": 32,
+    "screenInsetY": 51,
+    "path": "iWatch/Apple Watch Series 8-45mm.imageset/Apple Watch S8 - 45mm - SS - Graphite + Gray.png"
+  },
+  "Apple Watch S9 - 41mm - SS Graphite + Midnight Sport Band": {
+    "category": "Watch",
+    "model": "Apple Watch Series 9-41mm",
+    "displayType": "APP_WATCH_SERIES_7",
+    "outputWidth": 480,
+    "outputHeight": 780,
+    "screenInsetX": 28,
+    "screenInsetY": 46,
+    "path": "iWatch/Apple Watch Series 9-41mm.imageset/Apple Watch S9 - 41mm - SS Graphite + Midnight Sport Band.png"
+  },
+  "Apple Watch S9 - 45mm - SS Graphite + Midnight Sport Band": {
+    "category": "Watch",
+    "model": "Apple Watch Series 9-45mm",
+    "displayType": "APP_WATCH_SERIES_7",
+    "outputWidth": 540,
+    "outputHeight": 880,
+    "screenInsetX": 32,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple Watch Series 9-45mm.imageset/Apple Watch S9 - 45mm - SS Graphite + Midnight Sport Band.png"
+  },
+  "Apple Watch Ultra - Midnight Ocean Band": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple Watch Ultra.imageset/Apple Watch Ultra - Midnight Ocean Band.png"
+  },
+  "Apple Watch Ultra - Blue Alpine Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple Watch Ultra2.imageset/Apple Watch Ultra - Blue Alpine Loop.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Gold + Magnetic Link Sage Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 42mm - Titanium Gold + Magnetic Link Sage Gray.imageset/Apple Watch S11 - 42mm - Titanium Gold + Magnetic Link Sage Gray.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Natural + Magnetic Link Caramel": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 42mm - Titanium Natural + Magnetic Link Caramel.imageset/Apple Watch S11 - 42mm - Titanium Natural + Magnetic Link Caramel.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Slate + Magnetic Link Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 42mm - Titanium Slate + Magnetic Link Navy.imageset/Apple Watch S11 - 42mm - Titanium Slate + Magnetic Link Navy.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Gold + Magnetic Link Sage Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 46mm - Titanium Gold + Magnetic Link Sage Gray.imageset/Apple Watch S11 - 46mm - Titanium Gold + Magnetic Link Sage Gray.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Natural + Magnetic Link Caramel": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 46mm - Titanium Natural + Magnetic Link Caramel.imageset/Apple Watch S11 - 46mm - Titanium Natural + Magnetic Link Caramel.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Slate + Magnetic Link Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Magnetic Link/Apple Watch S11 - 46mm - Titanium Slate + Magnetic Link Navy.imageset/Apple Watch S11 - 46mm - Titanium Slate + Magnetic Link Navy.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Gold + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 42mm - Titanium Gold + Milanese Loop.imageset/Apple Watch S11 - 42mm - Titanium Gold + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Natural + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 42mm - Titanium Natural + Milanese Loop.imageset/Apple Watch S11 - 42mm - Titanium Natural + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Slate + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 42mm - Titanium Slate + Milanese Loop.imageset/Apple Watch S11 - 42mm - Titanium Slate + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Gold + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 46mm - Titanium Gold + Milanese Loop.imageset/Apple Watch S11 - 46mm - Titanium Gold + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Natural + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 46mm - Titanium Natural + Milanese Loop.imageset/Apple Watch S11 - 46mm - Titanium Natural + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Slate + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Milanese Loop/Apple Watch S11 - 46mm - Titanium Slate + Milanese Loop.imageset/Apple Watch S11 - 46mm - Titanium Slate + Milanese Loop.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Band Black.imageset/Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Band Light Blush.imageset/Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Neon Yellow": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Neon Yellow.imageset/Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Neon Yellow.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Purple Fog.imageset/Apple Watch S11 - 42mm - Aluminum Silver + Sport Band Purple Fog.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Anchor Blue.imageset/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Anchor Blue.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Black.imageset/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Titanium Gold + Sport Band Light Blush.imageset/Apple Watch S11 - 42mm - Titanium Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Gold + Sport Band Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Titanium Gold + Sport Band Purple Fog.imageset/Apple Watch S11 - 42mm - Titanium Gold + Sport Band Purple Fog.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Natural + Sport Band Stone Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Titanium Natural + Sport Band Stone Gray.imageset/Apple Watch S11 - 42mm - Titanium Natural + Sport Band Stone Gray.png"
+  },
+  "Apple Watch S11 - 42mm - Titanium Slate + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 42mm - Titanium Slate + Sport Band Black.imageset/Apple Watch S11 - 42mm - Titanium Slate + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Band Black.imageset/Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Band Light Blush.imageset/Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Neon Yellow": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Neon Yellow.imageset/Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Neon Yellow.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Purple Fog.imageset/Apple Watch S11 - 46mm - Aluminum Silver + Sport Band Purple Fog.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Anchor Blue.imageset/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Anchor Blue.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Black.imageset/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Gold + Sport Band Light Blush": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Titanium Gold + Sport Band Light Blush.imageset/Apple Watch S11 - 46mm - Titanium Gold + Sport Band Light Blush.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Gold + Sport Band Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Titanium Gold + Sport Band Purple Fog.imageset/Apple Watch S11 - 46mm - Titanium Gold + Sport Band Purple Fog.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Natural + Sport Band Stone Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Titanium Natural + Sport Band Stone Gray.imageset/Apple Watch S11 - 46mm - Titanium Natural + Sport Band Stone Gray.png"
+  },
+  "Apple Watch S11 - 46mm - Titanium Slate + Sport Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Band/Apple Watch S11 - 46mm - Titanium Slate + Sport Band Black.imageset/Apple Watch S11 - 46mm - Titanium Slate + Sport Band Black.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Loop Dark Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Loop Dark Gray.imageset/Apple Watch S11 - 42mm - Aluminum Jet Black + Sport Loop Dark Gray.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Loop Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Loop Purple Fog.imageset/Apple Watch S11 - 42mm - Aluminum Rose Gold + Sport Loop Purple Fog.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Forest": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Forest.imageset/Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Forest.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Neon Yellow": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Neon Yellow.imageset/Apple Watch S11 - 42mm - Aluminum Silver + Sport Loop Neon Yellow.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Anchor Blue.imageset/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Anchor Blue.png"
+  },
+  "Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Forest": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 520,
+    "outputHeight": 800,
+    "screenInsetX": 31,
+    "screenInsetY": 48,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Forest.imageset/Apple Watch S11 - 42mm - Aluminum Space Gray + Sport Loop Forest.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Loop Dark Gray": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Loop Dark Gray.imageset/Apple Watch S11 - 46mm - Aluminum Jet Black + Sport Loop Dark Gray.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Loop Purple Fog": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Loop Purple Fog.imageset/Apple Watch S11 - 46mm - Aluminum Rose Gold + Sport Loop Purple Fog.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Forest": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Forest.imageset/Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Forest.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Neon Yellow": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Neon Yellow.imageset/Apple Watch S11 - 46mm - Aluminum Silver + Sport Loop Neon Yellow.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Anchor Blue.imageset/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Anchor Blue.png"
+  },
+  "Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Forest": {
+    "category": "Watch",
+    "model": "Apple Watch Series 11",
+    "displayType": "APP_WATCH_SERIES_10",
+    "outputWidth": 560,
+    "outputHeight": 880,
+    "screenInsetX": 33,
+    "screenInsetY": 52,
+    "path": "iWatch/Apple-Watch-Series-11-2025/Sport Loop/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Forest.imageset/Apple Watch S11 - 46mm - Aluminum Space Gray + Sport Loop Forest.png"
+  },
+  "AW Ultra 2 - Black + Alpine Loop Dark Green": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Black + Alpine Loop Dark Green.imageset/AW Ultra 2 - Black + Alpine Loop Dark Green.png"
+  },
+  "AW Ultra 2 - Black + Alpine Loop Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Black + Alpine Loop Navy.imageset/AW Ultra 2 - Black + Alpine Loop Navy.png"
+  },
+  "AW Ultra 2 - Black + Alpine Loop Tan": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Black + Alpine Loop Tan.imageset/AW Ultra 2 - Black + Alpine Loop Tan.png"
+  },
+  "AW Ultra 2 - Natural + Alpine Loop Dark Green": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Natural + Alpine Loop Dark Green.imageset/AW Ultra 2 - Natural + Alpine Loop Dark Green.png"
+  },
+  "AW Ultra 2 - Natural + Alpine Loop Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Natural + Alpine Loop Navy.imageset/AW Ultra 2 - Natural + Alpine Loop Navy.png"
+  },
+  "AW Ultra 2 - Natural + Alpine Loop Tan": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Alpine Loop/AW Ultra 2 - Natural + Alpine Loop Tan.imageset/AW Ultra 2 - Natural + Alpine Loop Tan.png"
+  },
+  "AW Ultra 2 - Black + Titanium Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Milanese Loop/AW Ultra 2 - Black + Titanium Milanese Loop.imageset/AW Ultra 2 - Black + Titanium Milanese Loop.png"
+  },
+  "AW Ultra 2 - Natural + Titanium Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Milanese Loop/AW Ultra 2 - Natural + Titanium Milanese Loop.imageset/AW Ultra 2 - Natural + Titanium Milanese Loop.png"
+  },
+  "AW Ultra 2 - Black + Ocean Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Black + Ocean Band Black.imageset/AW Ultra 2 - Black + Ocean Band Black.png"
+  },
+  "AW Ultra 2 - Black + Ocean Band Ice Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Black + Ocean Band Ice Blue.imageset/AW Ultra 2 - Black + Ocean Band Ice Blue.png"
+  },
+  "AW Ultra 2 - Black + Ocean Band Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Black + Ocean Band Navy.imageset/AW Ultra 2 - Black + Ocean Band Navy.png"
+  },
+  "AW Ultra 2 - Natural + Ocean Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Natural + Ocean Band Black.imageset/AW Ultra 2 - Natural + Ocean Band Black.png"
+  },
+  "AW Ultra 2 - Natural + Ocean Band Ice Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Natural + Ocean Band Ice Blue.imageset/AW Ultra 2 - Natural + Ocean Band Ice Blue.png"
+  },
+  "AW Ultra 2 - Natural + Ocean Band Navy": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Ocean Band/AW Ultra 2 - Natural + Ocean Band Navy.imageset/AW Ultra 2 - Natural + Ocean Band Navy.png"
+  },
+  "AW Ultra 2 - Black + Trail Loop Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Trail Loop/AW Ultra 2 - Black + Trail Loop Black.imageset/AW Ultra 2 - Black + Trail Loop Black.png"
+  },
+  "AW Ultra 2 - Black + Trail Loop Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Trail Loop/AW Ultra 2 - Black + Trail Loop Blue.imageset/AW Ultra 2 - Black + Trail Loop Blue.png"
+  },
+  "AW Ultra 2 - Black + Trail Loop Green": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Trail Loop/AW Ultra 2 - Black + Trail Loop Green.imageset/AW Ultra 2 - Black + Trail Loop Green.png"
+  },
+  "AW Ultra 2 - Natural + Trail Loop Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Trail Loop/AW Ultra 2 - Natural + Trail Loop Black.imageset/AW Ultra 2 - Natural + Trail Loop Black.png"
+  },
+  "AW Ultra 2 - Natural + Trail Loop Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 2",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 940,
+    "screenInsetX": 95,
+    "screenInsetY": 219,
+    "path": "iWatch/Apple-Watch-Ultra-2-2024/Trail Loop/AW Ultra 2 - Natural + Trail Loop Blue.imageset/AW Ultra 2 - Natural + Trail Loop Blue.png"
+  },
+  "AW Ultra 3 - Black + Alpine Loop Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Alpine Loop/AW Ultra 3 - Black + Alpine Loop Black.imageset/AW Ultra 3 - Black + Alpine Loop Black.png"
+  },
+  "AW Ultra 3 - Black + Alpine Loop Light Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Alpine Loop/AW Ultra 3 - Black + Alpine Loop Light Blue.imageset/AW Ultra 3 - Black + Alpine Loop Light Blue.png"
+  },
+  "AW Ultra 3 - Natural + Alpine Loop Light Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Alpine Loop/AW Ultra 3 - Natural + Alpine Loop Light Blue.imageset/AW Ultra 3 - Natural + Alpine Loop Light Blue.png"
+  },
+  "AW Ultra 3 - Natural + Alpine Loop Terra Cotta": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Alpine Loop/AW Ultra 3 - Natural + Alpine Loop Terra Cotta.imageset/AW Ultra 3 - Natural + Alpine Loop Terra Cotta.png"
+  },
+  "AW Ultra 3 - Black + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Milanese Loop/AW Ultra 3 - Black + Milanese Loop.imageset/AW Ultra 3 - Black + Milanese Loop.png"
+  },
+  "AW Ultra 3 - Natural + Milanese Loop": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Milanese Loop/AW Ultra 3 - Natural + Milanese Loop.imageset/AW Ultra 3 - Natural + Milanese Loop.png"
+  },
+  "AW Ultra 3 - Black + Ocean Band Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Band/AW Ultra 3 - Black + Ocean Band Anchor Blue.imageset/AW Ultra 3 - Black + Ocean Band Anchor Blue.png"
+  },
+  "AW Ultra 3 - Black + Ocean Band Black": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Band/AW Ultra 3 - Black + Ocean Band Black.imageset/AW Ultra 3 - Black + Ocean Band Black.png"
+  },
+  "AW Ultra 3 - Natural + Ocean Band Anchor Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Band/AW Ultra 3 - Natural + Ocean Band Anchor Blue.imageset/AW Ultra 3 - Natural + Ocean Band Anchor Blue.png"
+  },
+  "AW Ultra 3 - Natural + Ocean Band Neon Green": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Band/AW Ultra 3 - Natural + Ocean Band Neon Green.imageset/AW Ultra 3 - Natural + Ocean Band Neon Green.png"
+  },
+  "AW Ultra 3 - Black + Trail Loop Black Charcoal": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Loop/AW Ultra 3 - Black + Trail Loop Black Charcoal.imageset/AW Ultra 3 - Black + Trail Loop Black Charcoal.png"
+  },
+  "AW Ultra 3 - Natural + Trail Loop Blue Bright Blue": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Loop/AW Ultra 3 - Natural + Trail Loop Blue Bright Blue.imageset/AW Ultra 3 - Natural + Trail Loop Blue Bright Blue.png"
+  },
+  "AW Ultra 3 - Natural + Trail Loop Green Neon": {
+    "category": "Watch",
+    "model": "Apple Watch Ultra 3",
+    "displayType": "APP_WATCH_ULTRA",
+    "outputWidth": 600,
+    "outputHeight": 960,
+    "screenInsetX": 95,
+    "screenInsetY": 229,
+    "path": "iWatch/Apple-Watch-Ultra-3-2025/Ocean Loop/AW Ultra 3 - Natural + Trail Loop Green Neon.imageset/AW Ultra 3 - Natural + Trail Loop Green Neon.png"
+  }
+}

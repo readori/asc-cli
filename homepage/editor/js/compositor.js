@@ -18,7 +18,12 @@ function loadImage(src) {
 
 async function getFrameImage(deviceName) {
   if (frameImageCache.has(deviceName)) return frameImageCache.get(deviceName);
-  const img = await loadImage(FRAME_BASE + deviceName + '.png');
+  const device = DEVICES_MAP[deviceName];
+  // Use device.path (BezelKit nested path) if available, else fall back to flat filename
+  const src = device && device.path
+    ? encodeURI(FRAME_BASE + device.path)
+    : encodeURIComponent(deviceName) + '.png';
+  const img = await loadImage(src);
   frameImageCache.set(deviceName, img);
   return img;
 }

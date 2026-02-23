@@ -1,14 +1,12 @@
-// Device registry — loaded from frames/devices.json (the single source of truth).
-// DEVICES_MAP  { [frameName]: { category, displayType, outputWidth, outputHeight, screenInsetX, screenInsetY } }
+// Device registry — loaded from devices.json at the editor root.
+// DEVICES_MAP  { [frameName]: { category, model, displayType, outputWidth, outputHeight, screenInsetX, screenInsetY, path } }
 // DEVICES_LIST array form for the device dropdown
-// DISPLAY_TYPE_SIZES { [displayType]: { width, height } } — derived: first portrait size per type
+// DISPLAY_TYPE_SIZES { [displayType]: { width, height } } — canonical App Store slot dimensions
 
 let DEVICES_MAP = {};
 let DEVICES_LIST = [];
 
 // Canonical App Store screenshot dimensions per display type slot.
-// These are the sizes App Store Connect expects for each slot — independent of
-// which specific device frame the user picks for the visual preview.
 const DISPLAY_TYPE_SIZES = {
   "APP_IPHONE_67":          { width: 1290, height: 2796 },
   "APP_IPHONE_65":          { width: 1242, height: 2688 },
@@ -33,25 +31,44 @@ const DISPLAY_TYPE_SIZES = {
 };
 
 async function initDevices() {
-  const resp = await fetch('frames/devices.json');
+  const resp = await fetch('devices.json');
   DEVICES_MAP = await resp.json();
-  delete DEVICES_MAP['_comment'];
   DEVICES_LIST = Object.entries(DEVICES_MAP).map(([name, d]) => ({ name, ...d }));
 }
 
+// Build dropdown grouped by: Category → Model → Variant
 function populateDeviceDropdown(selectEl) {
-  const categories = ['iPhone', 'iPad', 'Mac', 'Watch'];
-  categories.forEach(cat => {
-    const devices = DEVICES_LIST.filter(d => d.category === cat);
-    if (!devices.length) return;
-    const group = document.createElement('optgroup');
-    group.label = cat;
-    devices.forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d.name;
-      opt.textContent = d.name;
-      group.appendChild(opt);
-    });
-    selectEl.appendChild(group);
-  });
+  const categoryOrder = ['iPhone', 'iPad', 'Mac', 'Watch'];
+
+  // Group: category → model → [device]
+  const grouped = {};
+  for (const d of DEVICES_LIST) {
+    const cat = d.category || 'Other';
+    const model = d.model || d.name;
+    if (!grouped[cat]) grouped[cat] = {};
+    if (!grouped[cat][model]) grouped[cat][model] = [];
+    grouped[cat][model].push(d);
+  }
+
+  // Preserve insertion order for models within each category
+  for (const cat of categoryOrder) {
+    if (!grouped[cat]) continue;
+    const models = Object.keys(grouped[cat]);
+    for (const model of models) {
+      const devices = grouped[cat][model];
+      const group = document.createElement('optgroup');
+      group.label = model;
+      for (const d of devices) {
+        const opt = document.createElement('option');
+        opt.value = d.name;
+        // Show just the variant part (strip the model prefix from the display name)
+        let label = d.name;
+        if (label.startsWith(model + ' - ')) label = label.slice(model.length + 3);
+        else if (label.startsWith(model + ' ')) label = label.slice(model.length + 1);
+        opt.textContent = label || d.name;
+        group.appendChild(opt);
+      }
+      selectEl.appendChild(group);
+    }
+  }
 }
