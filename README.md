@@ -1,4 +1,4 @@
-# asc-swift
+# asc-cli
 
 [![CI](https://github.com/tddworks/asc-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/tddworks/asc-cli/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/tddworks/asc-cli/graph/badge.svg?token=v0k1Vzubrx)](https://codecov.io/gh/tddworks/asc-cli)
@@ -45,11 +45,12 @@ Every response includes an `affordances` field. Agents read it and execute — n
   "appId": "app-abc",
   "versionString": "2.1.0",
   "platform": "IOS",
-  "state": "READY_FOR_SALE",
-  "isLive": true,
+  "state": "PREPARE_FOR_SUBMISSION",
+  "isEditable": true,
   "affordances": {
     "listLocalizations": "asc localizations list --version-id v1",
-    "listVersions":      "asc versions list --app-id app-abc"
+    "listVersions":      "asc versions list --app-id app-abc",
+    "submitForReview":   "asc versions submit --version-id v1"
   }
 }
 ```
@@ -58,9 +59,12 @@ Every response includes an `affordances` field. Agents read it and execute — n
 
 ## Features
 
-- **Agent-first JSON output** — complete models with parent IDs and semantic booleans
-- **CAEOAS** — Commands As the Engine Of Application State: responses tell agents what to run next
+- **Agent-first JSON output** — complete models with parent IDs, semantic booleans, and state-aware affordances
+- **CAEOAS** — responses tell agents exactly what to run next
 - **Full resource hierarchy** — Apps → Versions → Localizations → Screenshot Sets → Screenshots
+- **App info localizations** — read and write per-locale name, subtitle, and privacy policy
+- **Create & submit** — create versions, localizations, screenshot sets; upload screenshots; submit for App Store review
+- **TestFlight** — list beta groups and testers
 - **TUI mode** — interactive terminal UI for human browsing
 - **Swift 6.2** — strict concurrency, async/await throughout
 - **Clean architecture** — Domain / Infrastructure / Command layers
@@ -73,9 +77,17 @@ Every response includes an `affordances` field. Agents read it and execute — n
 
 ## Installation
 
+### Homebrew (recommended)
+
 ```bash
-git clone https://github.com/tddworks/asc-swift.git
-cd asc-swift
+brew install asc-tools/tap/asc
+```
+
+### Build from source
+
+```bash
+git clone https://github.com/tddworks/asc-cli.git
+cd asc-cli
 swift build -c release
 cp .build/release/asc /usr/local/bin/
 ```
@@ -90,42 +102,62 @@ export ASC_PRIVATE_KEY_PATH="~/.asc/AuthKey_XXXXXX.p8"
 asc auth check
 ```
 
+Or use `ASC_PRIVATE_KEY` with the PEM content inline instead of `ASC_PRIVATE_KEY_PATH`.
+
 ## Usage
 
-### Resource Hierarchy
-
-Commands follow the App Store Connect resource hierarchy:
+### Command Reference
 
 ```
-asc apps list
-asc versions list --app-id <id>
+asc apps list                                              # list all apps
+asc versions list --app-id <id>                           # list versions for an app
+asc versions create --app-id <id> --version <v> --platform ios
+asc versions submit --version-id <id>                     # submit for App Store review
+
 asc localizations list --version-id <id>
+asc localizations create --version-id <id> --locale zh-Hans
+
 asc screenshot-sets list --localization-id <id>
+asc screenshot-sets create --localization-id <id> --display-type APP_IPHONE_67
+
 asc screenshots list --set-id <id>
+asc screenshots upload --set-id <id> --file ./screen.png
+
+asc app-infos list --app-id <id>
+asc app-info-localizations list --app-info-id <id>
+asc app-info-localizations create --app-info-id <id> --locale zh-Hans --name "我的应用"
+asc app-info-localizations update --localization-id <id> --name "My App" --subtitle "Do things faster"
+
 asc builds list [--app-id <id>]
-asc testflight groups  [--app-id <id>]
-asc testflight testers [--group-id <id>]
+asc testflight groups [--app-id <id>]
+asc testflight testers --group-id <id>
+
+asc tui                                                    # interactive browser
+asc auth check
 ```
 
 ### Agent Workflow Example
 
 ```bash
-# 1. Find your app
+# 1. Find your app — response includes affordances.listVersions and affordances.listAppInfos
 asc apps list
-# → includes affordances.listVersions for each app
 
-# 2. Get versions (one per platform: iOS, macOS, …)
+# 2. List versions for a platform
 asc versions list --app-id APP_ID
-# → includes affordances.listLocalizations for each version
 
-# 3. Get localizations
+# 3. Navigate to localizations (command is in the version affordances)
 asc localizations list --version-id VERSION_ID
 
-# 4. Get screenshot sets for a localization
+# 4. Browse screenshot sets and upload new screenshots
 asc screenshot-sets list --localization-id LOC_ID
+asc screenshots upload --set-id SET_ID --file ./hero.png
 
-# 5. Get screenshots in a set
-asc screenshots list --set-id SET_ID
+# 5. Update App Store metadata for each locale
+asc app-infos list --app-id APP_ID
+asc app-info-localizations update --localization-id LOC_ID --name "My App" --subtitle "Do things faster"
+
+# 6. Submit for review
+asc versions submit --version-id VERSION_ID
 ```
 
 ### Output Formats
@@ -145,23 +177,33 @@ asc tui
 
 Navigate interactively: **arrow keys** to move, **Enter** to drill in, **Escape** to go back.
 
+## Feature Guides
+
+Detailed documentation for each feature area:
+
+- [Screenshots](docs/features/screenshots.md) — listing, creating sets, uploading images
+- [App Info Localizations](docs/features/app-info-localizations.md) — managing per-locale name, subtitle, and privacy policy
+
 ## Development
 
 ```bash
 swift build          # Build
-swift test           # Run tests (100 tests, Chicago School TDD)
+swift test           # Run tests (196 tests, Chicago School TDD)
+swift format --in-place --recursive Sources Tests  # Format
 ```
 
 ## Architecture
 
 ```
 Sources/
-├── Domain/       # Value types, repository protocols, rich domain models
-├── Infrastructure/  # SDK adapters (appstoreconnect-swift-sdk)
-└── ASCCommand/   # CLI commands + TUI
+├── Domain/          # Pure value types, @Mockable repository protocols — zero I/O
+├── Infrastructure/  # SDK adapters (appstoreconnect-swift-sdk), parent ID injection
+└── ASCCommand/      # CLI commands, output formatting, TUI
 ```
 
-See [docs/desgin.md](docs/desgin.md) for full architecture documentation including the CAEOAS pattern.
+Unidirectional dependency: `ASCCommand → Infrastructure → Domain`
+
+See [docs/desgin.md](docs/desgin.md) for the full architecture and CAEOAS pattern documentation.
 
 ## Dependencies
 
@@ -169,6 +211,10 @@ See [docs/desgin.md](docs/desgin.md) for full architecture documentation includi
 - [swift-argument-parser](https://github.com/apple/swift-argument-parser) — CLI parsing
 - [TauTUI](https://github.com/steipete/TauTUI) — Terminal UI framework
 - [Mockable](https://github.com/Kolos65/Mockable) — Protocol mocking for tests
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
