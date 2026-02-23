@@ -1,0 +1,100 @@
+# Changelog
+
+All notable changes to asc-swift will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased] — 0.1.2
+
+### Added
+- **App Info Localizations**: Manage per-locale app metadata (name, subtitle, privacy policy) directly from the CLI. Each locale's App Store listing information is now fully writable.
+  - `asc app-infos list --app-id <id>` — list AppInfo records for an app
+  - `asc app-info-localizations list --app-info-id <id>` — list all locale entries
+  - `asc app-info-localizations create --app-info-id <id> --locale <locale> --name <name>` — add a new locale
+  - `asc app-info-localizations update --localization-id <id> [--name] [--subtitle] [--privacy-policy-url]` — patch one or more fields
+
+### Technical
+- Added `AppInfo` and `AppInfoLocalization` domain models carrying parent IDs for agent navigation
+- Added `AppInfoRepository` `@Mockable` protocol with `listAppInfos`, `listLocalizations`, `createLocalization`, `updateLocalization`
+- Added `SDKAppInfoRepository` mapping `privacyPolicyURL`/`privacyChoicesURL` SDK fields; extracts `appInfoId` from PATCH response relationships
+- Updated `App.affordances` to include `listAppInfos` command
+- Added `docs/features/app-info-localizations.md`
+
+---
+
+## [0.1.1] - 2026-02-22
+
+### Added
+- **App Store Version Management**: Browse and create versions for any app across all platforms (iOS, macOS, tvOS, watchOS, visionOS).
+  - `asc versions list --app-id <id>`
+  - `asc versions create --app-id <id> --version <string> --platform <ios|macos|...>`
+- **Localization Management**: List and create App Store version localizations.
+  - `asc localizations list --version-id <id>`
+  - `asc localizations create --version-id <id> --locale <locale>`
+- **Screenshot Sets**: List and create screenshot sets for a localization (one set per display type: iPhone 6.7", iPad Pro 12.9", Mac, etc.).
+  - `asc screenshot-sets list --localization-id <id>`
+  - `asc screenshot-sets create --localization-id <id> --display-type <TYPE>`
+- **Screenshots**: List and upload screenshots within a set.
+  - `asc screenshots list --set-id <id>` — with file size, dimensions, and delivery state
+  - `asc screenshots upload --set-id <id> --file <path>` — three-step ASC flow (reserve → S3 upload → commit) handled automatically
+- **Submit for Review**: Submit an App Store version for review in one command. Reuses an existing open review submission if one is already pending.
+  - `asc versions submit --version-id <id>`
+- **TestFlight**: List beta groups and testers.
+  - `asc testflight groups [--app-id <id>]`
+  - `asc testflight testers --group-id <id>`
+- **TUI Screenshot Browser**: Interactive terminal UI now supports the full screenshot hierarchy — app → version → platform → locale → screenshot set.
+- **Agent-First Output (CAEOAS)**: JSON responses include an `affordances` field with ready-to-run follow-up commands so AI agents can navigate the full resource tree without knowing the command structure.
+  ```json
+  { "data": [{ "id": "...", "affordances": { "listVersions": "asc versions list --app-id ..." } }] }
+  ```
+- **Homebrew Tap**: Install via Homebrew with native architecture binaries (arm64 and x86_64).
+  ```bash
+  brew install asc-tools/tap/asc
+  ```
+- **Homepage**: Static landing page at [asccli.app](https://asccli.app) with English, Chinese, and Japanese localizations.
+
+### Fixed
+- Submission flow now correctly includes the app relationship in the version request, preventing API 422 errors.
+- Submission flow reuses an unresolved (open) review submission instead of always creating a new one.
+
+### Technical
+- `AppStoreVersion`, `AppStoreVersionState`, `AppStorePlatform` models with semantic booleans (`isLive`, `isEditable`, `isPending`)
+- `AppStoreVersionLocalization`, `AppScreenshotSet`, `AppScreenshot` models; all carry parent IDs
+- `ScreenshotDisplayType` enum with 39 display types, device categories, and human-readable names
+- `AffordanceProviding` protocol; `OutputFormatter.formatAgentItems()` merges affordances into JSON
+- `SubmissionRepository` orchestrating 4-step review submission API flow
+- `ReviewSubmission` domain model with `ReviewSubmissionState` and `isWaitingForReview`
+- `SequencedStubAPIClient` for multi-step API flow tests
+- `APIClient` protocol abstraction enabling `StubAPIClient` for infrastructure tests
+- Automated GitHub Actions release workflow with binary artifacts and Homebrew formula update
+- CI/CD Codecov coverage reporting
+
+---
+
+## [0.1.0] - 2026-02-10
+
+### Added
+- **Apps**: List and get apps on your App Store Connect account.
+  - `asc apps list`
+- **Builds**: List builds for an app with processing state, version, and expiry.
+  - `asc builds list [--app-id <id>]`
+- **TUI**: Interactive terminal UI (`asc tui`) for browsing apps and builds without remembering IDs.
+- **Auth Check**: Verify environment credentials are valid.
+  - `asc auth check`
+- **Output Formats**: All commands support `--output json` (default), `--output table`, and `--output markdown`. Use `--pretty` for formatted JSON.
+- **Environment Auth**: Configure via `ASC_KEY_ID`, `ASC_ISSUER_ID`, and `ASC_PRIVATE_KEY_PATH` (or `ASC_PRIVATE_KEY` for inline PEM).
+
+### Technical
+- Three-layer architecture: `ASCCommand → Infrastructure → Domain`
+- `appstoreconnect-swift-sdk` adapter with clean domain model separation
+- `App`, `Build`, `BetaGroup`, `BetaTester` domain models (`Sendable`, `Equatable`, `Identifiable`, `Codable`)
+- `AppRepository`, `BuildRepository`, `TestFlightRepository` `@Mockable` protocols
+- `ClientFactory` + `ClientProvider` dependency injection wiring
+- Apple `@Testing` macro test suite following Chicago School TDD
+
+---
+
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/tddworks/asc-cli/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/tddworks/asc-cli/releases/tag/v0.1.0
