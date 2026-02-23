@@ -621,6 +621,7 @@
 @media (max-width: 768px) {
   .site-nav { padding: 16px 20px; }
   .nav-links { display: none; }
+  .site-nav .btn-github { display: none; }
   .hero { padding: 120px 20px 60px; }
   .section { padding: 80px 20px; }
   .cta { padding: 80px 20px; }
