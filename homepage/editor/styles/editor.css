@@ -418,13 +418,9 @@ html, body {
   transform: none;
   box-shadow: none;
 }
-.add-thumb-icon {
-  font-size: 24px;
-  font-weight: 200;
-  color: rgba(255,255,255,0.2);
-  line-height: 1;
-}
-.screenshot-gallery-card-add:hover .add-thumb-icon { color: rgba(255,255,255,0.35); }
+.screenshot-gallery-card-add .gallery-card-empty { color: rgba(255,255,255,0.2); }
+.screenshot-gallery-card-add:hover .gallery-card-empty { color: rgba(255,255,255,0.4); }
+.screenshot-gallery-card-add.drag-over .gallery-card-empty { color: var(--accent); }
 .screenshot-gallery-card-add .gallery-card-title { color: var(--text-muted); }
 
 
@@ -809,6 +805,13 @@ html, body {
   align-items: flex-start;
   justify-content: center;
   padding: 24px;
+  transition: background 0.15s;
+}
+.canvas-viewport.drag-over {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  outline: 2px dashed var(--accent);
+  outline-offset: -8px;
+  border-radius: 12px;
 }
 
 .canvas-wrapper {

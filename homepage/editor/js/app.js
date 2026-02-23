@@ -118,6 +118,36 @@ document.getElementById('screenshotFileInput').addEventListener('change', e => {
   e.target.value = '';
 });
 
+// ── Editor canvas: drag-and-drop image ────────────────────────────────────────
+
+(function() {
+  const viewport = document.getElementById('canvasViewport');
+  viewport.addEventListener('dragover', e => {
+    if (!e.dataTransfer.types.includes('Files')) return;
+    e.preventDefault();
+    viewport.classList.add('drag-over');
+  });
+  viewport.addEventListener('dragleave', e => {
+    if (!viewport.contains(e.relatedTarget)) viewport.classList.remove('drag-over');
+  });
+  viewport.addEventListener('drop', e => {
+    e.preventDefault();
+    viewport.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const shot = activeShot();
+        if (shot) { shot.setSourceImage(img); renderEditor(); }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+})();
+
 // ── Inspector: background ─────────────────────────────────────────────────────
 
 document.querySelectorAll('.bg-tab').forEach(tab => {

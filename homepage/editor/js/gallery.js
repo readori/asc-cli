@@ -65,6 +65,30 @@ function renderGallery() {
       const shot   = locale?.addScreenshot();
       if (shot) showEditor(card.dataset.locale, shot.id);
     });
+
+    // Drag-and-drop onto Add card: create shot + set image immediately
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const locale = project.localeByCode(card.dataset.locale);
+          const shot   = locale?.addScreenshot();
+          if (shot) { shot.setSourceImage(img); renderGallery(); }
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   });
 
   container.querySelectorAll('.btn-locale-delete').forEach(btn => {
@@ -191,10 +215,16 @@ function buildLocaleSection(locale) {
     addCard.style.setProperty('--ar', ar.toString());
     addCard.innerHTML = `
       <div class="gallery-card-thumb gallery-card-thumb-add">
-        <span class="add-thumb-icon">+</span>
+        <div class="gallery-card-empty">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>Add</span>
+        </div>
       </div>
       <div class="gallery-card-meta">
-        <span class="gallery-card-title">Add</span>
+        <span class="gallery-card-title">Add screenshot</span>
       </div>
     `;
     grid.appendChild(addCard);
@@ -214,10 +244,11 @@ function buildShotCard(locale, shot, outSize, ar) {
   card.dataset.id     = shot.id;
   card.style.setProperty('--ar', ar.toString());
 
-  // If a composited thumbnail has been generated (after editor visit), use it.
-  // Otherwise show the CSS background as a placeholder (replaced async by generateComposedThumbnails).
+  // If a composited thumbnail has been generated (after editor visit), use it —
+  // but only when the shot actually has a source image.  Empty shots always show
+  // the camera-icon placeholder so the drag target is obvious.
   let thumbContent;
-  if (shot._thumbnailUrl) {
+  if (shot._thumbnailUrl && !shot.isEmpty) {
     thumbContent = `<div class="gallery-card-thumb"><img class="gallery-card-img" src="${shot._thumbnailUrl}" alt=""></div>`;
   } else {
     const bg    = shot.background ?? { type: 'gradient', colors: ['#1a1a2e', '#0f3460'], angle: 135 };
