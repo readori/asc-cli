@@ -20,7 +20,7 @@ function renderTextOverlay(screenshot, canvasWrapper, outSize, zoom, onUpdate) {
   overlay.innerHTML = '';
   if (!screenshot || !screenshot.texts) return;
 
-  const scale = zoom / 100;
+  const scale = zoom; // zoom is displayScale (CSS fraction, e.g. 0.33), not a percentage
   const texts = screenshot.texts;
 
   texts.forEach(t => {

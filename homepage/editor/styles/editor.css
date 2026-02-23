@@ -144,7 +144,7 @@ body {
 
 .canvas-viewport {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   align-items: flex-start;
   justify-content: center;

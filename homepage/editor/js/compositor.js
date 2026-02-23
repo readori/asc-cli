@@ -118,10 +118,12 @@ function drawBackground(ctx, w, h, bg) {
 // bezelZoom: 0–200 — controls how large the device bezel is within the canvas (default 75)
 async function compositeScreenshot(canvasEl, screenshot, outSize, bezelZoom = 75) {
   const { width: cw, height: ch } = outSize;
-  canvasEl.width = cw;
-  canvasEl.height = ch;
-  const ctx = canvasEl.getContext('2d');
-  ctx.clearRect(0, 0, cw, ch);
+
+  // Draw everything on a work canvas first, then copy atomically to avoid flicker
+  const work = document.createElement('canvas');
+  work.width = cw;
+  work.height = ch;
+  const ctx = work.getContext('2d');
 
   // 1. Draw background
   drawBackground(ctx, cw, ch, screenshot.background || { type: 'gradient', colors: ['#1a1a2e', '#0f3460'], angle: 135 });
@@ -192,6 +194,13 @@ async function compositeScreenshot(canvasEl, screenshot, outSize, bezelZoom = 75
     const scaledH = sh * scale;
     ctx.drawImage(sourceImage, (cw - scaledW) / 2, (ch - scaledH) / 2, scaledW, scaledH);
   }
+
+  // Atomic copy to visible canvas — no intermediate blank/partial states
+  if (canvasEl.width !== cw || canvasEl.height !== ch) {
+    canvasEl.width = cw;
+    canvasEl.height = ch;
+  }
+  canvasEl.getContext('2d').drawImage(work, 0, 0);
 
   // 3. Draw text layers (rendered on the overlay div, not the canvas itself for export)
 }

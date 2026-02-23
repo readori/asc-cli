@@ -39,6 +39,10 @@ let displayScale = 0.33; // CSS scale to fit canvas in viewport (auto-calculated
 let bezelDrag = null;
 let rafPending = false;
 
+// Render guard — one compositing pass at a time; queue at most one follow-up
+let renderInFlight = false;
+let renderQueued  = false;
+
 function calcDisplayScale() {
   const viewport = document.getElementById('canvasViewport');
   const outSize = getOutSize();
@@ -206,26 +210,33 @@ async function rerender() {
   renderLocaleTabs();
   renderScreenshotSlots();
   renderInspector();
+  applyZoom();
   await renderCanvas();
 }
 
+// renderCanvas only composites content — never touches CSS layout
 async function renderCanvas() {
-  const ss = getCurrentScreenshot();
-  const outSize = getOutSize();
-  if (!ss) {
-    canvasEl.width = outSize.width;
-    canvasEl.height = outSize.height;
-    const ctx = canvasEl.getContext('2d');
-    ctx.fillStyle = '#1a1a1e';
-    ctx.fillRect(0, 0, outSize.width, outSize.height);
-    canvasInfo.textContent = 'No screenshot selected';
-  } else {
-    await compositeScreenshot(canvasEl, ss, outSize, zoom);
-    canvasInfo.textContent = `${outSize.width} \u00D7 ${outSize.height}`;
+  if (renderInFlight) { renderQueued = true; return; }
+  renderInFlight = true;
+  try {
+    const ss = getCurrentScreenshot();
+    const outSize = getOutSize();
+    if (!ss) {
+      canvasEl.width = outSize.width;
+      canvasEl.height = outSize.height;
+      const ctx = canvasEl.getContext('2d');
+      ctx.fillStyle = '#1a1a1e';
+      ctx.fillRect(0, 0, outSize.width, outSize.height);
+      canvasInfo.textContent = 'No screenshot selected';
+    } else {
+      await compositeScreenshot(canvasEl, ss, outSize, zoom);
+      canvasInfo.textContent = `${outSize.width} \u00D7 ${outSize.height}`;
+    }
+    renderTextOverlay(getCurrentScreenshot(), canvasWrapper, outSize, displayScale, rerender);
+  } finally {
+    renderInFlight = false;
+    if (renderQueued) { renderQueued = false; renderCanvas(); }
   }
-  applyZoom();
-  const ss2 = getCurrentScreenshot();
-  renderTextOverlay(ss2, canvasWrapper, outSize, displayScale, rerender);
 }
 
 function applyZoom() {
@@ -312,10 +323,14 @@ function makeScreenshot(order) {
 addLocaleBtn.addEventListener('click', addLocale);
 addScreenshotBtn.addEventListener('click', addScreenshot);
 
+let zoomRaf = null;
 zoomSlider.addEventListener('input', () => {
   zoom = parseInt(zoomSlider.value);
   zoomValue.textContent = zoom + '%';
-  renderCanvas();  // re-composites bezel at new scale; applyZoom() called inside
+  // RAF-throttle: coalesce rapid slider events into one render per frame
+  if (!zoomRaf) {
+    zoomRaf = requestAnimationFrame(() => { zoomRaf = null; renderCanvas(); });
+  }
 });
 
 window.addEventListener('resize', () => {
