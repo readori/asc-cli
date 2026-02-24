@@ -7,6 +7,6 @@ struct VersionCommand: ParsableCommand {
     )
 
     func run() {
-        print("asc 0.1.0")
+        print("asc \(ascVersion)")
     }
 }
