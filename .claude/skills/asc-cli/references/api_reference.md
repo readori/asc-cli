@@ -2,7 +2,19 @@
 
 Base URL: `https://api.appstoreconnect.apple.com/v1`
 
-All endpoints require a signed JWT in the `Authorization: Bearer <token>` header. The CLI handles auth automatically via `EnvironmentAuthProvider`.
+All endpoints require a signed JWT in the `Authorization: Bearer <token>` header. The CLI handles auth automatically via `CompositeAuthProvider` (checks `~/.asc/credentials.json` first, then environment variables).
+
+---
+
+## Auth (local — no API calls)
+
+`asc auth login / logout / check` operate on `~/.asc/credentials.json` only. No App Store Connect API is called.
+
+| Command | Storage operation |
+|---------|-------------------|
+| `asc auth login` | Write `~/.asc/credentials.json` |
+| `asc auth logout` | Delete `~/.asc/credentials.json` |
+| `asc auth check` | Read file then env vars, return `AuthStatus` |
 
 ---
 

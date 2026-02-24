@@ -10,11 +10,28 @@ description: |
   (5) Managing app info localizations (name, subtitle, privacy policy URL)
   (6) Any task involving `asc` commands, App Store Connect operations, or navigating the CAEOAS affordance system
   (7) User says "submit AppName", "list my apps", "upload screenshots", "check builds", "update app name", etc.
+  (8) Setting up authentication or logging in/out with `asc auth login`
 ---
 
 # asc CLI — App Store Connect CLI
 
 ## Authentication
+
+**Option A — Persistent login (recommended):**
+
+```bash
+asc auth login \
+  --key-id YOUR_KEY_ID \
+  --issuer-id YOUR_ISSUER_ID \
+  --private-key-path ~/.asc/AuthKey_XXXXXX.p8
+
+asc auth logout   # remove saved credentials
+asc auth check    # verify and show source (file or environment)
+```
+
+Credentials are saved to `~/.asc/credentials.json`. All `asc` commands pick them up automatically.
+
+**Option B — Environment variables:**
 
 ```bash
 export ASC_KEY_ID="YOUR_KEY_ID"
@@ -22,7 +39,7 @@ export ASC_ISSUER_ID="YOUR_ISSUER_ID"
 export ASC_PRIVATE_KEY_PATH="~/.asc/AuthKey_XXXXXX.p8"
 ```
 
-Verify with: `asc auth check`
+**Resolution order:** `~/.asc/credentials.json` → environment variables.
 
 ---
 
@@ -53,16 +70,25 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 
 | Goal | Command |
 |------|---------|
+| **Auth** | |
+| Save credentials to disk | `asc auth login --key-id <id> --issuer-id <id> --private-key-path <path>` |
+| Remove saved credentials | `asc auth logout` |
+| Check credentials + source | `asc auth check` |
+| **Apps & Versions** | |
 | List all apps | `asc apps list` |
 | List versions | `asc versions list --app-id <id>` |
 | Submit for review | `asc versions submit --version-id <id>` |
 | List builds | `asc builds list --app-id <id>` |
+| **Localizations** | |
 | List localizations | `asc localizations list --version-id <id>` |
 | Update What's New / description | `asc localizations update --localization-id <id> --whats-new "text"` |
+| **Screenshots** | |
 | List screenshot sets | `asc screenshot-sets list --localization-id <id>` |
 | Upload screenshot | `asc screenshots upload --set-id <id> --file <path>` |
 | Import screenshot ZIP | `asc screenshots import --version-id <id> --from export.zip` |
+| **TestFlight** | |
 | TestFlight groups | `asc testflight groups list --app-id <id>` |
+| **App Info** | |
 | List app infos | `asc app-infos list --app-id <id>` |
 | List app info localizations | `asc app-info-localizations list --app-info-id <id>` |
 | Update app name/subtitle | `asc app-info-localizations update --localization-id <id> --name <n>` |
@@ -70,6 +96,14 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 ---
 
 ## Common Workflows
+
+### First-time authentication setup
+
+```
+1. asc auth login --key-id <id> --issuer-id <id> --private-key-path ~/.asc/AuthKey_<id>.p8
+2. asc auth check   → confirm source: "file", keyID and issuerID shown
+3. asc apps list    → no env vars needed from now on
+```
 
 ### Submit an app for review
 

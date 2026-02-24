@@ -181,6 +181,29 @@ asc testflight testers list --app-id <id>
 
 ## auth
 
+### login
 ```bash
-asc auth    # verify credentials are configured correctly
+asc auth login \
+  --key-id <KEY_ID> \
+  --issuer-id <ISSUER_ID> \
+  --private-key-path ~/.asc/AuthKey_KEYID.p8
 ```
+Saves credentials to `~/.asc/credentials.json`. Accepts `--private-key` (raw PEM) instead of `--private-key-path`.
+
+Output: JSON `AuthStatus` with `source: "file"` and affordances.
+
+### logout
+```bash
+asc auth logout
+```
+Deletes `~/.asc/credentials.json`. Prints "Logged out successfully".
+
+### check
+```bash
+asc auth check [--pretty] [--output table]
+```
+Shows current credentials and their `source` (`"file"` or `"environment"`).
+
+**Credential resolution order:** `~/.asc/credentials.json` → environment variables (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH` / `ASC_PRIVATE_KEY_B64` / `ASC_PRIVATE_KEY`).
+
+Output fields: `keyID`, `issuerID`, `source`, `affordances`.
