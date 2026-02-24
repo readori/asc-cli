@@ -58,6 +58,7 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 | Submit for review | `asc versions submit --version-id <id>` |
 | List builds | `asc builds list --app-id <id>` |
 | List localizations | `asc localizations list --version-id <id>` |
+| Update What's New / description | `asc localizations update --localization-id <id> --whats-new "text"` |
 | List screenshot sets | `asc screenshot-sets list --localization-id <id>` |
 | Upload screenshot | `asc screenshots upload --set-id <id> --file <path>` |
 | Import screenshot ZIP | `asc screenshots import --version-id <id> --from export.zip` |

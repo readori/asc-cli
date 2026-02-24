@@ -60,6 +60,19 @@ asc localizations create --version-id <id> --locale zh-Hans
 
 Common locales: `en-US`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `de`, `fr`
 
+### update
+```bash
+asc localizations update --localization-id <id> \
+  [--whats-new <text>] \
+  [--description <text>] \
+  [--keywords <text>] \
+  [--marketing-url <url>] \
+  [--support-url <url>] \
+  [--promotional-text <text>]
+```
+
+All fields are optional — only provided fields are sent to the API (PATCH semantics). Nil fields are omitted from JSON output.
+
 ---
 
 ## screenshot-sets

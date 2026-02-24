@@ -17,10 +17,12 @@ Implement features using architecture-first design, TDD, rich domain models, and
 
 ```
 1. ARCHITECTURE DESIGN (Required — User Approval)
+   • Think from user's mental model → identify domain models + commands
    • Analyze requirements, create ASCII diagram
    • Present to user → wait for approval
 
 2. TDD IMPLEMENTATION
+   • Think from user's mental model for test cases by writing domain tests first, then infrastructure, then command tests
    • Domain tests → Domain value types + AffordanceProviding + @Mockable protocol
    • Infrastructure: SDK adapter injecting parent IDs
    • Command: formatAgentItems → {"data":[{...,"affordances":{...}}]}
@@ -149,6 +151,39 @@ See [tdd-patterns.md](references/tdd-patterns.md) for complete patterns includin
 4. Register in `ASC.swift` subcommands array
 5. Run `swift test` — all must pass
 
+**Command tests use exact JSON assertions, not `output.contains`:**
+
+```swift
+// ✅ CORRECT — exact JSON string comparison
+@Test func `execute json output`() async throws {
+    let mockRepo = MockMyRepository()
+    given(mockRepo).listMyModels(parentId: .any).willReturn([
+        MockRepositoryFactory.makeMyModel(id: "m-1", parentId: "p-1")
+    ])
+    let cmd = try MyList.parse(["--parent-id", "p-1", "--pretty"])
+    let output = try await cmd.execute(repo: mockRepo)
+    #expect(output == """
+    {
+      "data" : [
+        {
+          "affordances" : {
+            "listChildren" : "asc children list --parent-id m-1",
+            "listSiblings" : "asc my-models list --grandparent-id p-1"
+          },
+          "id" : "m-1",
+          "parentId" : "p-1"
+        }
+      ]
+    }
+    """)
+}
+
+// ❌ AVOID — too loose, misses missing/extra fields and affordance regressions
+#expect(output.contains("\"id\" : \"m-1\""))
+```
+
+The exact JSON assertion verifies: field names, field order, affordance content, nil-field omission — all at once.
+
 ### Phase 4: Feature doc
 
 Write `docs/features/<feature>.md` from the actual implementation. The doc is derived from code — read the files, then write. Never write from memory.
@@ -205,6 +240,7 @@ Use `docs/features/screenshots.md` as the canonical reference example.
 - [ ] `ClientProvider.swift` — static factory method
 - [ ] Registered in `ASC.swift`
 - [ ] Affordance tests added to `AffordancesTests.swift`
+- [ ] Command tests use **exact JSON string assertions** (not `output.contains`)
 - [ ] `swift test` — all 100+ tests pass
 
 ### Phase 4: Feature Doc
