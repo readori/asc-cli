@@ -41,16 +41,24 @@
       "description": "Every response embeds ready-to-run next commands in an affordances field. No agent needs to know the full command tree — it just follows the links."
     },
     "feature2": {
+      "icon": "🔑",
+      "title": "Persistent Auth Login",
+      "description": "Log in once with asc auth login. Credentials are saved to ~/.asc/credentials.json and picked up automatically by every command — no environment variables required per session.",
+      "comment1": "# one-time setup",
+      "savedMsg": "saved to ~/.asc/credentials.json",
+      "comment2": "# no env vars needed from now on"
+    },
+    "feature3": {
       "icon": "🗂️",
       "title": "Full Resource Hierarchy",
       "description": "Manage the complete App Store Connect resource tree: Apps → Versions → Localizations → Screenshot Sets → Screenshots. Plus Builds and TestFlight."
     },
-    "feature3": {
+    "feature4": {
       "icon": "📤",
       "title": "One-Command Submission",
       "description": "Submit any iOS or macOS version for App Store review with a single command. The CLI handles the full multi-step review submission flow automatically."
     },
-    "feature4": {
+    "feature5": {
       "icon": "🔧",
       "title": "Multiple Output Formats",
       "description": "Designed for both humans and machines. Output as JSON (default), table, or markdown. Pipe into jq, scripts, or AI agents with ease."
@@ -64,8 +72,9 @@
       "description": "One command installs the latest release. No Xcode or Swift toolchain required."
     },
     "step2": {
-      "title": "Configure your API key",
-      "description": "Set three environment variables from your App Store Connect API key. The CLI picks them up automatically."
+      "title": "Log in once, run forever",
+      "description": "Save your API key with asc auth login. Credentials are stored in ~/.asc/credentials.json — no environment variables needed per session.",
+      "savedComment": "# saved to ~/.asc/credentials.json"
     },
     "step3": {
       "title": "Start managing your apps",
