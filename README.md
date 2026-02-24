@@ -62,6 +62,7 @@ Every response includes an `affordances` field. Agents read it and execute — n
 - **Agent-first JSON output** — complete models with parent IDs, semantic booleans, and state-aware affordances
 - **CAEOAS** — responses tell agents exactly what to run next
 - **Full resource hierarchy** — Apps → Versions → Localizations → Screenshot Sets → Screenshots
+- **Version localizations** — update What's New, description, keywords, and URLs per locale
 - **App info localizations** — read and write per-locale name, subtitle, and privacy policy
 - **Create & submit** — create versions, localizations, screenshot sets; upload screenshots; submit for App Store review
 - **TestFlight** — list beta groups and testers
@@ -116,6 +117,7 @@ asc versions submit --version-id <id>                     # submit for App Store
 
 asc localizations list --version-id <id>
 asc localizations create --version-id <id> --locale zh-Hans
+asc localizations update --localization-id <id> --whats-new "Bug fixes"
 
 asc screenshot-sets list --localization-id <id>
 asc screenshot-sets create --localization-id <id> --display-type APP_IPHONE_67
@@ -152,11 +154,14 @@ asc localizations list --version-id VERSION_ID
 asc screenshot-sets list --localization-id LOC_ID
 asc screenshots upload --set-id SET_ID --file ./hero.png
 
-# 5. Update App Store metadata for each locale
+# 5. Update What's New text for each locale
+asc localizations update --localization-id LOC_ID --whats-new "Bug fixes and performance improvements"
+
+# 6. Update app name / subtitle per locale
 asc app-infos list --app-id APP_ID
 asc app-info-localizations update --localization-id LOC_ID --name "My App" --subtitle "Do things faster"
 
-# 6. Submit for review
+# 7. Submit for review
 asc versions submit --version-id VERSION_ID
 ```
 
@@ -181,6 +186,7 @@ Navigate interactively: **arrow keys** to move, **Enter** to drill in, **Escape*
 
 Detailed documentation for each feature area:
 
+- [Version Localizations](docs/features/version-localizations.md) — updating What's New, description, keywords, and URLs
 - [Screenshots](docs/features/screenshots.md) — listing, creating sets, uploading images
 - [App Info Localizations](docs/features/app-info-localizations.md) — managing per-locale name, subtitle, and privacy policy
 
@@ -188,7 +194,7 @@ Detailed documentation for each feature area:
 
 ```bash
 swift build          # Build
-swift test           # Run tests (196 tests, Chicago School TDD)
+swift test           # Run tests (224 tests, Chicago School TDD)
 swift format --in-place --recursive Sources Tests  # Format
 ```
 

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 0.1.2
 
 ### Added
+- **Version Localization Update**: Set What's New text, description, keywords, marketing URL, support URL, and promotional text for any locale directly from the CLI.
+  - `asc localizations update --localization-id <id> --whats-new "text"` — update What's New
+  - `asc localizations update --localization-id <id> --description "text" --keywords "a,b,c"` — update other fields
+  - All content fields are optional — only provided fields are sent to the API
 - **App Info Localizations**: Manage per-locale app metadata (name, subtitle, privacy policy) directly from the CLI. Each locale's App Store listing information is now fully writable.
   - `asc app-infos list --app-id <id>` — list AppInfo records for an app
   - `asc app-info-localizations list --app-info-id <id>` — list all locale entries
@@ -15,11 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `asc app-info-localizations update --localization-id <id> [--name] [--subtitle] [--privacy-policy-url]` — patch one or more fields
 
 ### Technical
+- Introduced `VersionLocalizationRepository` (`@Mockable` protocol) with `listLocalizations`, `createLocalization`, `updateLocalization` — separate from `ScreenshotRepository` which now handles only screenshot sets and images
+- Added `SDKLocalizationRepository` implementing `VersionLocalizationRepository`; converts `URL?` ↔ `String?` for `marketingURL`/`supportURL` SDK fields
+- `AppStoreVersionLocalization` gains 6 optional text fields with nil-safe Codable (`encodeIfPresent`) — nil fields are omitted from JSON output
+- `AppStoreVersionLocalization.affordances` now includes `updateLocalization` command
+- `ScreenshotsImport` updated to accept `localizationRepo` + `screenshotRepo` as separate parameters
 - Added `AppInfo` and `AppInfoLocalization` domain models carrying parent IDs for agent navigation
 - Added `AppInfoRepository` `@Mockable` protocol with `listAppInfos`, `listLocalizations`, `createLocalization`, `updateLocalization`
 - Added `SDKAppInfoRepository` mapping `privacyPolicyURL`/`privacyChoicesURL` SDK fields; extracts `appInfoId` from PATCH response relationships
 - Updated `App.affordances` to include `listAppInfos` command
-- Added `docs/features/app-info-localizations.md`
+- Added `docs/features/version-localizations.md`, `docs/features/app-info-localizations.md`
 
 ---
 
