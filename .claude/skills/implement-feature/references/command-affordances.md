@@ -20,7 +20,7 @@ Every new domain model **must** conform to `AffordanceProviding`.
 extension AppStoreVersion: AffordanceProviding {
     public var affordances: [String: String] {
         var cmds: [String: String] = [
-            "listLocalizations": "asc localizations list --version-id \(id)",
+            "listLocalizations": "asc version-localizations list --version-id \(id)",
             "listVersions":      "asc versions list --app-id \(appId)",
         ]
         if isEditable {
@@ -40,7 +40,7 @@ Rules:
 | Key | Command |
 |-----|---------|
 | `listVersions` | `asc versions list --app-id <id>` |
-| `listLocalizations` | `asc localizations list --version-id <id>` |
+| `listLocalizations` | `asc version-localizations list --version-id <id>` |
 | `listScreenshotSets` | `asc screenshot-sets list --localization-id <id>` |
 | `listScreenshots` | `asc screenshots list --set-id <id>` |
 | `submitForReview` | `asc versions submit --version-id <id>` |
@@ -78,7 +78,7 @@ let output = try formatter.formatItems(versions, ...)
       "isEditable": false,
       "isPending": false,
       "affordances": {
-        "listLocalizations": "asc localizations list --version-id v1",
+        "listLocalizations": "asc version-localizations list --version-id v1",
         "listVersions": "asc versions list --app-id app-abc"
       }
     }

@@ -45,24 +45,24 @@ Requires version to be in `PREPARE_FOR_SUBMISSION` with all required content pre
 
 ---
 
-## localizations
+## version-localizations
 
 ### list
 ```bash
-asc localizations list --version-id <id>
+asc version-localizations list --version-id <id>
 ```
 
 ### create
 ```bash
-asc localizations create --version-id <id> --locale en-US
-asc localizations create --version-id <id> --locale zh-Hans
+asc version-localizations create --version-id <id> --locale en-US
+asc version-localizations create --version-id <id> --locale zh-Hans
 ```
 
 Common locales: `en-US`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `de`, `fr`
 
 ### update
 ```bash
-asc localizations update --localization-id <id> \
+asc version-localizations update --localization-id <id> \
   [--whats-new <text>] \
   [--description <text>] \
   [--keywords <text>] \

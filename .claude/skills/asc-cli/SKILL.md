@@ -80,8 +80,8 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 | Submit for review | `asc versions submit --version-id <id>` |
 | List builds | `asc builds list --app-id <id>` |
 | **Localizations** | |
-| List localizations | `asc localizations list --version-id <id>` |
-| Update What's New / description | `asc localizations update --localization-id <id> --whats-new "text"` |
+| List localizations | `asc version-localizations list --version-id <id>` |
+| Update What's New / description | `asc version-localizations update --localization-id <id> --whats-new "text"` |
 | **Screenshots** | |
 | List screenshot sets | `asc screenshot-sets list --localization-id <id>` |
 | Upload screenshot | `asc screenshots upload --set-id <id> --file <path>` |
@@ -120,7 +120,7 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 
 ```
 1. asc versions list --app-id <id>                  → get version ID
-2. asc localizations list --version-id <id>         → get localization ID
+2. asc version-localizations list --version-id <id>         → get localization ID
 3. asc screenshot-sets list --localization-id <id>  → get set ID for display type
 4. asc screenshots upload --set-id <id> --file ./screenshot.png
 ```

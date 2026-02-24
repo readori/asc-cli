@@ -53,8 +53,8 @@ All endpoints require a signed JWT in the `Authorization: Bearer <token>` header
 
 | Method | Endpoint | CLI command |
 |--------|----------|-------------|
-| GET | `/v1/appStoreVersions/{id}/appStoreVersionLocalizations` | `asc localizations list --version-id <id>` |
-| POST | `/v1/appStoreVersionLocalizations` | `asc localizations create --version-id <id> --locale <locale>` |
+| GET | `/v1/appStoreVersions/{id}/appStoreVersionLocalizations` | `asc version-localizations list --version-id <id>` |
+| POST | `/v1/appStoreVersionLocalizations` | `asc version-localizations create --version-id <id> --locale <locale>` |
 
 ---
 

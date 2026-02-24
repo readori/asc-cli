@@ -59,7 +59,7 @@ Infrastructure Layer  (implements Domain protocols)
 ASCCommand Layer
   asc apps list            → formatAgentItems  → {"data":[{...,"affordances":{...}}]}
   asc versions list        → formatAgentItems
-  asc localizations list   → formatAgentItems
+  asc version-localizations list   → formatAgentItems
   asc screenshot-sets list → formatAgentItems
   asc screenshots list     → formatItems
   asc builds list          → formatItems
