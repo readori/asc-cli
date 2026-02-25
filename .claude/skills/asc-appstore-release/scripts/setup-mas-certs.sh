@@ -10,8 +10,8 @@
 # What it does:
 #   1. Generate a CSR (Certificate Signing Request)
 #   2. Create "Mac App Distribution" cert via `asc`
-#   3. Open Apple Developer portal for "Mac Installer Distribution" cert
-#   4. Install both certs in your keychain
+#   3. Create "Mac Installer Distribution" cert via `asc`
+#   4. Install both certs + the private key in your keychain
 #   5. Export as P12 → print base64 for GitHub Secrets
 #
 # Prerequisites:
@@ -88,71 +88,54 @@ security import "$APP_CERT_PATH" -k ~/Library/Keychains/login.keychain-db 2>/dev
 security import "$APP_CERT_PATH" 2>/dev/null || true
 ok "Mac App Distribution cert created and installed"
 
-# ── Mac Installer Distribution cert (via portal) ──────────────────────────────
-step "Creating Mac Installer Distribution certificate (Apple Developer Portal)"
+# ── Mac Installer Distribution cert (via asc) ────────────────────────────────
+step "Creating Mac Installer Distribution certificate via asc"
 echo "  (This is the '3rd Party Mac Developer Installer' cert that signs your .pkg)"
-echo ""
-echo "  The Apple API doesn't support creating this cert type programmatically."
-echo "  Please do this manually:"
-echo ""
-echo "  1. Opening Apple Developer Certificates page..."
-sleep 1
-open "https://developer.apple.com/account/resources/certificates/add"
-echo ""
-echo "  2. Select: Mac Installer Distribution"
-echo "  3. Upload this CSR file: $CSR_PATH"
-echo "     (drag it to Finder: $(dirname "$CSR_PATH"))"
-echo "  4. Download the generated .cer file"
-echo "  5. Move it here: $INSTALLER_CERT_PATH"
-echo "     mv ~/Downloads/mac_installer.cer $INSTALLER_CERT_PATH"
 
-pause
+INSTALLER_CERT_RESPONSE=$(asc certificates create \
+  --type MAC_INSTALLER_DISTRIBUTION \
+  --csr-path "$CSR_PATH")
 
-if [ ! -f "$INSTALLER_CERT_PATH" ]; then
-  warn "Installer cert not found at $INSTALLER_CERT_PATH"
-  echo -n "Enter the path to the downloaded .cer file: "
-  read -r USER_CERT_PATH
-  cp "$USER_CERT_PATH" "$INSTALLER_CERT_PATH"
+INSTALLER_CERT_CONTENT=$(echo "$INSTALLER_CERT_RESPONSE" | jq -r '.data[0].certificateContent // empty')
+
+if [ -z "$INSTALLER_CERT_CONTENT" ]; then
+  die "Failed to create MAC_INSTALLER_DISTRIBUTION certificate. Check: asc certificates list --type MAC_INSTALLER_DISTRIBUTION"
 fi
 
+echo "$INSTALLER_CERT_CONTENT" | base64 --decode > "$INSTALLER_CERT_PATH"
 security import "$INSTALLER_CERT_PATH" -k ~/Library/Keychains/login.keychain-db 2>/dev/null || \
 security import "$INSTALLER_CERT_PATH" 2>/dev/null || true
-ok "Mac Installer Distribution cert installed"
+ok "Mac Installer Distribution cert created and installed"
 
-# ── Export P12 ────────────────────────────────────────────────────────────────
-step "Exporting both certificates as P12"
+# ── Create P12 ────────────────────────────────────────────────────────────────
+step "Creating P12 from private key + both certificates"
 echo ""
-echo "  Keychain Access will open. Please:"
-echo "  1. Search for '3rd Party Mac Developer'"
-echo "  2. Select BOTH items that show a private key arrow (▶)"
-echo "     - 3rd Party Mac Developer Application: ${CERT_NAME}"
-echo "     - 3rd Party Mac Developer Installer: ${CERT_NAME}"
-echo "  3. Right-click → Export 2 Items"
-echo "  4. Save as: $P12_PATH"
-echo "  5. Set a password (you'll need it for APPLE_MAS_CERTIFICATE_PASSWORD)"
-echo ""
-
-open -a "Keychain Access"
-pause
-
-if [ ! -f "$P12_PATH" ]; then
-  warn "P12 not found at $P12_PATH"
-  echo -n "Enter the path to the exported .p12 file: "
-  read -r USER_P12_PATH
-  cp "$USER_P12_PATH" "$P12_PATH"
-fi
-
-# Verify the P12 is readable
-echo -n "Enter the P12 password to verify: "
+echo -n "Set a P12 password (you'll need this for APPLE_MAS_CERTIFICATE_PASSWORD): "
 read -rs P12_PASSWORD
 echo ""
 
-if ! openssl pkcs12 -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -noout 2>/dev/null; then
-  if ! openssl pkcs12 -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -legacy -noout 2>/dev/null; then
-    die "Could not read P12 with that password. Try again."
-  fi
-fi
-ok "P12 verified"
+APP_CERT_PEM="$WORKDIR/mac-app-dist.pem"
+INSTALLER_CERT_PEM="$WORKDIR/mac-installer-dist.pem"
+
+# Convert DER → PEM for openssl pkcs12
+openssl x509 -inform DER -in "$APP_CERT_PATH"       -out "$APP_CERT_PEM"
+openssl x509 -inform DER -in "$INSTALLER_CERT_PATH" -out "$INSTALLER_CERT_PEM"
+
+# Bundle: private key + App Distribution cert + Installer Distribution cert → P12
+openssl pkcs12 -export \
+  -inkey "$KEY_PATH" \
+  -in "$APP_CERT_PEM" \
+  -certfile "$INSTALLER_CERT_PEM" \
+  -out "$P12_PATH" \
+  -password "pass:$P12_PASSWORD" 2>/dev/null || \
+openssl pkcs12 -legacy -export \
+  -inkey "$KEY_PATH" \
+  -in "$APP_CERT_PEM" \
+  -certfile "$INSTALLER_CERT_PEM" \
+  -out "$P12_PATH" \
+  -password "pass:$P12_PASSWORD"
+
+ok "P12 created at $P12_PATH"
 
 # ── Output GitHub Secrets ─────────────────────────────────────────────────────
 step "GitHub Secrets values"
