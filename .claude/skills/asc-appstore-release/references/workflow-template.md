@@ -69,6 +69,20 @@ jobs:
           asc versions set-build --version-id "$VERSION_ID" --build-id "$BUILD_ID"
           echo "VERSION_ID=$VERSION_ID" >> $GITHUB_ENV
 
+      - name: Check Submission Readiness
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          READINESS=$(asc versions check-readiness --version-id "$VERSION_ID")
+          IS_READY=$(echo "$READINESS" | jq -r '.data[0].isReadyToSubmit')
+          if [ "$IS_READY" != "true" ]; then
+            echo "Version is NOT ready to submit:"
+            echo "$READINESS" | jq '.data[0] | {stateCheck, buildCheck, pricingCheck}'
+            exit 1
+          fi
+
       - name: Submit for App Store Review
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -169,6 +183,15 @@ jobs:
         run: |
           VERSION_ID=$(asc versions list --app-id "$APP_ID" | jq -r '.data[0].id')
           asc versions set-build --version-id "$VERSION_ID" --build-id "$BUILD_ID"
+
+          READINESS=$(asc versions check-readiness --version-id "$VERSION_ID")
+          IS_READY=$(echo "$READINESS" | jq -r '.data[0].isReadyToSubmit')
+          if [ "$IS_READY" != "true" ]; then
+            echo "Version is NOT ready to submit:"
+            echo "$READINESS" | jq '.data[0] | {stateCheck, buildCheck, pricingCheck}'
+            exit 1
+          fi
+
           asc versions submit --version-id "$VERSION_ID"
 ```
 

@@ -8,6 +8,7 @@ description: |
   (3) Adding TestFlight distribution steps (add beta group, update "What's New")
   (4) User asks "how do I release to the App Store from CI", "create a GitHub Actions workflow for App Store submission"
   (5) Wiring `asc builds upload`, `asc versions set-build`, `asc versions submit` into a pipeline
+  (6) Adding a pre-submission readiness gate using `asc versions check-readiness`
 ---
 
 # App Store Release with `asc` in GitHub Actions
@@ -16,11 +17,12 @@ The developer's mental model:
 
 ```
 Signed IPA/PKG (from your build step)
-  → asc builds upload --wait       # upload + wait for Apple processing
-  → asc builds add-beta-group      # optional: TestFlight distribution
-  → asc builds update-beta-notes   # optional: "What's New" text
-  → asc versions set-build         # link build to App Store version
-  → asc versions submit            # submit for App Store review
+  → asc builds upload --wait        # upload + wait for Apple processing
+  → asc builds add-beta-group       # optional: TestFlight distribution
+  → asc builds update-beta-notes    # optional: "What's New" text
+  → asc versions set-build          # link build to App Store version
+  → asc versions check-readiness    # gate: verify all checks pass
+  → asc versions submit             # submit for App Store review
 ```
 
 See [workflow-template.md](references/workflow-template.md) for complete copy-paste workflows.
@@ -96,7 +98,16 @@ asc builds update-beta-notes \
 VERSION_ID=$(asc versions list --app-id $APP_ID --pretty | jq -r '.data[0].id')
 asc versions set-build --version-id $VERSION_ID --build-id $BUILD_ID
 
-# 6. App Store: submit for review
+# 6. App Store: gate — verify all checks pass before submitting
+READINESS=$(asc versions check-readiness --version-id $VERSION_ID)
+IS_READY=$(echo "$READINESS" | jq -r '.data[0].isReadyToSubmit')
+if [ "$IS_READY" != "true" ]; then
+  echo "Version is NOT ready to submit:"
+  echo "$READINESS" | jq '.data[0] | {stateCheck, buildCheck, pricingCheck}'
+  exit 1
+fi
+
+# 7. App Store: submit for review
 asc versions submit --version-id $VERSION_ID
 ```
 
