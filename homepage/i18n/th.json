@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "รูปแบบการส่งออกหลายแบบ",
       "description": "ออกแบบสำหรับทั้งมนุษย์และเครื่องจักร ส่งออกเป็น JSON (ค่าเริ่มต้น) ตาราง หรือ markdown เชื่อมต่อกับ jq สคริปต์ หรือ AI agent ได้ง่าย"
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

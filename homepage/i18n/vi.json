@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "Nhiều định dạng đầu ra",
       "description": "Thiết kế cho cả con người và máy móc. Đầu ra dạng JSON (mặc định), bảng hoặc markdown. Dễ dàng pipe vào jq, script hoặc tác nhân AI."
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

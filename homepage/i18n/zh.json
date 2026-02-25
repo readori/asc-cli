@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "多种输出格式",
       "description": "专为人类和机器设计。支持 JSON（默认）、表格或 Markdown 格式输出，轻松接入 jq、脚本或 AI 智能体。"
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

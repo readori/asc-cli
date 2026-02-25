@@ -302,6 +302,30 @@
           <p class="feature-card-description">ออกแบบสำหรับทั้งมนุษย์และเครื่องจักร ส่งออกเป็น JSON (ค่าเริ่มต้น) ตาราง หรือ markdown เชื่อมต่อกับ jq สคริปต์ หรือ AI agent ได้ง่าย</p>
         </div>
       </div>
+
+      <!-- Feature 6: Check Readiness -->
+      <div class="feature-card" data-animate="fade-up" data-delay="6">
+        <div class="feature-card-preview">
+          <div style="font-size:40px;margin-bottom:20px;">✅</div>
+          <div class="code-snippet">
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc versions check-readiness \</span></div>
+            <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--version-id a965... --pretty</span></div>
+            <div class="t-blank"></div>
+            <div class="t-line"><span class="t-key">"isReadyToSubmit"</span><span class="t-dim">:</span> <span class="t-success">true</span><span class="t-dim">,</span></div>
+            <div class="t-line"><span class="t-key">"stateCheck"</span><span class="t-dim">:   {</span> <span class="t-key">"pass"</span><span class="t-dim">:</span> <span class="t-success">true</span> <span class="t-dim">},</span></div>
+            <div class="t-line"><span class="t-key">"buildCheck"</span><span class="t-dim">:   {</span> <span class="t-key">"pass"</span><span class="t-dim">:</span> <span class="t-success">true</span><span class="t-dim">,</span></div>
+            <div class="t-line"><span class="t-dim">&nbsp;&nbsp;</span><span class="t-key">"buildVersion"</span><span class="t-dim">:</span> <span class="t-str">"2.1.0 (102)"</span> <span class="t-dim">},</span></div>
+            <div class="t-line"><span class="t-key">"pricingCheck"</span><span class="t-dim">: {</span> <span class="t-key">"pass"</span><span class="t-dim">:</span> <span class="t-success">true</span> <span class="t-dim">},</span></div>
+            <div class="t-line"><span class="t-key">"affordances"</span><span class="t-dim">: {</span></div>
+            <div class="t-line"><span class="t-dim">&nbsp;&nbsp;</span><span class="t-key">"submit"</span><span class="t-dim">:</span> <span class="t-val">"asc versions submit ..."</span></div>
+            <div class="t-line"><span class="t-dim">}</span></div>
+          </div>
+        </div>
+        <div class="feature-card-content">
+          <h3 class="feature-card-title">Pre-flight Check Readiness</h3>
+          <p class="feature-card-description">Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -388,6 +412,21 @@
         <a href="https://github.com/tddworks/asc-cli" class="btn btn-secondary" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
           ดูซอร์สโค้ดบน GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sponsors -->
+  <section class="sponsors-section" id="sponsors">
+    <div class="sponsors-inner">
+      <p class="sponsors-eyebrow">Built for real apps</p>
+      <h2 class="sponsors-title">Sponsors</h2>
+      <div class="sponsors-grid">
+        <a href="https://appnexus.app" class="sponsor-card" target="_blank" rel="noopener" aria-label="AppNexus for App Store Connect">
+          <img src="https://appnexus.app/favicon.ico" alt="AppNexus" class="sponsor-logo" onerror="this.style.display='none'">
+          <span class="sponsor-name">AppNexus</span>
+          <span class="sponsor-desc">App Store Connect</span>
         </a>
       </div>
     </div>

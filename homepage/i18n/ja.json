@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "複数の出力形式",
       "description": "人間にも機械にも対応した設計。JSON（デフォルト）、テーブル、Markdown 形式で出力。jq、スクリプト、AI エージェントへのパイプも簡単です。"
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

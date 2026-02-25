@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "Multiple Output Formats",
       "description": "Designed for both humans and machines. Output as JSON (default), table, or markdown. Pipe into jq, scripts, or AI agents with ease."
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

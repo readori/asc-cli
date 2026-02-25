@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "Múltiples formatos de salida",
       "description": "Diseñado para humanos y máquinas. Salida en JSON (por defecto), tabla o markdown. Conecta fácilmente con jq, scripts o agentes de IA."
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {

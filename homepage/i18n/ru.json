@@ -62,6 +62,11 @@
       "icon": "🔧",
       "title": "Несколько форматов вывода",
       "description": "Разработан для людей и машин. Вывод в JSON (по умолчанию), таблице или markdown. Легко передаётся в jq, скрипты или ИИ-агенты."
+    },
+    "feature6": {
+      "icon": "✅",
+      "title": "Pre-flight Check Readiness",
+      "description": "Run all submission checks in one command before you hit submit. Catches missing builds, unconfigured pricing, and incomplete localizations — with MUST FIX vs SHOULD FIX severity. The submit affordance only appears when everything is green."
     }
   },
   "howItWorks": {
