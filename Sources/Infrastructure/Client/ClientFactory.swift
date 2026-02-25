@@ -76,6 +76,16 @@ public struct ClientFactory: Sendable {
         return SDKBetaBuildLocalizationRepository(client: provider)
     }
 
+    public func makeReviewDetailRepository(authProvider: any AuthProvider) throws -> any ReviewDetailRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKReviewDetailRepository(client: provider)
+    }
+
+    public func makePricingRepository(authProvider: any AuthProvider) throws -> any PricingRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKPricingRepository(client: provider)
+    }
+
     private func makeProvider(authProvider: any AuthProvider) throws -> APIProvider {
         let credentials = try authProvider.resolve()
         let strippedKey = credentials.privateKeyPEM

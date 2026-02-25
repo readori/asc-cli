@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AppStoreVersion: Sendable, Equatable, Identifiable, Codable {
+public struct AppStoreVersion: Sendable, Equatable, Identifiable {
     public let id: String
     /// Parent app identifier — always present so agents can correlate responses.
     public let appId: String
@@ -8,6 +8,8 @@ public struct AppStoreVersion: Sendable, Equatable, Identifiable, Codable {
     public let platform: AppStorePlatform
     public let state: AppStoreVersionState
     public let createdDate: Date?
+    /// Linked build ID, if a build has been associated with this version.
+    public let buildId: String?
 
     public init(
         id: String,
@@ -15,7 +17,8 @@ public struct AppStoreVersion: Sendable, Equatable, Identifiable, Codable {
         versionString: String,
         platform: AppStorePlatform,
         state: AppStoreVersionState,
-        createdDate: Date? = nil
+        createdDate: Date? = nil,
+        buildId: String? = nil
     ) {
         self.id = id
         self.appId = appId
@@ -23,6 +26,7 @@ public struct AppStoreVersion: Sendable, Equatable, Identifiable, Codable {
         self.platform = platform
         self.state = state
         self.createdDate = createdDate
+        self.buildId = buildId
     }
 
     public var isLive: Bool { state.isLive }
@@ -32,11 +36,42 @@ public struct AppStoreVersion: Sendable, Equatable, Identifiable, Codable {
     public var displayName: String { "\(platform.displayName) \(versionString)" }
 }
 
+// MARK: - Codable (omit nil optional fields from JSON output)
+
+extension AppStoreVersion: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id, appId, versionString, platform, state, createdDate, buildId
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        appId = try c.decode(String.self, forKey: .appId)
+        versionString = try c.decode(String.self, forKey: .versionString)
+        platform = try c.decode(AppStorePlatform.self, forKey: .platform)
+        state = try c.decode(AppStoreVersionState.self, forKey: .state)
+        createdDate = try c.decodeIfPresent(Date.self, forKey: .createdDate)
+        buildId = try c.decodeIfPresent(String.self, forKey: .buildId)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(appId, forKey: .appId)
+        try c.encode(versionString, forKey: .versionString)
+        try c.encode(platform, forKey: .platform)
+        try c.encode(state, forKey: .state)
+        try c.encodeIfPresent(createdDate, forKey: .createdDate)
+        try c.encodeIfPresent(buildId, forKey: .buildId)
+    }
+}
+
 extension AppStoreVersion: AffordanceProviding {
     public var affordances: [String: String] {
         var cmds: [String: String] = [
             "listLocalizations": "asc version-localizations list --version-id \(id)",
             "listVersions": "asc versions list --app-id \(appId)",
+            "checkReadiness": "asc versions check-readiness --version-id \(id)",
         ]
         if isEditable {
             cmds["submitForReview"] = "asc versions submit --version-id \(id)"

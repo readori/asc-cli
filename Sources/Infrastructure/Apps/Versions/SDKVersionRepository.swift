@@ -14,6 +14,19 @@ public struct SDKVersionRepository: VersionRepository, @unchecked Sendable {
         return response.data.compactMap { mapVersion($0, appId: appId) }
     }
 
+    public func getVersion(id: String) async throws -> Domain.AppStoreVersion {
+        let request = APIEndpoint.v1.appStoreVersions.id(id).get(
+            parameters: .init(include: [.app, .build])
+        )
+        let response = try await client.request(request)
+        let appId = response.data.relationships?.app?.data?.id ?? ""
+        let buildId = response.data.relationships?.build?.data?.id
+        guard let version = mapVersion(response.data, appId: appId, buildId: buildId) else {
+            throw Domain.APIError.unknown("Failed to map version \(id)")
+        }
+        return version
+    }
+
     public func createVersion(appId: String, versionString: String, platform: Domain.AppStorePlatform) async throws -> Domain.AppStoreVersion {
         guard let sdkPlatform = AppStoreConnect_Swift_SDK.Platform(rawValue: platform.rawValue) else {
             throw Domain.APIError.unknown("Unsupported platform for create: \(platform.rawValue)")
@@ -47,7 +60,8 @@ public struct SDKVersionRepository: VersionRepository, @unchecked Sendable {
 
     private func mapVersion(
         _ sdkVersion: AppStoreConnect_Swift_SDK.AppStoreVersion,
-        appId: String
+        appId: String,
+        buildId: String? = nil
     ) -> Domain.AppStoreVersion? {
         guard let platform = Domain.AppStorePlatform(
             rawValue: sdkVersion.attributes?.platform?.rawValue ?? ""
@@ -60,7 +74,8 @@ public struct SDKVersionRepository: VersionRepository, @unchecked Sendable {
             appId: appId,
             versionString: sdkVersion.attributes?.versionString ?? "",
             platform: platform,
-            state: state
+            state: state,
+            buildId: buildId
         )
     }
 }

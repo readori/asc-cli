@@ -22,11 +22,34 @@ struct AffordancesTests {
     }
 
     @Test
+    func `version affordances include checkReadiness always`() {
+        let version = MockRepositoryFactory.makeVersion(id: "v1", state: .readyForSale)
+        #expect(version.affordances["checkReadiness"] == "asc versions check-readiness --version-id v1")
+    }
+
+    @Test
     func `version affordances include submitForReview only when editable`() {
         let editable = MockRepositoryFactory.makeVersion(id: "v1", state: .prepareForSubmission)
         let live = MockRepositoryFactory.makeVersion(id: "v2", state: .readyForSale)
         #expect(editable.affordances["submitForReview"] != nil)
         #expect(live.affordances["submitForReview"] == nil)
+    }
+
+    // MARK: - VersionReadiness affordances
+
+    @Test
+    func `version readiness affordances include checkReadiness and listLocalizations always`() {
+        let readiness = MockRepositoryFactory.makeVersionReadiness(id: "v-42", isReadyToSubmit: false)
+        #expect(readiness.affordances["checkReadiness"] == "asc versions check-readiness --version-id v-42")
+        #expect(readiness.affordances["listLocalizations"] == "asc version-localizations list --version-id v-42")
+    }
+
+    @Test
+    func `version readiness affordances include submit only when ready to submit`() {
+        let ready = MockRepositoryFactory.makeVersionReadiness(id: "v-r", isReadyToSubmit: true)
+        let notReady = MockRepositoryFactory.makeVersionReadiness(id: "v-n", isReadyToSubmit: false)
+        #expect(ready.affordances["submit"] == "asc versions submit --version-id v-r")
+        #expect(notReady.affordances["submit"] == nil)
     }
 
     // MARK: - AppStoreVersionLocalization affordances

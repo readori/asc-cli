@@ -70,9 +70,60 @@ struct MockRepositoryFactory {
         appId: String = "app-1",
         versionString: String = "1.0.0",
         platform: AppStorePlatform = .iOS,
-        state: AppStoreVersionState = .readyForSale
+        state: AppStoreVersionState = .readyForSale,
+        buildId: String? = nil
     ) -> AppStoreVersion {
-        AppStoreVersion(id: id, appId: appId, versionString: versionString, platform: platform, state: state)
+        AppStoreVersion(id: id, appId: appId, versionString: versionString, platform: platform, state: state, buildId: buildId)
+    }
+
+    static func makeReviewDetail(
+        id: String = "rd-1",
+        versionId: String = "version-1",
+        contactFirstName: String? = "John",
+        contactLastName: String? = "Doe",
+        contactPhone: String? = "+1-555-0100",
+        contactEmail: String? = "john@example.com",
+        demoAccountRequired: Bool = false,
+        demoAccountName: String? = nil,
+        demoAccountPassword: String? = nil
+    ) -> AppStoreReviewDetail {
+        AppStoreReviewDetail(
+            id: id,
+            versionId: versionId,
+            contactFirstName: contactFirstName,
+            contactLastName: contactLastName,
+            contactPhone: contactPhone,
+            contactEmail: contactEmail,
+            demoAccountRequired: demoAccountRequired,
+            demoAccountName: demoAccountName,
+            demoAccountPassword: demoAccountPassword
+        )
+    }
+
+    static func makeVersionReadiness(
+        id: String = "v-1",
+        appId: String = "app-1",
+        versionString: String = "1.2.0",
+        state: AppStoreVersionState = .prepareForSubmission,
+        isReadyToSubmit: Bool = true,
+        stateCheck: ReadinessCheck = .pass(),
+        buildCheck: BuildReadinessCheck = BuildReadinessCheck(linked: true, valid: true, notExpired: true, buildVersion: "1.2.0 (55)"),
+        pricingCheck: ReadinessCheck = .pass(),
+        reviewContactCheck: ReadinessCheck = .pass(),
+        localizations: [LocalizationReadiness] = []
+    ) -> VersionReadiness {
+        VersionReadiness(
+            id: id,
+            appId: appId,
+            versionString: versionString,
+            state: state,
+            isReadyToSubmit: isReadyToSubmit,
+            stateCheck: stateCheck,
+            buildCheck: buildCheck,
+            pricingCheck: pricingCheck,
+            reviewContactCheck: reviewContactCheck,
+            localizations: localizations
+        )
     }
 
     static func makeLocalization(
