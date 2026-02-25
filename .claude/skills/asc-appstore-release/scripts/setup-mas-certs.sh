@@ -75,7 +75,7 @@ echo "  (This is the '3rd Party Mac Developer Application' cert that signs your 
 
 CERT_RESPONSE=$(asc certificates create \
   --type MAC_APP_DISTRIBUTION \
-  --csr-content "$(cat "$CSR_PATH")")
+  --csr-path "$CSR_PATH")
 
 CERT_CONTENT=$(echo "$CERT_RESPONSE" | jq -r '.data[0].certificateContent // empty')
 

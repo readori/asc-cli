@@ -1,5 +1,6 @@
 import ArgumentParser
 import Domain
+import Foundation
 
 struct CertificatesCreate: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
@@ -9,11 +10,14 @@ struct CertificatesCreate: AsyncParsableCommand {
 
     @OptionGroup var globals: GlobalOptions
 
-    @Option(name: .long, help: "Certificate type (e.g. IOS_DISTRIBUTION, MAC_APP_STORE)")
+    @Option(name: .long, help: "Certificate type (e.g. IOS_DISTRIBUTION, MAC_APP_DISTRIBUTION)")
     var type: String
 
-    @Option(name: .long, help: "PEM-encoded Certificate Signing Request content")
-    var csrContent: String
+    @Option(name: .long, help: "Path to the .csr file — use this for PEM files (avoids shell quoting issues with dashes)")
+    var csrPath: String?
+
+    @Option(name: .long, help: "CSR content as a string — NOTE: PEM files start with '-----' which breaks shell argument parsing; use --csr-path instead")
+    var csrContent: String?
 
     func run() async throws {
         let repo = try ClientProvider.makeCertificateRepository()
@@ -24,7 +28,15 @@ struct CertificatesCreate: AsyncParsableCommand {
         guard let certType = CertificateType(rawValue: type.uppercased()) else {
             throw ValidationError("Invalid certificate type '\(type)'.")
         }
-        let item = try await repo.createCertificate(certificateType: certType, csrContent: csrContent)
+        let pem: String
+        if let path = csrPath {
+            pem = try String(contentsOfFile: path, encoding: .utf8)
+        } else if let content = csrContent {
+            pem = content
+        } else {
+            throw ValidationError("Provide either --csr-path <file> or --csr-content <pem>.")
+        }
+        let item = try await repo.createCertificate(certificateType: certType, csrContent: pem)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
             [item],
