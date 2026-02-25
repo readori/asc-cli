@@ -39,7 +39,11 @@ This CLI has **CAEOAS**: responses embed ready-to-run commands so agents navigat
 
 Every response includes an `affordances` field. Agents read it and execute — no API knowledge required:
 
-```json
+```shell
+$ asc versions list --app-id app-abc
+```
+
+```jsonc
 {
   "id": "v1",
   "appId": "app-abc",
@@ -48,9 +52,10 @@ Every response includes an `affordances` field. Agents read it and execute — n
   "state": "PREPARE_FOR_SUBMISSION",
   "isEditable": true,
   "affordances": {
-    "listLocalizations": "asc version-localizations list --version-id v1",
-    "listVersions":      "asc versions list --app-id app-abc",
-    "submitForReview":   "asc versions submit --version-id v1"
+    "listLocalizations": "asc version-localizations list --version-id v1",  // navigate down → localizations
+    "listVersions":      "asc versions list --app-id app-abc",              // navigate up → sibling versions
+    "checkReadiness":    "asc versions check-readiness --version-id v1",    // pre-flight submission check
+    "submitForReview":   "asc versions submit --version-id v1"              // only present when isEditable == true
   }
 }
 ```
