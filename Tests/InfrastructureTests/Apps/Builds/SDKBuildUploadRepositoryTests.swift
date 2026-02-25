@@ -62,11 +62,53 @@ struct SDKBuildUploadRepositoryTests {
         #expect(stub.voidRequestCalled)
     }
 
+    @Test func `failed upload maps error details`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(BuildUploadResponse(
+            data: makeSdkBuildUpload(
+                id: "up-1",
+                state: .failed,
+                errors: [.init(code: "INVALID_BINARY", description: "Binary is corrupt")],
+                warnings: [.init(code: "MISSING_ICON", description: "Icon missing")]
+            ),
+            links: .init(this: "")
+        ))
+
+        let repo = SDKBuildUploadRepository(client: stub)
+        let upload = try await repo.getBuildUpload(id: "up-1")
+
+        #expect(upload.state == .failed)
+        #expect(upload.errors.count == 1)
+        #expect(upload.errors[0].code == "INVALID_BINARY")
+        #expect(upload.errors[0].description == "Binary is corrupt")
+        #expect(upload.warnings.count == 1)
+        #expect(upload.warnings[0].code == "MISSING_ICON")
+        #expect(upload.infos.isEmpty)
+    }
+
+    @Test func `successful upload has empty error arrays`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(BuildUploadResponse(
+            data: makeSdkBuildUpload(id: "up-1", state: .complete),
+            links: .init(this: "")
+        ))
+
+        let repo = SDKBuildUploadRepository(client: stub)
+        let upload = try await repo.getBuildUpload(id: "up-1")
+
+        #expect(upload.errors.isEmpty)
+        #expect(upload.warnings.isEmpty)
+        #expect(upload.infos.isEmpty)
+    }
+
     // MARK: - Helpers
 
     private func makeSdkBuildUpload(
         id: String,
-        state: AppStoreConnect_Swift_SDK.BuildUploadState
+        state: AppStoreConnect_Swift_SDK.BuildUploadState,
+        errors: [AppStoreConnect_Swift_SDK.StateDetail] = [],
+        warnings: [AppStoreConnect_Swift_SDK.StateDetail] = [],
+        infos: [AppStoreConnect_Swift_SDK.StateDetail] = []
     ) -> AppStoreConnect_Swift_SDK.BuildUpload {
         AppStoreConnect_Swift_SDK.BuildUpload(
             type: .buildUploads,
@@ -74,7 +116,12 @@ struct SDKBuildUploadRepositoryTests {
             attributes: .init(
                 cfBundleShortVersionString: "1.0.0",
                 cfBundleVersion: "42",
-                state: .init(state: state),
+                state: .init(
+                    errors: errors.isEmpty ? nil : errors,
+                    warnings: warnings.isEmpty ? nil : warnings,
+                    infos: infos.isEmpty ? nil : infos,
+                    state: state
+                ),
                 platform: .ios
             )
         )

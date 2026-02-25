@@ -58,4 +58,31 @@ struct BuildUploadTests {
         #expect(!json.contains("createdDate"))
         #expect(!json.contains("uploadedDate"))
     }
+
+    @Test func `errors warnings infos are omitted from json when empty`() throws {
+        let upload = BuildUpload(
+            id: "up-1", appId: "app-1", version: "1.0", buildNumber: "1",
+            platform: .iOS, state: .failed
+        )
+        let data = try JSONEncoder().encode(upload)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(!json.contains("errors"))
+        #expect(!json.contains("warnings"))
+        #expect(!json.contains("infos"))
+    }
+
+    @Test func `errors are included in json when present`() throws {
+        let upload = BuildUpload(
+            id: "up-1", appId: "app-1", version: "1.0", buildNumber: "1",
+            platform: .iOS, state: .failed,
+            errors: [BuildUploadStateDetail(code: "INVALID_BINARY", description: "Binary is invalid")]
+        )
+        let data = try JSONEncoder().encode(upload)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(json.contains("errors"))
+        #expect(json.contains("INVALID_BINARY"))
+        #expect(json.contains("Binary is invalid"))
+        #expect(!json.contains("warnings"))
+        #expect(!json.contains("infos"))
+    }
 }

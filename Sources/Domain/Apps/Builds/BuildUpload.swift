@@ -1,5 +1,15 @@
 import Foundation
 
+public struct BuildUploadStateDetail: Sendable, Equatable, Codable {
+    public let code: String
+    public let description: String
+
+    public init(code: String, description: String) {
+        self.code = code
+        self.description = description
+    }
+}
+
 public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
     public let id: String
     public let appId: String
@@ -9,6 +19,9 @@ public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
     public let state: BuildUploadState
     public let createdDate: Date?
     public let uploadedDate: Date?
+    public let errors: [BuildUploadStateDetail]
+    public let warnings: [BuildUploadStateDetail]
+    public let infos: [BuildUploadStateDetail]
 
     public init(
         id: String,
@@ -18,7 +31,10 @@ public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
         platform: BuildUploadPlatform,
         state: BuildUploadState,
         createdDate: Date? = nil,
-        uploadedDate: Date? = nil
+        uploadedDate: Date? = nil,
+        errors: [BuildUploadStateDetail] = [],
+        warnings: [BuildUploadStateDetail] = [],
+        infos: [BuildUploadStateDetail] = []
     ) {
         self.id = id
         self.appId = appId
@@ -28,10 +44,13 @@ public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
         self.state = state
         self.createdDate = createdDate
         self.uploadedDate = uploadedDate
+        self.errors = errors
+        self.warnings = warnings
+        self.infos = infos
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, appId, version, buildNumber, platform, state, createdDate, uploadedDate
+        case id, appId, version, buildNumber, platform, state, createdDate, uploadedDate, errors, warnings, infos
     }
 
     public init(from decoder: any Decoder) throws {
@@ -44,6 +63,9 @@ public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
         state = try container.decode(BuildUploadState.self, forKey: .state)
         createdDate = try container.decodeIfPresent(Date.self, forKey: .createdDate)
         uploadedDate = try container.decodeIfPresent(Date.self, forKey: .uploadedDate)
+        errors = try container.decodeIfPresent([BuildUploadStateDetail].self, forKey: .errors) ?? []
+        warnings = try container.decodeIfPresent([BuildUploadStateDetail].self, forKey: .warnings) ?? []
+        infos = try container.decodeIfPresent([BuildUploadStateDetail].self, forKey: .infos) ?? []
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -56,6 +78,9 @@ public struct BuildUpload: Sendable, Equatable, Identifiable, Codable {
         try container.encode(state, forKey: .state)
         try container.encodeIfPresent(createdDate, forKey: .createdDate)
         try container.encodeIfPresent(uploadedDate, forKey: .uploadedDate)
+        if !errors.isEmpty { try container.encode(errors, forKey: .errors) }
+        if !warnings.isEmpty { try container.encode(warnings, forKey: .warnings) }
+        if !infos.isEmpty { try container.encode(infos, forKey: .infos) }
     }
 }
 

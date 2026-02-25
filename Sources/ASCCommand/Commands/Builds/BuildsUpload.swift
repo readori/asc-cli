@@ -69,6 +69,14 @@ struct BuildsUpload: AsyncParsableCommand {
     private func poll(uploadId: String, repo: any BuildUploadRepository) async throws -> BuildUpload {
         while true {
             let upload = try await repo.getBuildUpload(id: uploadId)
+            if upload.state.hasFailed {
+                let details = upload.errors.map { "[\($0.code)] \($0.description)" }.joined(separator: "\n")
+                throw ValidationError(
+                    details.isEmpty
+                        ? "Build upload failed (upload-id: \(uploadId))"
+                        : "Build upload failed:\n\(details)"
+                )
+            }
             if !upload.state.isPending { return upload }
             try await Task.sleep(nanoseconds: 10_000_000_000)
         }

@@ -111,16 +111,27 @@ public struct SDKBuildUploadRepository: BuildUploadRepository, @unchecked Sendab
         _ sdk: AppStoreConnect_Swift_SDK.BuildUpload,
         appId: String
     ) -> Domain.BuildUpload {
-        Domain.BuildUpload(
+        let sdkState = sdk.attributes?.state
+        return Domain.BuildUpload(
             id: sdk.id,
             appId: appId,
             version: sdk.attributes?.cfBundleShortVersionString ?? "",
             buildNumber: sdk.attributes?.cfBundleVersion ?? "",
             platform: mapPlatform(sdk.attributes?.platform),
-            state: mapState(sdk.attributes?.state?.state),
+            state: mapState(sdkState?.state),
             createdDate: sdk.attributes?.createdDate,
-            uploadedDate: sdk.attributes?.uploadedDate
+            uploadedDate: sdk.attributes?.uploadedDate,
+            errors: mapStateDetails(sdkState?.errors),
+            warnings: mapStateDetails(sdkState?.warnings),
+            infos: mapStateDetails(sdkState?.infos)
         )
+    }
+
+    private func mapStateDetails(_ details: [AppStoreConnect_Swift_SDK.StateDetail]?) -> [Domain.BuildUploadStateDetail] {
+        (details ?? []).compactMap { detail in
+            guard let code = detail.code, let desc = detail.description else { return nil }
+            return Domain.BuildUploadStateDetail(code: code, description: desc)
+        }
     }
 
     private func mapState(_ sdkState: AppStoreConnect_Swift_SDK.BuildUploadState?) -> Domain.BuildUploadState {
