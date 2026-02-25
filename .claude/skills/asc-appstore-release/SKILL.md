@@ -27,6 +27,24 @@ Signed IPA/PKG (from your build step)
 
 See [workflow-template.md](references/workflow-template.md) for complete copy-paste workflows.
 
+## Mac App Store Certificate Setup
+
+Before the first CI run, you need `APPLE_MAS_CERTIFICATE_P12` and `APPLE_MAS_CERTIFICATE_PASSWORD`.
+Run the interactive setup script:
+
+```bash
+.claude/skills/asc-appstore-release/scripts/setup-mas-certs.sh
+```
+
+The script walks through the full mental model:
+```
+Generate CSR
+  → asc certificates create MAC_APP_DISTRIBUTION  (automated)
+  → Apple portal: Mac Installer Distribution cert  (one browser step)
+  → Export both as P12 via Keychain Access
+  → Print base64 values ready to paste into GitHub Secrets
+```
+
 ## Install `asc` in GitHub Actions
 
 ```yaml
