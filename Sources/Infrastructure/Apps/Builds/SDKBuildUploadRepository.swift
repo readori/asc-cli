@@ -1,5 +1,4 @@
 @preconcurrency import AppStoreConnect_Swift_SDK
-import CryptoKit
 import Domain
 import Foundation
 
@@ -72,14 +71,13 @@ public struct SDKBuildUploadRepository: BuildUploadRepository, @unchecked Sendab
             _ = try await URLSession.shared.data(for: request)
         }
 
-        // Step 4: Confirm upload with SHA-256 checksum
-        let sha256 = fileData.sha256HexString
+        // Step 4: Commit upload — checksums are optional; don't send any to avoid API rejection
         let confirmBody = BuildUploadFileUpdateRequest(
             data: .init(
                 type: .buildUploadFiles,
                 id: fileId,
                 attributes: .init(
-                    sourceFileChecksums: .init(file: .init(hash: sha256, algorithm: .sha256)),
+                    sourceFileChecksums: nil,
                     isUploaded: true
                 )
             )
@@ -146,9 +144,3 @@ public struct SDKBuildUploadRepository: BuildUploadRepository, @unchecked Sendab
     }
 }
 
-private extension Data {
-    var sha256HexString: String {
-        let digest = SHA256.hash(data: self)
-        return digest.map { String(format: "%02x", $0) }.joined()
-    }
-}
