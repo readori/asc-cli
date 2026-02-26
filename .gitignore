@@ -2,6 +2,9 @@
 /.build
 /Packages
 apps/ascbar/Tuist/.build/
+apps/ascbar/ASCBar.xcworkspace/
+apps/ascbar/Derived/
+apps/ascbar/Tuist/Package.resolved
 xcuserdata/
 DerivedData/
 .swiftpm/configuration/registries.json
