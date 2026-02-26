@@ -33,6 +33,10 @@ struct VersionsCheckReadinessTests {
         )
     }
 
+    private func makeApp(primaryLocale: String = "en-US") -> App {
+        App(id: "app-456", name: "TestApp", bundleId: "com.test.app", primaryLocale: primaryLocale)
+    }
+
     private func makeLocalization(id: String = "loc-1", locale: String = "en-US") -> AppStoreVersionLocalization {
         AppStoreVersionLocalization(
             id: id,
@@ -56,11 +60,13 @@ struct VersionsCheckReadinessTests {
 
     @Test func `version with valid build and pricing is ready to submit`() async throws {
         let mockVersionRepo = MockVersionRepository()
+        let mockAppRepo = MockAppRepository()
         let mockBuildRepo = MockBuildRepository()
         let mockReviewDetailRepo = MockReviewDetailRepository()
         let mockLocalizationRepo = MockVersionLocalizationRepository()
         let mockScreenshotRepo = MockScreenshotRepository()
         let mockPricingRepo = MockPricingRepository()
+        given(mockAppRepo).getApp(id: .value("app-456")).willReturn(makeApp())
 
         given(mockVersionRepo).getVersion(id: .value("v-123")).willReturn(makeEditable())
         given(mockBuildRepo).getBuild(id: .value("build-55")).willReturn(makeBuild())
@@ -72,6 +78,7 @@ struct VersionsCheckReadinessTests {
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
             versionRepo: mockVersionRepo,
+            appRepo: mockAppRepo,
             buildRepo: mockBuildRepo,
             reviewDetailRepo: mockReviewDetailRepo,
             localizationRepo: mockLocalizationRepo,
@@ -132,11 +139,13 @@ struct VersionsCheckReadinessTests {
 
     @Test func `version without linked build is not ready to submit`() async throws {
         let mockVersionRepo = MockVersionRepository()
+        let mockAppRepo = MockAppRepository()
         let mockBuildRepo = MockBuildRepository()
         let mockReviewDetailRepo = MockReviewDetailRepository()
         let mockLocalizationRepo = MockVersionLocalizationRepository()
         let mockScreenshotRepo = MockScreenshotRepository()
         let mockPricingRepo = MockPricingRepository()
+        given(mockAppRepo).getApp(id: .value("app-456")).willReturn(makeApp())
 
         given(mockVersionRepo).getVersion(id: .value("v-123")).willReturn(makeEditable(buildId: nil))
         given(mockPricingRepo).hasPricing(appId: .value("app-456")).willReturn(true)
@@ -146,6 +155,7 @@ struct VersionsCheckReadinessTests {
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
             versionRepo: mockVersionRepo,
+            appRepo: mockAppRepo,
             buildRepo: mockBuildRepo,
             reviewDetailRepo: mockReviewDetailRepo,
             localizationRepo: mockLocalizationRepo,
@@ -195,11 +205,13 @@ struct VersionsCheckReadinessTests {
 
     @Test func `live version is not editable so cannot submit`() async throws {
         let mockVersionRepo = MockVersionRepository()
+        let mockAppRepo = MockAppRepository()
         let mockBuildRepo = MockBuildRepository()
         let mockReviewDetailRepo = MockReviewDetailRepository()
         let mockLocalizationRepo = MockVersionLocalizationRepository()
         let mockScreenshotRepo = MockScreenshotRepository()
         let mockPricingRepo = MockPricingRepository()
+        given(mockAppRepo).getApp(id: .value("app-456")).willReturn(makeApp())
 
         let liveVersion = AppStoreVersion(
             id: "v-123",
@@ -218,6 +230,7 @@ struct VersionsCheckReadinessTests {
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
             versionRepo: mockVersionRepo,
+            appRepo: mockAppRepo,
             buildRepo: mockBuildRepo,
             reviewDetailRepo: mockReviewDetailRepo,
             localizationRepo: mockLocalizationRepo,
@@ -269,11 +282,13 @@ struct VersionsCheckReadinessTests {
 
     @Test func `secondary locale without screenshots does not block submission`() async throws {
         let mockVersionRepo = MockVersionRepository()
+        let mockAppRepo = MockAppRepository()
         let mockBuildRepo = MockBuildRepository()
         let mockReviewDetailRepo = MockReviewDetailRepository()
         let mockLocalizationRepo = MockVersionLocalizationRepository()
         let mockScreenshotRepo = MockScreenshotRepository()
         let mockPricingRepo = MockPricingRepository()
+        given(mockAppRepo).getApp(id: .value("app-456")).willReturn(makeApp())
 
         given(mockVersionRepo).getVersion(id: .value("v-123")).willReturn(makeEditable())
         given(mockBuildRepo).getBuild(id: .value("build-55")).willReturn(makeBuild())
@@ -290,6 +305,7 @@ struct VersionsCheckReadinessTests {
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
             versionRepo: mockVersionRepo,
+            appRepo: mockAppRepo,
             buildRepo: mockBuildRepo,
             reviewDetailRepo: mockReviewDetailRepo,
             localizationRepo: mockLocalizationRepo,
@@ -360,11 +376,13 @@ struct VersionsCheckReadinessTests {
 
     @Test func `missing review contact does not block submission`() async throws {
         let mockVersionRepo = MockVersionRepository()
+        let mockAppRepo = MockAppRepository()
         let mockBuildRepo = MockBuildRepository()
         let mockReviewDetailRepo = MockReviewDetailRepository()
         let mockLocalizationRepo = MockVersionLocalizationRepository()
         let mockScreenshotRepo = MockScreenshotRepository()
         let mockPricingRepo = MockPricingRepository()
+        given(mockAppRepo).getApp(id: .value("app-456")).willReturn(makeApp())
 
         given(mockVersionRepo).getVersion(id: .value("v-123")).willReturn(makeEditable())
         given(mockBuildRepo).getBuild(id: .value("build-55")).willReturn(makeBuild())
@@ -378,6 +396,7 @@ struct VersionsCheckReadinessTests {
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
             versionRepo: mockVersionRepo,
+            appRepo: mockAppRepo,
             buildRepo: mockBuildRepo,
             reviewDetailRepo: mockReviewDetailRepo,
             localizationRepo: mockLocalizationRepo,

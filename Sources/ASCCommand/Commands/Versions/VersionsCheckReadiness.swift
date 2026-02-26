@@ -14,6 +14,7 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
 
     func run() async throws {
         let versionRepo = try ClientProvider.makeVersionRepository()
+        let appRepo = try ClientProvider.makeAppRepository()
         let buildRepo = try ClientProvider.makeBuildRepository()
         let reviewDetailRepo = try ClientProvider.makeReviewDetailRepository()
         let localizationRepo = try ClientProvider.makeVersionLocalizationRepository()
@@ -21,6 +22,7 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
         let pricingRepo = try ClientProvider.makePricingRepository()
         print(try await execute(
             versionRepo: versionRepo,
+            appRepo: appRepo,
             buildRepo: buildRepo,
             reviewDetailRepo: reviewDetailRepo,
             localizationRepo: localizationRepo,
@@ -31,6 +33,7 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
 
     func execute(
         versionRepo: any VersionRepository,
+        appRepo: any AppRepository,
         buildRepo: any BuildRepository,
         reviewDetailRepo: any ReviewDetailRepository,
         localizationRepo: any VersionLocalizationRepository,
@@ -77,15 +80,20 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
             ? .pass()
             : .fail("No contact email or phone set in App Store review information")
 
-        // 6. Localization readiness (first locale = primary)
+        // 6. Localization readiness — use app primaryLocale for accurate isPrimary
+        let app = try await appRepo.getApp(id: version.appId)
+        let primaryLocale = app.primaryLocale
         let localizations = try await localizationRepo.listLocalizations(versionId: versionId)
         var localizationReadiness: [LocalizationReadiness] = []
-        for (index, loc) in localizations.enumerated() {
+        for loc in localizations {
             let sets = try await screenshotRepo.listScreenshotSets(localizationId: loc.id)
             let screenshotSetCount = sets.filter { $0.screenshotsCount > 0 }.count
+            let isPrimary = primaryLocale != nil
+                ? loc.locale == primaryLocale
+                : localizations.first?.id == loc.id
             localizationReadiness.append(LocalizationReadiness(
                 locale: loc.locale,
-                isPrimary: index == 0,
+                isPrimary: isPrimary,
                 hasDescription: loc.description != nil,
                 hasKeywords: loc.keywords != nil,
                 hasSupportUrl: loc.supportUrl != nil,
