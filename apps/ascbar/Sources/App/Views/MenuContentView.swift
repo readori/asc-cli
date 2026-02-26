@@ -9,7 +9,7 @@ enum AppNavigation: Equatable {
     case settings
     case versionDetail(ASCVersion)
     case readiness(ASCVersion)
-    case localizations(ASCVersion)
+    case localizations(ASCVersion, [LocalizationSummary])
 }
 
 /// Main menu bar popup — three states matching row-1-core-states.html exactly.
@@ -58,21 +58,22 @@ struct MenuContentView: View {
                         primaryLocale: app?.primaryLocale,
                         detailRepository: detailRepository,
                         onOpenReadiness: { navigation = .readiness(version) },
-                        onOpenLocalizations: { navigation = .localizations(version) },
+                        onOpenLocalizations: { locs in navigation = .localizations(version, locs) },
                         onBack: { navigation = .main }
                     )
                 case .readiness(let version):
                     ReadinessCheckView(
                         version: version,
                         detailRepository: detailRepository,
-                        onFixLocalizations: { navigation = .localizations(version) },
+                        onFixLocalizations: { navigation = .localizations(version, []) },
                         onBack: { navigation = .versionDetail(version) }
                     )
-                case .localizations(let version):
+                case .localizations(let version, let preloaded):
                     let primaryLocale = portfolio.apps.first(where: { $0.id == version.appId })?.primaryLocale
                     VersionLocalizationsView(
                         version: version,
                         primaryLocale: primaryLocale,
+                        preloadedLocalizations: preloaded,
                         detailRepository: detailRepository,
                         onBack: { navigation = .versionDetail(version) }
                     )

@@ -47,6 +47,7 @@ private struct LocalizationDraft: Equatable {
 struct VersionLocalizationsView: View {
     let version: ASCVersion
     let primaryLocale: String?
+    let preloadedLocalizations: [LocalizationSummary]
     let detailRepository: any VersionDetailRepository
     let onBack: () -> Void
 
@@ -600,6 +601,19 @@ struct VersionLocalizationsView: View {
     // MARK: - Network
 
     private func loadLocalizations() async {
+        // Use data already fetched by VersionDetailView — no second network call
+        if !preloadedLocalizations.isEmpty {
+            localizations = preloadedLocalizations
+            let primary = localizations.first(where: { $0.isPrimary }) ?? localizations.first
+            if let first = primary {
+                selectedId = first.id
+                let fresh = LocalizationDraft(from: first)
+                draft = fresh
+                savedDraft = fresh
+            }
+            isLoading = false
+            return
+        }
         isLoading = true
         loadError = nil
         do {
@@ -682,6 +696,7 @@ private extension LocalizationSummary {
         version: ASCVersion(id: "v1", appId: "app1", versionString: "2.1.0",
                             platform: "MAC_OS", state: "PREPARE_FOR_SUBMISSION"),
         primaryLocale: "en-US",
+        preloadedLocalizations: [],
         detailRepository: PreviewVersionDetailRepository(),
         onBack: {}
     )
@@ -694,6 +709,7 @@ private extension LocalizationSummary {
         version: ASCVersion(id: "v1", appId: "app1", versionString: "2.1.0",
                             platform: "MAC_OS", state: "PREPARE_FOR_SUBMISSION"),
         primaryLocale: "en-US",
+        preloadedLocalizations: [],
         detailRepository: PreviewVersionDetailRepository(),
         onBack: {}
     )

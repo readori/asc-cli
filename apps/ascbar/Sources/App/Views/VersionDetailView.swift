@@ -9,11 +9,11 @@ struct VersionDetailView: View {
     let primaryLocale: String?
     let detailRepository: any VersionDetailRepository
     let onOpenReadiness: () -> Void
-    let onOpenLocalizations: () -> Void
+    let onOpenLocalizations: ([LocalizationSummary]) -> Void
     let onBack: () -> Void
 
     @Environment(\.appTheme) private var theme
-    @State private var localizationCount: Int? = nil
+    @State private var localizations: [LocalizationSummary]? = nil
     @State private var copiedCommandId: String? = nil
 
     private var cliCommands: [(id: String, cmd: String)] {
@@ -163,15 +163,15 @@ struct VersionDetailView: View {
             rowDivider
 
             // Localizations row — tappable
-            Button(action: onOpenLocalizations) {
+            Button { onOpenLocalizations(localizations ?? []) } label: {
                 HStack(spacing: 10) {
                     iconBox(symbol: "globe", color: BaseColors.systemPurple)
                     Text("Localizations")
                         .font(.system(size: 13, design: theme.fontDesign))
                         .foregroundStyle(theme.textSecondary)
                     Spacer()
-                    if let count = localizationCount {
-                        Text("\(count) locale\(count == 1 ? "" : "s")")
+                    if let locs = localizations {
+                        Text("\(locs.count) locale\(locs.count == 1 ? "" : "s")")
                             .font(.system(size: 13, weight: .semibold, design: theme.fontDesign))
                             .foregroundStyle(theme.textPrimary)
                     } else {
@@ -380,10 +380,9 @@ struct VersionDetailView: View {
 
     private func loadLocalizationCount() async {
         do {
-            let locs = try await detailRepository.fetchLocalizations(versionId: version.id, primaryLocale: primaryLocale)
-            localizationCount = locs.count
+            localizations = try await detailRepository.fetchLocalizations(versionId: version.id, primaryLocale: primaryLocale)
         } catch {
-            localizationCount = 0
+            localizations = []
         }
     }
 }
@@ -398,7 +397,7 @@ struct VersionDetailView: View {
         primaryLocale: "en-US",
         detailRepository: PreviewVersionDetailRepository(),
         onOpenReadiness: {},
-        onOpenLocalizations: {},
+        onOpenLocalizations: { _ in },
         onBack: {}
     )
     .frame(width: 400)
@@ -413,7 +412,7 @@ struct VersionDetailView: View {
         primaryLocale: "en-US",
         detailRepository: PreviewVersionDetailRepository(),
         onOpenReadiness: {},
-        onOpenLocalizations: {},
+        onOpenLocalizations: { _ in },
         onBack: {}
     )
     .frame(width: 400)
