@@ -77,14 +77,15 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
             ? .pass()
             : .fail("No contact email or phone set in App Store review information")
 
-        // 6. Localization readiness
+        // 6. Localization readiness (first locale = primary)
         let localizations = try await localizationRepo.listLocalizations(versionId: versionId)
         var localizationReadiness: [LocalizationReadiness] = []
-        for loc in localizations {
+        for (index, loc) in localizations.enumerated() {
             let sets = try await screenshotRepo.listScreenshotSets(localizationId: loc.id)
             let screenshotSetCount = sets.filter { $0.screenshotsCount > 0 }.count
             localizationReadiness.append(LocalizationReadiness(
                 locale: loc.locale,
+                isPrimary: index == 0,
                 hasDescription: loc.description != nil,
                 hasKeywords: loc.keywords != nil,
                 hasSupportUrl: loc.supportUrl != nil,
@@ -93,8 +94,9 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
             ))
         }
 
-        // 7. Aggregate MUST FIX result
-        let isReadyToSubmit = stateCheck.pass && buildCheck.pass && pricingCheck.pass
+        // 7. Aggregate MUST FIX result — primary locale must pass
+        let localizationCheck = LocalizationReadinessCheck(localizations: localizationReadiness)
+        let isReadyToSubmit = stateCheck.pass && buildCheck.pass && pricingCheck.pass && localizationCheck.pass
 
         let readiness = VersionReadiness(
             id: version.id,
@@ -105,8 +107,8 @@ struct VersionsCheckReadiness: AsyncParsableCommand {
             stateCheck: stateCheck,
             buildCheck: buildCheck,
             pricingCheck: pricingCheck,
-            reviewContactCheck: reviewContactCheck,
-            localizations: localizationReadiness
+            localizationCheck: localizationCheck,
+            reviewContactCheck: reviewContactCheck
         )
 
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)

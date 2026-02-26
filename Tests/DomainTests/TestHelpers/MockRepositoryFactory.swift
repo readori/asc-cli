@@ -109,8 +109,8 @@ struct MockRepositoryFactory {
         stateCheck: ReadinessCheck = .pass(),
         buildCheck: BuildReadinessCheck = BuildReadinessCheck(linked: true, valid: true, notExpired: true, buildVersion: "1.2.0 (55)"),
         pricingCheck: ReadinessCheck = .pass(),
-        reviewContactCheck: ReadinessCheck = .pass(),
-        localizations: [LocalizationReadiness] = []
+        localizationCheck: LocalizationReadinessCheck = LocalizationReadinessCheck(localizations: []),
+        reviewContactCheck: ReadinessCheck = .pass()
     ) -> VersionReadiness {
         VersionReadiness(
             id: id,
@@ -121,8 +121,8 @@ struct MockRepositoryFactory {
             stateCheck: stateCheck,
             buildCheck: buildCheck,
             pricingCheck: pricingCheck,
-            reviewContactCheck: reviewContactCheck,
-            localizations: localizations
+            localizationCheck: localizationCheck,
+            reviewContactCheck: reviewContactCheck
         )
     }
 

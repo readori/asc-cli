@@ -10,9 +10,9 @@ public struct VersionReadiness: Sendable, Equatable, Identifiable {
     public let stateCheck: ReadinessCheck
     public let buildCheck: BuildReadinessCheck
     public let pricingCheck: ReadinessCheck
+    public let localizationCheck: LocalizationReadinessCheck
     // SHOULD FIX
     public let reviewContactCheck: ReadinessCheck
-    public let localizations: [LocalizationReadiness]
 
     public init(
         id: String,
@@ -23,8 +23,8 @@ public struct VersionReadiness: Sendable, Equatable, Identifiable {
         stateCheck: ReadinessCheck,
         buildCheck: BuildReadinessCheck,
         pricingCheck: ReadinessCheck,
-        reviewContactCheck: ReadinessCheck,
-        localizations: [LocalizationReadiness]
+        localizationCheck: LocalizationReadinessCheck,
+        reviewContactCheck: ReadinessCheck
     ) {
         self.id = id
         self.appId = appId
@@ -34,8 +34,8 @@ public struct VersionReadiness: Sendable, Equatable, Identifiable {
         self.stateCheck = stateCheck
         self.buildCheck = buildCheck
         self.pricingCheck = pricingCheck
+        self.localizationCheck = localizationCheck
         self.reviewContactCheck = reviewContactCheck
-        self.localizations = localizations
     }
 }
 
@@ -44,7 +44,7 @@ public struct VersionReadiness: Sendable, Equatable, Identifiable {
 extension VersionReadiness: Codable {
     enum CodingKeys: String, CodingKey {
         case id, appId, versionString, state, isReadyToSubmit
-        case stateCheck, buildCheck, pricingCheck, reviewContactCheck, localizations
+        case stateCheck, buildCheck, pricingCheck, localizationCheck, reviewContactCheck
     }
 
     public init(from decoder: any Decoder) throws {
@@ -57,8 +57,8 @@ extension VersionReadiness: Codable {
         stateCheck = try c.decode(ReadinessCheck.self, forKey: .stateCheck)
         buildCheck = try c.decode(BuildReadinessCheck.self, forKey: .buildCheck)
         pricingCheck = try c.decode(ReadinessCheck.self, forKey: .pricingCheck)
+        localizationCheck = try c.decode(LocalizationReadinessCheck.self, forKey: .localizationCheck)
         reviewContactCheck = try c.decode(ReadinessCheck.self, forKey: .reviewContactCheck)
-        localizations = try c.decode([LocalizationReadiness].self, forKey: .localizations)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -71,8 +71,8 @@ extension VersionReadiness: Codable {
         try c.encode(stateCheck, forKey: .stateCheck)
         try c.encode(buildCheck, forKey: .buildCheck)
         try c.encode(pricingCheck, forKey: .pricingCheck)
+        try c.encode(localizationCheck, forKey: .localizationCheck)
         try c.encode(reviewContactCheck, forKey: .reviewContactCheck)
-        try c.encode(localizations, forKey: .localizations)
     }
 }
 
@@ -161,8 +161,39 @@ extension BuildReadinessCheck: Codable {
     }
 }
 
+/// Wraps per-locale readiness details. Pass is true when the primary locale passes.
+public struct LocalizationReadinessCheck: Sendable, Equatable {
+    public let localizations: [LocalizationReadiness]
+
+    /// True when the primary locale has a description and at least one screenshot set.
+    public var pass: Bool {
+        localizations.first(where: { $0.isPrimary })?.pass ?? false
+    }
+
+    public init(localizations: [LocalizationReadiness]) {
+        self.localizations = localizations
+    }
+}
+
+extension LocalizationReadinessCheck: Codable {
+    enum CodingKeys: String, CodingKey { case localizations, pass }
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        localizations = try c.decode([LocalizationReadiness].self, forKey: .localizations)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(localizations, forKey: .localizations)
+        try c.encode(pass, forKey: .pass)
+    }
+}
+
 public struct LocalizationReadiness: Sendable, Equatable {
     public let locale: String
+    /// True when this is the app's default/primary locale (first returned by the API).
+    public let isPrimary: Bool
     public let hasDescription: Bool
     public let hasKeywords: Bool
     public let hasSupportUrl: Bool
@@ -173,6 +204,7 @@ public struct LocalizationReadiness: Sendable, Equatable {
 
     public init(
         locale: String,
+        isPrimary: Bool,
         hasDescription: Bool,
         hasKeywords: Bool,
         hasSupportUrl: Bool,
@@ -180,6 +212,7 @@ public struct LocalizationReadiness: Sendable, Equatable {
         screenshotSetCount: Int
     ) {
         self.locale = locale
+        self.isPrimary = isPrimary
         self.hasDescription = hasDescription
         self.hasKeywords = hasKeywords
         self.hasSupportUrl = hasSupportUrl
@@ -190,12 +223,13 @@ public struct LocalizationReadiness: Sendable, Equatable {
 
 extension LocalizationReadiness: Codable {
     enum CodingKeys: String, CodingKey {
-        case locale, hasDescription, hasKeywords, hasSupportUrl, hasWhatsNew, screenshotSetCount, pass
+        case locale, isPrimary, hasDescription, hasKeywords, hasSupportUrl, hasWhatsNew, screenshotSetCount, pass
     }
 
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         locale = try c.decode(String.self, forKey: .locale)
+        isPrimary = try c.decode(Bool.self, forKey: .isPrimary)
         hasDescription = try c.decode(Bool.self, forKey: .hasDescription)
         hasKeywords = try c.decode(Bool.self, forKey: .hasKeywords)
         hasSupportUrl = try c.decode(Bool.self, forKey: .hasSupportUrl)
@@ -206,6 +240,7 @@ extension LocalizationReadiness: Codable {
     public func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(locale, forKey: .locale)
+        try c.encode(isPrimary, forKey: .isPrimary)
         try c.encode(hasDescription, forKey: .hasDescription)
         try c.encode(hasKeywords, forKey: .hasKeywords)
         try c.encode(hasSupportUrl, forKey: .hasSupportUrl)

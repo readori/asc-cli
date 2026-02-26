@@ -98,17 +98,21 @@ struct VersionsCheckReadinessTests {
               },
               "id" : "v-123",
               "isReadyToSubmit" : true,
-              "localizations" : [
-                {
-                  "hasDescription" : true,
-                  "hasKeywords" : true,
-                  "hasSupportUrl" : false,
-                  "hasWhatsNew" : false,
-                  "locale" : "en-US",
-                  "pass" : true,
-                  "screenshotSetCount" : 1
-                }
-              ],
+              "localizationCheck" : {
+                "localizations" : [
+                  {
+                    "hasDescription" : true,
+                    "hasKeywords" : true,
+                    "hasSupportUrl" : false,
+                    "hasWhatsNew" : false,
+                    "isPrimary" : true,
+                    "locale" : "en-US",
+                    "pass" : true,
+                    "screenshotSetCount" : 1
+                  }
+                ],
+                "pass" : true
+              },
               "pricingCheck" : {
                 "pass" : true
               },
@@ -166,9 +170,12 @@ struct VersionsCheckReadinessTests {
               },
               "id" : "v-123",
               "isReadyToSubmit" : false,
-              "localizations" : [
+              "localizationCheck" : {
+                "localizations" : [
 
-              ],
+                ],
+                "pass" : false
+              },
               "pricingCheck" : {
                 "pass" : true
               },
@@ -236,9 +243,12 @@ struct VersionsCheckReadinessTests {
               },
               "id" : "v-123",
               "isReadyToSubmit" : false,
-              "localizations" : [
+              "localizationCheck" : {
+                "localizations" : [
 
-              ],
+                ],
+                "pass" : false
+              },
               "pricingCheck" : {
                 "pass" : true
               },
@@ -306,26 +316,31 @@ struct VersionsCheckReadinessTests {
               },
               "id" : "v-123",
               "isReadyToSubmit" : true,
-              "localizations" : [
-                {
-                  "hasDescription" : true,
-                  "hasKeywords" : true,
-                  "hasSupportUrl" : false,
-                  "hasWhatsNew" : false,
-                  "locale" : "en-US",
-                  "pass" : true,
-                  "screenshotSetCount" : 1
-                },
-                {
-                  "hasDescription" : true,
-                  "hasKeywords" : true,
-                  "hasSupportUrl" : false,
-                  "hasWhatsNew" : false,
-                  "locale" : "zh-Hans",
-                  "pass" : false,
-                  "screenshotSetCount" : 0
-                }
-              ],
+              "localizationCheck" : {
+                "localizations" : [
+                  {
+                    "hasDescription" : true,
+                    "hasKeywords" : true,
+                    "hasSupportUrl" : false,
+                    "hasWhatsNew" : false,
+                    "isPrimary" : true,
+                    "locale" : "en-US",
+                    "pass" : true,
+                    "screenshotSetCount" : 1
+                  },
+                  {
+                    "hasDescription" : true,
+                    "hasKeywords" : true,
+                    "hasSupportUrl" : false,
+                    "hasWhatsNew" : false,
+                    "isPrimary" : false,
+                    "locale" : "zh-Hans",
+                    "pass" : false,
+                    "screenshotSetCount" : 0
+                  }
+                ],
+                "pass" : true
+              },
               "pricingCheck" : {
                 "pass" : true
               },
@@ -357,7 +372,8 @@ struct VersionsCheckReadinessTests {
         given(mockReviewDetailRepo).getReviewDetail(versionId: .value("v-123")).willReturn(
             makeReviewDetail(phone: nil, email: nil)
         )
-        given(mockLocalizationRepo).listLocalizations(versionId: .value("v-123")).willReturn([])
+        given(mockLocalizationRepo).listLocalizations(versionId: .value("v-123")).willReturn([makeLocalization()])
+        given(mockScreenshotRepo).listScreenshotSets(localizationId: .value("loc-1")).willReturn([makeScreenshotSet()])
 
         let cmd = try VersionsCheckReadiness.parse(["--version-id", "v-123", "--pretty"])
         let output = try await cmd.execute(
@@ -388,9 +404,21 @@ struct VersionsCheckReadinessTests {
               },
               "id" : "v-123",
               "isReadyToSubmit" : true,
-              "localizations" : [
-
-              ],
+              "localizationCheck" : {
+                "localizations" : [
+                  {
+                    "hasDescription" : true,
+                    "hasKeywords" : true,
+                    "hasSupportUrl" : false,
+                    "hasWhatsNew" : false,
+                    "isPrimary" : true,
+                    "locale" : "en-US",
+                    "pass" : true,
+                    "screenshotSetCount" : 1
+                  }
+                ],
+                "pass" : true
+              },
               "pricingCheck" : {
                 "pass" : true
               },

@@ -46,6 +46,7 @@ struct VersionReadinessTests {
     @Test func `localization readiness passes when description and screenshots present`() {
         let loc = LocalizationReadiness(
             locale: "en-US",
+            isPrimary: true,
             hasDescription: true,
             hasKeywords: false,
             hasSupportUrl: false,
@@ -58,6 +59,7 @@ struct VersionReadinessTests {
     @Test func `localization readiness fails when no description`() {
         let loc = LocalizationReadiness(
             locale: "en-US",
+            isPrimary: true,
             hasDescription: false,
             hasKeywords: true,
             hasSupportUrl: true,
@@ -70,6 +72,7 @@ struct VersionReadinessTests {
     @Test func `localization readiness fails when no screenshot sets`() {
         let loc = LocalizationReadiness(
             locale: "en-US",
+            isPrimary: true,
             hasDescription: true,
             hasKeywords: true,
             hasSupportUrl: true,
@@ -113,16 +116,17 @@ struct VersionReadinessTests {
             versionString: "2.0.0",
             state: .prepareForSubmission,
             isReadyToSubmit: true,
-            localizations: [
+            localizationCheck: LocalizationReadinessCheck(localizations: [
                 LocalizationReadiness(
                     locale: "en-US",
+                    isPrimary: true,
                     hasDescription: true,
                     hasKeywords: true,
                     hasSupportUrl: false,
                     hasWhatsNew: false,
                     screenshotSetCount: 1
                 )
-            ]
+            ])
         )
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
