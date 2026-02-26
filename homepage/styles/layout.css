@@ -57,6 +57,7 @@
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 .nav-logo-text .nav-logo-suffix {
   color: var(--color-text-tertiary);
@@ -99,6 +100,7 @@
   transition: all 0.4s var(--ease-out-expo);
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
 }
 .btn::before {
   content: '';
@@ -352,7 +354,8 @@
   align-items: baseline;
   gap: 8px;
   line-height: 1.8;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 .t-prompt { color: var(--color-term-prompt); user-select: none; }
 .t-cmd { color: var(--color-term-cmd); }
@@ -714,6 +717,7 @@
 }
 @media (max-width: 768px) {
   .site-nav { padding: 16px 20px; }
+  .site-nav.scrolled { padding: 12px 20px; }
   .nav-links { display: none; }
   .site-nav .btn-github { display: none; }
   .hero { padding: 120px 20px 60px; }
