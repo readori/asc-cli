@@ -274,12 +274,22 @@ struct MenuContentView: View {
 
     // MARK: - Shimmer skeleton grid  (matches .skeleton cards)
 
+    /// Full skeleton section: top wide bar (app-name placeholder) + 2×2 card grid.
+    /// Matches the prototype HTML loading state exactly:
+    ///   <div class="skeleton" style="width:60%;height:14px;margin-bottom:16px;"></div>
+    ///   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"> … </div>
     private var shimmerGrid: some View {
-        LazyVGrid(
-            columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)],
-            spacing: 8
-        ) {
-            ForEach(0..<4, id: \.self) { _ in skeletonCard }
+        VStack(alignment: .leading, spacing: 0) {
+            // App-name placeholder bar — 60% width, 14px height, 16px gap below
+            shimmerBar(width: 160, height: 14)
+                .padding(.bottom, 16)
+
+            LazyVGrid(
+                columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)],
+                spacing: 8
+            ) {
+                ForEach(0..<4, id: \.self) { _ in skeletonCard }
+            }
         }
     }
 

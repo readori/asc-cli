@@ -39,6 +39,24 @@ struct AppStoreMonitorTests {
         #expect(monitor.overallStatus == .live)
     }
 
+    @Test func `overallStatus is pending when both IN_REVIEW and PREPARE_FOR_SUBMISSION`() async throws {
+        let mockRepo = MockAppStoreRepository()
+        given(mockRepo).fetchApps().willReturn([
+            ASCApp(id: "app1", name: "My App", bundleId: "com.example.myapp")
+        ])
+        given(mockRepo).fetchVersions(appId: .any).willReturn([
+            ASCVersion(id: "v1", appId: "app1", versionString: "2.1.0", platform: "MAC_OS", state: "WAITING_FOR_REVIEW"),
+            ASCVersion(id: "v2", appId: "app1", versionString: "1.0.0", platform: "IOS",    state: "PREPARE_FOR_SUBMISSION"),
+        ])
+        let monitor = AppPortfolio(repository: mockRepo)
+
+        await monitor.refresh()
+
+        // pending (In Review) outranks editable (Prepare for Submission) —
+        // Apple is deciding NOW; the pill dot should be orange, not blue.
+        #expect(monitor.overallStatus == .pending)
+    }
+
     @Test func `overallStatus is editable when only PREPARE_FOR_SUBMISSION`() async throws {
         let mockRepo = MockAppStoreRepository()
         given(mockRepo).fetchApps().willReturn([

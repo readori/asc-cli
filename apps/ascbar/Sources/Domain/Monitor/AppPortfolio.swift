@@ -42,12 +42,13 @@ public final class AppPortfolio: @unchecked Sendable {
             .sorted { urgencyScore($0) > urgencyScore($1) }
     }
 
-    /// Most urgent status across all selected app versions (drives the menu bar icon).
+    /// Most time-critical status across all selected app versions (drives pill dot + menu bar icon).
+    /// Priority: pending (In Review — Apple is deciding NOW) > editable > live.
     public var overallStatus: AppStatus {
         let active = selectedVersions.filter { $0.appStatus != .removed }
         if active.isEmpty { return .processing }
-        if active.contains(where: { $0.appStatus == .editable }) { return .editable }
         if active.contains(where: { $0.appStatus == .pending })  { return .pending }
+        if active.contains(where: { $0.appStatus == .editable }) { return .editable }
         if active.contains(where: { $0.appStatus == .live })     { return .live }
         return .processing
     }
