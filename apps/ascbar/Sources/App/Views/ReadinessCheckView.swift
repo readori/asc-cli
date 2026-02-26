@@ -340,5 +340,6 @@ private struct SlowPreviewRepository: VersionDetailRepository {
         fatalError("unreachable in preview")
     }
     func fetchLocalizations(versionId: String) async throws -> [LocalizationSummary] { [] }
-    func updateWhatsNew(localizationId: String, text: String) async throws {}
+    func updateLocalization(localizationId: String, whatsNew: String?, description: String?,
+        keywords: String?, marketingUrl: String?, supportUrl: String?, promotionalText: String?) async throws {}
 }

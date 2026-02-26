@@ -81,28 +81,40 @@ struct VersionReadinessResultTests {
 struct LocalizationSummaryTests {
 
     @Test func `isPrimary is true for primary locale`() {
-        let loc = LocalizationSummary(id: "l1", locale: "en-US", whatsNew: "Bug fixes", isPrimary: true)
+        let loc = LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true, whatsNew: "Bug fixes")
         #expect(loc.isPrimary == true)
     }
 
     @Test func `isPrimary is false for secondary locale`() {
-        let loc = LocalizationSummary(id: "l2", locale: "zh-Hans", whatsNew: nil, isPrimary: false)
+        let loc = LocalizationSummary(id: "l2", locale: "zh-Hans", isPrimary: false)
         #expect(loc.isPrimary == false)
     }
 
     @Test func `model preserves whatsNew text correctly`() {
         let text = "New dark mode and performance improvements"
-        let loc = LocalizationSummary(id: "l1", locale: "en-US", whatsNew: text, isPrimary: true)
+        let loc = LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true, whatsNew: text)
         #expect(loc.whatsNew == text)
     }
 
     @Test func `whatsNew is nil when missing`() {
-        let loc = LocalizationSummary(id: "l1", locale: "en-US", whatsNew: nil, isPrimary: true)
+        let loc = LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true)
         #expect(loc.whatsNew == nil)
     }
 
     @Test func `locale is preserved correctly`() {
-        let loc = LocalizationSummary(id: "l1", locale: "ja", whatsNew: nil, isPrimary: false)
+        let loc = LocalizationSummary(id: "l1", locale: "ja", isPrimary: false)
         #expect(loc.locale == "ja")
+    }
+
+    @Test func `setFieldCount counts non-empty fields`() {
+        let loc = LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true,
+                                      whatsNew: "Bug fixes", description: "An app",
+                                      keywords: "test")
+        #expect(loc.setFieldCount == 3)
+    }
+
+    @Test func `setFieldCount is zero when all fields nil`() {
+        let loc = LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true)
+        #expect(loc.setFieldCount == 0)
     }
 }

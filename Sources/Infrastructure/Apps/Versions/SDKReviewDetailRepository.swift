@@ -10,8 +10,24 @@ public struct SDKReviewDetailRepository: ReviewDetailRepository, @unchecked Send
 
     public func getReviewDetail(versionId: String) async throws -> Domain.AppStoreReviewDetail {
         let request = APIEndpoint.v1.appStoreVersions.id(versionId).appStoreReviewDetail.get()
-        let response = try await client.request(request)
-        return mapReviewDetail(response.data, versionId: versionId)
+        do {
+            let response = try await client.request(request)
+            return mapReviewDetail(response.data, versionId: versionId)
+        } catch {
+            // The API returns {"data": null} when review information has never been submitted.
+            // Treat as empty — reviewContactCheck will surface this as a SHOULD FIX warning.
+            return Domain.AppStoreReviewDetail(
+                id: "",
+                versionId: versionId,
+                contactFirstName: nil,
+                contactLastName: nil,
+                contactPhone: nil,
+                contactEmail: nil,
+                demoAccountRequired: false,
+                demoAccountName: nil,
+                demoAccountPassword: nil
+            )
+        }
     }
 
     private func mapReviewDetail(

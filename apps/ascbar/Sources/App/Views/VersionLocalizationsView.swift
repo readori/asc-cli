@@ -1,7 +1,53 @@
 import SwiftUI
 import Domain
 
-/// Screen 7 — list all version localizations with inline What's New editing.
+// MARK: - Draft Model
+
+/// Editable snapshot of all text fields for one localization.
+private struct LocalizationDraft: Equatable {
+    var whatsNew: String
+    var description: String
+    var keywords: String
+    var marketingUrl: String
+    var supportUrl: String
+    var promotionalText: String
+
+    init(from loc: LocalizationSummary) {
+        whatsNew       = loc.whatsNew       ?? ""
+        description    = loc.description    ?? ""
+        keywords       = loc.keywords       ?? ""
+        marketingUrl   = loc.marketingUrl   ?? ""
+        supportUrl     = loc.supportUrl     ?? ""
+        promotionalText = loc.promotionalText ?? ""
+    }
+
+    /// Produces only fields whose values differ from the original.
+    func changedFields(from original: LocalizationSummary) -> (
+        whatsNew: String?, description: String?, keywords: String?,
+        marketingUrl: String?, supportUrl: String?, promotionalText: String?
+    ) {
+        func changed(_ draft: String, _ original: String?) -> String? {
+            draft != (original ?? "") ? draft : nil
+        }
+        return (
+            changed(whatsNew,        original.whatsNew),
+            changed(description,     original.description),
+            changed(keywords,        original.keywords),
+            changed(marketingUrl,    original.marketingUrl),
+            changed(supportUrl,      original.supportUrl),
+            changed(promotionalText, original.promotionalText)
+        )
+    }
+
+    var isEmpty: Bool {
+        whatsNew.isEmpty && description.isEmpty && keywords.isEmpty
+            && marketingUrl.isEmpty && supportUrl.isEmpty && promotionalText.isEmpty
+    }
+}
+
+// MARK: - View
+
+/// Screen 7 — list all version localizations with inline multi-field editing.
 struct VersionLocalizationsView: View {
     let version: ASCVersion
     let detailRepository: any VersionDetailRepository
@@ -11,8 +57,10 @@ struct VersionLocalizationsView: View {
     @State private var localizations: [LocalizationSummary] = []
     @State private var isLoading = true
     @State private var loadError: String? = nil
+
+    // Editing state
     @State private var editingId: String? = nil
-    @State private var draftText: String = ""
+    @State private var draft: LocalizationDraft? = nil
     @State private var savingId: String? = nil
     @State private var saveError: String? = nil
 
@@ -145,43 +193,42 @@ struct VersionLocalizationsView: View {
     private func localeRow(_ loc: LocalizationSummary) -> some View {
         let isEditing = editingId == loc.id
         let isSaving = savingId == loc.id
-        let hasWhatsNew = loc.whatsNew != nil
 
         return VStack(alignment: .leading, spacing: 0) {
-            // Row header
+            // Row header: locale + set count chip + edit button
             HStack(spacing: 8) {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 5) {
                         Text("🌍").font(.system(size: 11))
                         Text(loc.locale + (loc.isPrimary ? " (primary)" : ""))
                             .font(.system(size: 13, weight: .semibold, design: theme.fontDesign))
                             .foregroundStyle(theme.textPrimary)
                     }
-                    if let whatsNew = loc.whatsNew, !isEditing {
+                    if let whatsNew = loc.whatsNew, !whatsNew.isEmpty, !isEditing {
                         Text(whatsNew)
                             .font(.system(size: 11, design: theme.fontDesign))
                             .foregroundStyle(theme.textSecondary)
-                            .lineLimit(2)
+                            .lineLimit(1)
                     }
                 }
 
                 Spacer()
 
-                // Status chip
-                Text(hasWhatsNew ? "Set" : "Missing")
+                // Fields set chip
+                let count = loc.setFieldCount
+                Text(count == 0 ? "Empty" : "\(count)/6")
                     .font(.system(size: 9, weight: .bold, design: theme.fontDesign))
-                    .foregroundStyle(hasWhatsNew ? BaseColors.systemGreen : BaseColors.systemOrange)
+                    .foregroundStyle(count == 0 ? BaseColors.systemOrange : BaseColors.systemGreen)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .background(
                         RoundedRectangle(cornerRadius: 4)
-                            .fill((hasWhatsNew ? BaseColors.systemGreen : BaseColors.systemOrange).opacity(0.15))
+                            .fill((count == 0 ? BaseColors.systemOrange : BaseColors.systemGreen).opacity(0.15))
                     )
 
-                // Edit button (hidden while this row is being edited)
                 if !isEditing {
                     Button {
-                        draftText = loc.whatsNew ?? ""
+                        draft = LocalizationDraft(from: loc)
                         saveError = nil
                         withAnimation(.easeOut(duration: 0.15)) { editingId = loc.id }
                     } label: {
@@ -205,23 +252,63 @@ struct VersionLocalizationsView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
 
-            // Editor section — expands on Edit tap
-            if isEditing {
-                VStack(alignment: .leading, spacing: 8) {
-                    TextEditor(text: $draftText)
-                        .font(.system(size: 12, design: theme.fontDesign))
-                        .foregroundStyle(theme.textPrimary)
-                        .scrollContentBackground(.hidden)
-                        .frame(height: 80)
-                        .padding(4)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(theme.codeBackground)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(theme.glassBorder, lineWidth: 1)
-                                )
-                        )
+            // Edit form — expands on Edit tap
+            if isEditing, var currentDraft = draft {
+                VStack(alignment: .leading, spacing: 10) {
+                    // What's New
+                    fieldEditor(
+                        label: "What's New",
+                        text: Binding(
+                            get: { currentDraft.whatsNew },
+                            set: { currentDraft.whatsNew = $0; draft = currentDraft }
+                        ),
+                        isMultiline: true
+                    )
+                    // Description
+                    fieldEditor(
+                        label: "Description",
+                        text: Binding(
+                            get: { currentDraft.description },
+                            set: { currentDraft.description = $0; draft = currentDraft }
+                        ),
+                        isMultiline: true
+                    )
+                    // Keywords
+                    fieldEditor(
+                        label: "Keywords",
+                        text: Binding(
+                            get: { currentDraft.keywords },
+                            set: { currentDraft.keywords = $0; draft = currentDraft }
+                        ),
+                        isMultiline: false
+                    )
+                    // Marketing URL
+                    fieldEditor(
+                        label: "Marketing URL",
+                        text: Binding(
+                            get: { currentDraft.marketingUrl },
+                            set: { currentDraft.marketingUrl = $0; draft = currentDraft }
+                        ),
+                        isMultiline: false
+                    )
+                    // Support URL
+                    fieldEditor(
+                        label: "Support URL",
+                        text: Binding(
+                            get: { currentDraft.supportUrl },
+                            set: { currentDraft.supportUrl = $0; draft = currentDraft }
+                        ),
+                        isMultiline: false
+                    )
+                    // Promotional Text
+                    fieldEditor(
+                        label: "Promotional Text",
+                        text: Binding(
+                            get: { currentDraft.promotionalText },
+                            set: { currentDraft.promotionalText = $0; draft = currentDraft }
+                        ),
+                        isMultiline: true
+                    )
 
                     if let err = saveError {
                         HStack(spacing: 4) {
@@ -235,10 +322,12 @@ struct VersionLocalizationsView: View {
                         }
                     }
 
+                    // Cancel / Save buttons
                     HStack(spacing: 8) {
                         Button {
                             withAnimation(.easeOut(duration: 0.15)) {
                                 editingId = nil
+                                draft = nil
                                 saveError = nil
                             }
                         } label: {
@@ -264,9 +353,10 @@ struct VersionLocalizationsView: View {
                             ProgressView().progressViewStyle(.circular).scaleEffect(0.7)
                         } else {
                             let locId = loc.id
+                            let originalLoc = loc
+                            let snapshotDraft = currentDraft
                             Button {
-                                let text = draftText
-                                Task { await saveWhatsNew(localizationId: locId, text: text) }
+                                Task { await saveDraft(snapshotDraft, originalLoc: originalLoc, localizationId: locId) }
                             } label: {
                                 HStack(spacing: 4) {
                                     Image(systemName: "checkmark").font(.system(size: 9, weight: .bold))
@@ -283,11 +373,54 @@ struct VersionLocalizationsView: View {
                     }
                 }
                 .padding(.horizontal, 12)
-                .padding(.bottom, 10)
+                .padding(.bottom, 12)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .animation(.easeOut(duration: 0.15), value: isEditing)
+    }
+
+    // MARK: - Field Editor
+
+    private func fieldEditor(label: String, text: Binding<String>, isMultiline: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label)
+                .font(.system(size: 10, weight: .semibold, design: theme.fontDesign))
+                .foregroundStyle(theme.textTertiary)
+                .tracking(0.3)
+
+            if isMultiline {
+                TextEditor(text: text)
+                    .font(.system(size: 12, design: theme.fontDesign))
+                    .foregroundStyle(theme.textPrimary)
+                    .scrollContentBackground(.hidden)
+                    .frame(height: 56)
+                    .padding(4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(theme.codeBackground)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(theme.glassBorder, lineWidth: 1)
+                            )
+                    )
+            } else {
+                TextField("", text: text)
+                    .font(.system(size: 12, design: theme.fontDesign))
+                    .foregroundStyle(theme.textPrimary)
+                    .textFieldStyle(.plain)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(theme.codeBackground)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(theme.glassBorder, lineWidth: 1)
+                            )
+                    )
+            }
+        }
     }
 
     // MARK: - Action Bar
@@ -339,13 +472,34 @@ struct VersionLocalizationsView: View {
         isLoading = false
     }
 
-    private func saveWhatsNew(localizationId: String, text: String) async {
+    private func saveDraft(
+        _ snapshotDraft: LocalizationDraft,
+        originalLoc: LocalizationSummary,
+        localizationId: String
+    ) async {
         savingId = localizationId
         saveError = nil
-        do {
-            try await detailRepository.updateWhatsNew(localizationId: localizationId, text: text)
+        let changed = snapshotDraft.changedFields(from: originalLoc)
+        // Only save if something actually changed
+        guard changed.whatsNew != nil || changed.description != nil || changed.keywords != nil
+                || changed.marketingUrl != nil || changed.supportUrl != nil || changed.promotionalText != nil
+        else {
+            withAnimation(.easeOut(duration: 0.15)) { editingId = nil; draft = nil }
             savingId = nil
-            withAnimation(.easeOut(duration: 0.15)) { editingId = nil }
+            return
+        }
+        do {
+            try await detailRepository.updateLocalization(
+                localizationId: localizationId,
+                whatsNew: changed.whatsNew,
+                description: changed.description,
+                keywords: changed.keywords,
+                marketingUrl: changed.marketingUrl,
+                supportUrl: changed.supportUrl,
+                promotionalText: changed.promotionalText
+            )
+            savingId = nil
+            withAnimation(.easeOut(duration: 0.15)) { editingId = nil; draft = nil }
             await loadLocalizations()
         } catch {
             saveError = error.localizedDescription

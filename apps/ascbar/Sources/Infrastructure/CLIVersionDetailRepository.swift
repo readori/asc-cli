@@ -49,6 +49,11 @@ private struct CLILocalizationItem: Decodable {
     let id: String
     let locale: String
     let whatsNew: String?
+    let description: String?
+    let keywords: String?
+    let marketingUrl: String?
+    let supportUrl: String?
+    let promotionalText: String?
 }
 
 // MARK: - Repository
@@ -85,18 +90,34 @@ public final class CLIVersionDetailRepository: VersionDetailRepository, @uncheck
             LocalizationSummary(
                 id: loc.id,
                 locale: loc.locale,
+                isPrimary: index == 0,
                 whatsNew: loc.whatsNew,
-                isPrimary: index == 0
+                description: loc.description,
+                keywords: loc.keywords,
+                marketingUrl: loc.marketingUrl,
+                supportUrl: loc.supportUrl,
+                promotionalText: loc.promotionalText
             )
         }
     }
 
-    public func updateWhatsNew(localizationId: String, text: String) async throws {
-        _ = try await executor.execute(
-            "asc", args: ["version-localizations", "update",
-                          "--localization-id", localizationId,
-                          "--whats-new", text]
-        )
+    public func updateLocalization(
+        localizationId: String,
+        whatsNew: String?,
+        description: String?,
+        keywords: String?,
+        marketingUrl: String?,
+        supportUrl: String?,
+        promotionalText: String?
+    ) async throws {
+        var args = ["version-localizations", "update", "--localization-id", localizationId]
+        if let v = whatsNew         { args += ["--whats-new", v] }
+        if let v = description      { args += ["--description", v] }
+        if let v = keywords         { args += ["--keywords", v] }
+        if let v = marketingUrl     { args += ["--marketing-url", v] }
+        if let v = supportUrl       { args += ["--support-url", v] }
+        if let v = promotionalText  { args += ["--promotional-text", v] }
+        _ = try await executor.execute("asc", args: args)
     }
 
     // MARK: - Mapping

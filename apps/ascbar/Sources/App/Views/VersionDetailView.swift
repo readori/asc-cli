@@ -243,13 +243,20 @@ struct PreviewVersionDetailRepository: VersionDetailRepository {
     func fetchLocalizations(versionId: String) async throws -> [LocalizationSummary] {
         try await Task.sleep(for: .milliseconds(600))
         return [
-            LocalizationSummary(id: "l1", locale: "en-US", whatsNew: "Bug fixes and improvements.", isPrimary: true),
-            LocalizationSummary(id: "l2", locale: "zh-Hans", whatsNew: nil, isPrimary: false),
-            LocalizationSummary(id: "l3", locale: "ja", whatsNew: "バグ修正と改善。", isPrimary: false),
+            LocalizationSummary(id: "l1", locale: "en-US", isPrimary: true,
+                                whatsNew: "Bug fixes and improvements.",
+                                description: "A powerful app store manager.",
+                                keywords: "app store, asc, developer"),
+            LocalizationSummary(id: "l2", locale: "zh-Hans", isPrimary: false),
+            LocalizationSummary(id: "l3", locale: "ja", isPrimary: false,
+                                whatsNew: "バグ修正と改善。"),
         ]
     }
 
-    func updateWhatsNew(localizationId: String, text: String) async throws {
+    func updateLocalization(
+        localizationId: String, whatsNew: String?, description: String?,
+        keywords: String?, marketingUrl: String?, supportUrl: String?, promotionalText: String?
+    ) async throws {
         try await Task.sleep(for: .seconds(1))
     }
 }
