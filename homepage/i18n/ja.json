@@ -12,7 +12,8 @@
     "howItWorks": "クイックスタート",
     "download": "インストール",
     "github": "GitHub",
-    "getApp": "インストール"
+    "getApp": "インストール",
+    "editor": "エディター"
   },
   "hero": {
     "badge": "オープンソース · MIT ライセンス",
@@ -110,7 +111,8 @@
       "commands": "コマンド一覧",
       "changelog": "変更履歴",
       "license": "MIT ライセンス",
-      "privacy": "プライバシーポリシー"
+      "privacy": "プライバシーポリシー",
+      "editor": "エディター"
     }
   }
 }

@@ -12,7 +12,8 @@
     "howItWorks": "빠른 시작",
     "download": "설치",
     "github": "GitHub",
-    "getApp": "설치"
+    "getApp": "설치",
+    "editor": "에디터"
   },
   "hero": {
     "badge": "오픈소스 · MIT 라이선스",
@@ -110,7 +111,8 @@
       "commands": "명령어",
       "changelog": "변경 로그",
       "license": "MIT 라이선스",
-      "privacy": "개인정보처리방침"
+      "privacy": "개인정보처리방침",
+      "editor": "에디터"
     }
   }
 }

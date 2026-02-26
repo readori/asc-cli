@@ -12,7 +12,8 @@
     "howItWorks": "Início rápido",
     "download": "Instalar",
     "github": "GitHub",
-    "getApp": "Instalar"
+    "getApp": "Instalar",
+    "editor": "Editor"
   },
   "hero": {
     "badge": "Open Source · Licença MIT",
@@ -110,7 +111,8 @@
       "commands": "Comandos",
       "changelog": "Changelog",
       "license": "Licença MIT",
-      "privacy": "Privacidade"
+      "privacy": "Privacidade",
+      "editor": "Editor"
     }
   }
 }

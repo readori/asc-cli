@@ -12,7 +12,8 @@
     "howItWorks": "快速開始",
     "download": "安裝",
     "github": "GitHub",
-    "getApp": "安裝"
+    "getApp": "安裝",
+    "editor": "編輯器"
   },
   "hero": {
     "badge": "開源 · MIT 授權",
@@ -110,7 +111,8 @@
       "commands": "命令參考",
       "changelog": "更新日誌",
       "license": "MIT 授權",
-      "privacy": "隱私政策"
+      "privacy": "隱私政策",
+      "editor": "編輯器"
     }
   }
 }

@@ -12,7 +12,8 @@
     "howItWorks": "Bắt đầu nhanh",
     "download": "Cài đặt",
     "github": "GitHub",
-    "getApp": "Cài đặt"
+    "getApp": "Cài đặt",
+    "editor": "Trình soạn thảo"
   },
   "hero": {
     "badge": "Mã nguồn mở · Giấy phép MIT",
@@ -110,7 +111,8 @@
       "commands": "Lệnh",
       "changelog": "Nhật ký thay đổi",
       "license": "Giấy phép MIT",
-      "privacy": "Quyền riêng tư"
+      "privacy": "Quyền riêng tư",
+      "editor": "Trình soạn thảo"
     }
   }
 }
