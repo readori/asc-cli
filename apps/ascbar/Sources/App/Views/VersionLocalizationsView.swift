@@ -124,7 +124,7 @@ struct VersionLocalizationsView: View {
     private var localeTabs: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
-                ForEach(localizations) { loc in
+                ForEach(localizations.sorted { $0.isPrimary && !$1.isPrimary }) { loc in
                     Button {
                         switchLocale(to: loc)
                     } label: {
@@ -603,7 +603,8 @@ struct VersionLocalizationsView: View {
         loadError = nil
         do {
             localizations = try await detailRepository.fetchLocalizations(versionId: version.id)
-            if let first = localizations.first {
+            let primary = localizations.first(where: { $0.isPrimary }) ?? localizations.first
+            if let first = primary {
                 selectedId = first.id
                 let fresh = LocalizationDraft(from: first)
                 draft = fresh
