@@ -31,7 +31,7 @@ struct ReadinessCheckView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 12, weight: .semibold))
-                    Text("Back")
+                    Text(version.versionString)
                         .font(.system(size: 13, weight: .semibold, design: theme.fontDesign))
                 }
                 .foregroundStyle(theme.accentPrimary)
@@ -120,58 +120,60 @@ struct ReadinessCheckView: View {
 
     @ViewBuilder
     private func resultContent(_ result: VersionReadinessResult) -> some View {
-        readinessBadge(isReady: result.isReadyToSubmit)
-
         if !result.mustFix.isEmpty {
-            checkSection(title: "MUST FIX", items: result.mustFix, color: BaseColors.systemRed)
+            checkSection(
+                emoji: "🚨", title: "Must Fix",
+                count: "\(result.mustFix.count) issue\(result.mustFix.count == 1 ? "" : "s")",
+                items: result.mustFix, color: BaseColors.systemRed
+            )
         }
         if !result.shouldFix.isEmpty {
-            checkSection(title: "SHOULD FIX", items: result.shouldFix, color: BaseColors.systemOrange)
+            checkSection(
+                emoji: "⚠", title: "Should Fix",
+                count: "\(result.shouldFix.count) warning\(result.shouldFix.count == 1 ? "" : "s")",
+                items: result.shouldFix, color: BaseColors.systemOrange
+            )
         }
         if !result.passing.isEmpty {
-            checkSection(title: "PASSING", items: result.passing, color: BaseColors.systemGreen)
+            checkSection(
+                emoji: "✓", title: "Passing",
+                count: "\(result.passing.count) check\(result.passing.count == 1 ? "" : "s")",
+                items: result.passing, color: BaseColors.systemGreen
+            )
         }
     }
 
-    private func readinessBadge(isReady: Bool) -> some View {
-        let color = isReady ? BaseColors.systemGreen : BaseColors.systemRed
-        return HStack(spacing: 8) {
-            Image(systemName: isReady ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .font(.system(size: 16))
-                .foregroundStyle(color)
-            Text(isReady ? "Ready to Submit" : "Not Ready")
-                .font(.system(size: 14, weight: .bold, design: theme.fontDesign))
-                .foregroundStyle(theme.textPrimary)
-            Spacer()
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(color.opacity(0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(color.opacity(0.25), lineWidth: 1)
-                )
-        )
-    }
-
-    private func checkSection(title: String, items: [ReadinessItem], color: Color) -> some View {
+    private func checkSection(
+        emoji: String, title: String, count: String,
+        items: [ReadinessItem], color: Color
+    ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.system(size: 11, weight: .bold, design: theme.fontDesign))
-                .foregroundStyle(color)
-                .tracking(0.6)
+            HStack {
+                Text("\(emoji) \(title)")
+                    .font(.system(size: 11, weight: .bold, design: theme.fontDesign))
+                    .foregroundStyle(color)
+                Spacer()
+                Text(count)
+                    .font(.system(size: 11, weight: .bold, design: theme.fontDesign))
+                    .foregroundStyle(color)
+            }
 
             VStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { idx, item in
                     if idx > 0 {
-                        Rectangle().fill(theme.dividerColor).frame(height: 1)
+                        Rectangle().fill(color.opacity(0.12)).frame(height: 1)
                     }
                     checkItemRow(item: item, sectionColor: color)
                 }
             }
-            .background(card)
+            .background(
+                RoundedRectangle(cornerRadius: theme.cardCornerRadius)
+                    .fill(color.opacity(0.06))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: theme.cardCornerRadius)
+                            .stroke(color.opacity(0.15), lineWidth: 1)
+                    )
+            )
         }
     }
 
@@ -262,40 +264,70 @@ struct ReadinessCheckView: View {
     // MARK: - Action Bar
 
     private var actionBar: some View {
-        HStack {
-            Spacer()
-            Button(action: onBack) {
-                HStack(spacing: 5) {
-                    Image(systemName: "xmark").font(.system(size: 10, weight: .bold))
-                    Text("Close").font(.system(size: 12, weight: .bold, design: theme.fontDesign))
+        HStack(spacing: 8) {
+            if let result {
+                if result.isReadyToSubmit {
+                    readyPill
+                } else {
+                    fixIssuesPill
                 }
-                .foregroundStyle(theme.textSecondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .background(
-                    Capsule()
-                        .fill(theme.glassBackground)
-                        .overlay(Capsule().stroke(theme.glassBorder, lineWidth: 1))
-                )
             }
-            .buttonStyle(.plain)
             Spacer()
+            closeButton
         }
         .padding(.horizontal, 16)
         .padding(.top, 10)
         .padding(.bottom, 14)
     }
 
-    // MARK: - Helpers
-
-    private var card: some View {
-        RoundedRectangle(cornerRadius: theme.cardCornerRadius)
-            .fill(theme.glassBackground)
-            .overlay(
-                RoundedRectangle(cornerRadius: theme.cardCornerRadius)
-                    .stroke(theme.glassBorder, lineWidth: 1)
+    private var fixIssuesPill: some View {
+        Text("Fix issues to submit")
+            .font(.system(size: 12, weight: .bold, design: theme.fontDesign))
+            .foregroundStyle(theme.textTertiary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(
+                Capsule()
+                    .fill(theme.glassBackground.opacity(0.5))
+                    .overlay(Capsule().stroke(theme.glassBorder.opacity(0.5), lineWidth: 1))
             )
     }
+
+    private var readyPill: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 10, weight: .bold))
+            Text("Ready to Submit")
+                .font(.system(size: 12, weight: .bold, design: theme.fontDesign))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(
+            Capsule()
+                .fill(LinearGradient(
+                    colors: [BaseColors.systemGreen.opacity(0.85), BaseColors.systemGreen],
+                    startPoint: .topLeading, endPoint: .bottomTrailing))
+                .shadow(color: BaseColors.systemGreen.opacity(0.3), radius: 6, y: 2)
+        )
+    }
+
+    private var closeButton: some View {
+        Button(action: onBack) {
+            ZStack {
+                Circle()
+                    .fill(theme.glassBackground)
+                    .overlay(Circle().stroke(theme.glassBorder, lineWidth: 1))
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(theme.textSecondary)
+            }
+            .frame(width: 30, height: 30)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Helpers
 
     private func loadReadiness() async {
         isLoading = true

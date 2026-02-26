@@ -52,6 +52,7 @@ struct MenuContentView: View {
                     )
                 case .versionDetail(let version):
                     VersionDetailView(
+                        appName: portfolio.apps.first(where: { $0.id == version.appId })?.displayName ?? "",
                         version: version,
                         detailRepository: detailRepository,
                         onOpenReadiness: { navigation = .readiness(version) },
