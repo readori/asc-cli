@@ -143,21 +143,6 @@ struct SettingsContentView: View {
             sectionHeader("Behaviour")
 
             VStack(spacing: 0) {
-                HStack {
-                    Text("Auto-refresh interval")
-                        .font(.system(size: 13, design: theme.fontDesign))
-                        .foregroundStyle(theme.textPrimary)
-                    Spacer()
-                    Text(formatInterval(settings.backgroundSyncInterval))
-                        .font(.system(size: 12, design: theme.fontDesign))
-                        .foregroundStyle(theme.textSecondary)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-
-                rowDivider
-                toggleRow(label: "Show notifications", isOn: $settings.showNotifications)
-                rowDivider
                 toggleRow(label: "Launch at login", isOn: $settings.launchAtLogin)
                 rowDivider
                 toggleRow(label: "Background orbs", isOn: $settings.backgroundOrbs)
@@ -281,11 +266,6 @@ struct SettingsContentView: View {
     }
 
     // MARK: - Helpers
-
-    private func formatInterval(_ seconds: TimeInterval) -> String {
-        let minutes = Int(seconds) / 60
-        return minutes >= 1 ? "\(minutes) min" : "\(Int(seconds)) sec"
-    }
 
     private func signOut() {
         let credentialsURL = URL(fileURLWithPath: NSHomeDirectory())

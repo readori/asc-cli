@@ -15,19 +15,7 @@ struct ASCBarApp: App {
         MenuBarExtra {
             MenuContentView(portfolio: portfolio)
                 .appThemeProvider(themeModeId: settings.themeMode)
-                .task {
-                    await portfolio.refresh()
-                    if settings.backgroundSyncEnabled {
-                        portfolio.startAutoRefresh(interval: settings.backgroundSyncInterval)
-                    }
-                }
-                .onChange(of: settings.backgroundSyncEnabled) { _, enabled in
-                    if enabled {
-                        portfolio.startAutoRefresh(interval: settings.backgroundSyncInterval)
-                    } else {
-                        portfolio.stopAutoRefresh()
-                    }
-                }
+                .task { await portfolio.refresh() }
         } label: {
             StatusBarIcon(status: portfolio.overallStatus, isSyncing: portfolio.isSyncing)
                 .appThemeProvider(themeModeId: settings.themeMode)
