@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.23] - 2026-02-26
+
+---
+
 ## [0.1.22] - 2026-02-26
 
 ---
@@ -162,7 +166,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.22...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.23...HEAD
+[0.1.23]: https://github.com/tddworks/asc-cli/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/tddworks/asc-cli/compare/v0.1.21...v0.1.22
 [0.1.21]: https://github.com/tddworks/asc-cli/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/tddworks/asc-cli/compare/v0.1.9...v0.1.20
