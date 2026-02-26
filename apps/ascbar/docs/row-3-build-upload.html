@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCBar — Row 3: Build Upload</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="sub-header">
+    <a class="sub-header-back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      All Flows
+    </a>
+    <div>
+      <h1>Row 3 — Build Upload &amp; Notifications</h1>
+      <p>Upload form · 5-step progress · alerts panel</p>
+    </div>
+  </header>
+
+  <div class="row-label">
+    <div class="row-label-line"></div>
+    <span>Build Upload &amp; Notifications</span>
+    <div class="row-label-line"></div>
+  </div>
+
+  <div class="flow-row">
+
+    <!-- 7. Upload form -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">7</div><span class="step-name">Upload Build ✦ new</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header" style="border-bottom:none;">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              ASCBar
+            </div>
+            <div style="flex:1;text-align:center;font-size:14px;font-weight:700;">Upload Build</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="divider"></div>
+          <div style="padding:12px 16px 0;">
+            <div style="display:flex;background:rgba(255,255,255,.06);border-radius:8px;padding:2px;gap:2px;font-size:12px;font-weight:600;">
+              <div style="flex:1;text-align:center;padding:5px;background:rgba(255,255,255,.12);border-radius:6px;">macOS</div>
+              <div style="flex:1;text-align:center;padding:5px;color:var(--text-secondary);">iOS</div>
+              <div style="flex:1;text-align:center;padding:5px;color:var(--text-secondary);">tvOS</div>
+              <div style="flex:1;text-align:center;padding:5px;color:var(--text-secondary);">visionOS</div>
+            </div>
+          </div>
+          <div style="margin:12px 16px 0;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.15);border-radius:var(--radius-card);padding:16px;text-align:center;">
+            <div style="font-size:28px;margin-bottom:6px;">📦</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px;">ASCBar-2.1.0.pkg</div>
+            <div style="font-size:11px;color:var(--text-secondary);">47.2 MB · macOS</div>
+            <div style="margin-top:8px;color:var(--accent);font-size:12px;font-weight:600;">Change File</div>
+          </div>
+          <div style="margin:10px 16px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="detail-row"><div class="dr-icon blue">📱</div><span class="dr-label">App</span><span class="dr-value">ASCBar</span></div>
+            <div class="detail-row"><div class="dr-icon green">🏷</div><span class="dr-label">Version</span><span class="dr-value">2.1.0</span></div>
+            <div class="detail-row"><div class="dr-icon purple">🔢</div><span class="dr-label">Build #</span><span class="dr-value">43</span></div>
+          </div>
+          <div class="code-snippet" style="margin-top:10px;">
+            <span>asc builds upload --app-id 123 --file … --platform macos</span>
+            <span class="copy-btn">Copy</span>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn primary" style="background:linear-gradient(135deg,#64d2ff,#007aff);">📤 Upload</div>
+            <div class="bar-btn ghost">Cancel</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 8. Upload progress -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">8</div><span class="step-name">Uploading…</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header" style="border-bottom:none;">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>ASCBar</h2><p>&gt; app monitor</p></div>
+            <div class="status-pill"><div class="dot pulse"></div>Uploading</div>
+          </div>
+          <div class="divider"></div>
+          <div style="padding:14px 16px 8px;display:flex;align-items:center;gap:12px;">
+            <div style="width:42px;height:42px;border-radius:50%;background:rgba(10,132,255,.15);border:1.5px solid rgba(10,132,255,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📤</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;">ASCBar-2.1.0.pkg</div>
+              <div style="font-size:11px;color:var(--text-secondary);">47.2 MB · macOS · Build 43</div>
+            </div>
+          </div>
+          <div class="upload-bar">
+            <div class="upload-bar-label"><span>Uploading chunks…</span><span style="color:var(--accent);font-weight:700;">68%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:68%;"></div></div>
+          </div>
+          <div class="upload-steps">
+            <div class="upload-step">
+              <div class="us-icon done">✓</div><div class="us-label done">Reserve file slot</div><div class="us-val done">Done</div>
+            </div>
+            <div class="upload-step">
+              <div class="us-icon active">⋯</div><div class="us-label active">Upload chunks (PUT)</div><div class="us-val active">68%</div>
+            </div>
+            <div class="upload-step">
+              <div class="us-icon pending">3</div><div class="us-label pending">Confirm MD5 (PATCH)</div><div class="us-val" style="color:var(--text-tertiary);">—</div>
+            </div>
+            <div class="upload-step">
+              <div class="us-icon pending">4</div><div class="us-label pending">Apple processing (GET)</div><div class="us-val" style="color:var(--text-tertiary);">—</div>
+            </div>
+            <div class="upload-step">
+              <div class="us-icon pending">5</div><div class="us-label pending">Build ready</div><div class="us-val" style="color:var(--text-tertiary);">—</div>
+            </div>
+          </div>
+          <div class="action-bar" style="margin-top:4px;">
+            <div class="bar-btn ghost" style="color:var(--red);">Cancel Upload</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation right" style="top:270px;right:-170px;">5-step domain flow</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 9. Alerts panel -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">9</div><span class="step-name">Alerts ✦ new</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>Alerts</h2><p>&gt; 3 unread</p></div>
+            <div style="font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;">Clear all</div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon orange">⏳</div>
+            <div class="notif-body">
+              <div class="nb-title">ASCBar 2.1.0 — In Review</div>
+              <div class="nb-desc">Apple has started reviewing your submission.</div>
+              <div class="nb-time">2 minutes ago</div>
+            </div>
+            <div class="notif-unread"></div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon green">✅</div>
+            <div class="notif-body">
+              <div class="nb-title">Build 43 — Processing Complete</div>
+              <div class="nb-desc">Build 43 is ready to attach to a version.</div>
+              <div class="nb-time">15 minutes ago</div>
+            </div>
+            <div class="notif-unread"></div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon red">❌</div>
+            <div class="notif-body">
+              <div class="nb-title">FocusTimer 3.8.1 — Rejected</div>
+              <div class="nb-desc">Review rejected. Check metadata guidelines.</div>
+              <div class="nb-time">1 hour ago</div>
+            </div>
+            <div class="notif-unread"></div>
+          </div>
+          <div class="notif-item" style="opacity:.5;">
+            <div class="notif-icon green">🚀</div>
+            <div class="notif-body">
+              <div class="nb-title">MoneyNotes 4.3.2 — Ready for Sale</div>
+              <div class="nb-desc">App is now live on the App Store.</div>
+              <div class="nb-time">Yesterday</div>
+            </div>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn ghost">⊞ All Apps</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation left" style="top:200px;left:-180px;">Polls for state changes</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

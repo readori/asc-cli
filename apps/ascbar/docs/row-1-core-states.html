@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCBar — Row 1: Core States</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="sub-header">
+    <a class="sub-header-back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      All Flows
+    </a>
+    <div>
+      <h1>Row 1 — Core Popover States</h1>
+      <p>Loading skeleton · main view · error / no-auth</p>
+    </div>
+  </header>
+
+  <div class="row-label">
+    <div class="row-label-line"></div>
+    <span>Core Popover States</span>
+    <div class="row-label-line"></div>
+  </div>
+
+  <div class="flow-row">
+
+    <!-- 1. Loading -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">1</div><span class="step-name">Loading</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>ASCBar</h2><p>&gt; app monitor</p></div>
+            <div class="status-pill"><div class="dot pulse"></div>Syncing…</div>
+          </div>
+          <div style="padding:16px;">
+            <div class="skeleton" style="width:60%;height:14px;margin-bottom:16px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
+                <div class="skeleton" style="width:40%;height:9px;"></div>
+                <div class="skeleton" style="width:55%;height:22px;"></div>
+                <div class="skeleton" style="width:70%;height:11px;margin-bottom:0;"></div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
+                <div class="skeleton" style="width:40%;height:9px;"></div>
+                <div class="skeleton" style="width:55%;height:22px;"></div>
+                <div class="skeleton" style="width:70%;height:11px;margin-bottom:0;"></div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
+                <div class="skeleton" style="width:40%;height:9px;"></div>
+                <div class="skeleton" style="width:55%;height:22px;"></div>
+                <div class="skeleton" style="width:70%;height:11px;margin-bottom:0;"></div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
+                <div class="skeleton" style="width:40%;height:9px;"></div>
+                <div class="skeleton" style="width:55%;height:22px;"></div>
+                <div class="skeleton" style="width:70%;height:11px;margin-bottom:0;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn primary" style="opacity:.5;">⊞ Apps</div>
+            <div class="bar-btn ghost"   style="opacity:.5;">↻ Syncing</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn" style="opacity:.4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <div class="icon-btn" style="opacity:.4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation top" style="bottom:-42px;left:50%;transform:translateX(-50%);">monitor.isSyncing = true</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 2. Main view -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">2</div><span class="step-name">Main View</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>ASCBar</h2><p>&gt; app monitor</p></div>
+            <div class="status-pill"><div class="dot green"></div>Ready</div>
+          </div>
+          <div class="pills-row">
+            <div class="app-pill active"><div class="pill-dot" style="background:var(--orange);"></div>ASCBar</div>
+            <div class="app-pill"><div class="pill-dot" style="background:var(--green);"></div>MoneyNotes</div>
+            <div class="app-pill"><div class="pill-dot" style="background:var(--purple);"></div>TaskKit Pro</div>
+            <div class="app-pill"><div class="pill-dot" style="background:var(--accent);"></div>WatchLog</div>
+          </div>
+          <div class="app-meta-header">
+            <h3>ASCBar</h3>
+            <code>com.example.ascbar · macOS</code>
+          </div>
+          <div class="version-grid">
+            <div class="version-card live">
+              <div class="vc-platform">macOS</div><div class="vc-version">2.0.1</div>
+              <div class="vc-state green">Ready for Sale</div>
+              <div class="vc-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy cmd</div>
+            </div>
+            <div class="version-card pending">
+              <div class="vc-platform">macOS</div><div class="vc-version">2.1.0</div>
+              <div class="vc-state orange">In Review</div>
+              <div class="vc-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy status</div>
+            </div>
+            <div class="version-card highlighted">
+              <div class="vc-platform">iOS</div><div class="vc-version">1.0.0</div>
+              <div class="vc-state blue">Prepare for Sub.</div>
+              <div class="vc-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy submit</div>
+            </div>
+            <div class="version-card live">
+              <div class="vc-platform">iOS</div><div class="vc-version">0.9.5</div>
+              <div class="vc-state green">Ready for Sale</div>
+              <div class="vc-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy cmd</div>
+            </div>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn primary">⊞ Apps</div>
+            <div class="bar-btn ghost">↻ Refresh</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation right" style="top:128px;right:-165px;">Tap pill → switch app</div>
+        <div class="annotation right" style="top:255px;right:-185px;">Hover card → copy CLI cmd</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 3. Error state -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">3</div><span class="step-name">Error / No Auth</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>ASCBar</h2><p>&gt; app monitor</p></div>
+            <div class="status-pill"><div class="dot red"></div>Error</div>
+          </div>
+          <div style="padding:12px 16px;">
+            <div style="background:rgba(255,69,58,.08);border:1px solid rgba(255,69,58,.2);border-radius:10px;padding:20px;text-align:center;">
+              <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+              <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Could not load apps</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px;">No credentials found.<br>Run the command below in Terminal.</div>
+              <div class="code-snippet" style="margin:0;text-align:left;">
+                <span>$ asc auth login</span>
+                <span class="copy-btn">Copy</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding:0 16px 14px;">
+            <div class="detail-row" style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);">
+              <div class="dr-icon blue">🔑</div>
+              <span class="dr-label">Set up credentials</span>
+              <span style="font-size:12px;color:var(--accent);">Guide ›</span>
+            </div>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn ghost">↻ Retry</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

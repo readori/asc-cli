@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCBar — Row 2: Version Actions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="sub-header">
+    <a class="sub-header-back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      All Flows
+    </a>
+    <div>
+      <h1>Row 2 — Version Actions (CAEOAS)</h1>
+      <p>Hover copy · version detail panel · readiness check</p>
+    </div>
+  </header>
+
+  <div class="row-label">
+    <div class="row-label-line"></div>
+    <span>Version Actions — CAEOAS</span>
+    <div class="row-label-line"></div>
+  </div>
+
+  <div class="flow-row">
+
+    <!-- 4. Hover: copy submit -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">4</div><span class="step-name">Hover: Submit</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header">
+            <div class="logo-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="3" width="9" height="9" rx="2"/><rect x="2" y="14" width="9" height="9" rx="2"/><rect x="13" y="14" width="9" height="9" rx="2"/></svg></div>
+            <div class="pop-title"><h2>ASCBar</h2><p>&gt; app monitor</p></div>
+            <div class="status-pill"><div class="dot green"></div>Ready</div>
+          </div>
+          <div class="pills-row">
+            <div class="app-pill active"><div class="pill-dot" style="background:var(--orange);"></div>ASCBar</div>
+            <div class="app-pill"><div class="pill-dot" style="background:var(--green);"></div>MoneyNotes</div>
+          </div>
+          <div class="app-meta-header"><h3>ASCBar</h3><code>com.example.ascbar</code></div>
+          <div class="version-grid">
+            <div class="version-card live">
+              <div class="vc-platform">macOS</div><div class="vc-version">2.0.1</div>
+              <div class="vc-state green">Ready for Sale</div>
+            </div>
+            <div class="version-card highlighted" style="box-shadow:0 0 0 1.5px rgba(10,132,255,.5);">
+              <div class="vc-platform">macOS</div><div class="vc-version">2.1.0</div>
+              <div class="vc-state blue">Prepare for Sub.</div>
+              <div class="vc-action" style="opacity:1;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy submit
+              </div>
+            </div>
+          </div>
+          <div class="code-snippet">
+            <span>asc versions submit --version-id v21</span>
+            <span class="copy-btn" style="background:rgba(48,209,88,.12);border-color:rgba(48,209,88,.25);color:var(--green);">✓ Copied!</span>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn primary">⊞ Apps</div>
+            <div class="bar-btn ghost">↻ Refresh</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation left" style="top:236px;left:-190px;">Hover card → reveal action</div>
+        <div class="annotation left" style="top:315px;left:-175px;">Toast confirms copy</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 5. Version detail (proposed) -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">5</div><span class="step-name">Version Detail ✦ new</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header" style="border-bottom:none;">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;cursor:pointer;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </div>
+            <div style="flex:1;text-align:center;font-size:14px;font-weight:700;">ASCBar 2.1.0</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="info-banner blue">
+            <span>📋</span>
+            <div>
+              <div style="font-weight:700;margin-bottom:2px;">Prepare for Submission</div>
+              <div style="color:var(--text-secondary);font-size:11px;">Version is editable — ready to link a build and submit.</div>
+            </div>
+          </div>
+          <div style="margin:0 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="detail-row">
+              <div class="dr-icon blue">📱</div><span class="dr-label">Platform</span><span class="dr-value">macOS</span>
+            </div>
+            <div class="detail-row">
+              <div class="dr-icon green">🔨</div><span class="dr-label">Build</span><span class="dr-badge orange">Not attached</span>
+            </div>
+            <div class="detail-row">
+              <div class="dr-icon purple">🌍</div><span class="dr-label">Localizations</span><span class="dr-value">3 locales</span>
+            </div>
+            <div class="detail-row">
+              <div class="dr-icon orange">📊</div><span class="dr-label">Pricing</span><span class="dr-badge green">Set</span>
+            </div>
+          </div>
+          <div class="section-header" style="margin-top:10px;">
+            <h4>CLI Commands</h4>
+          </div>
+          <div class="code-snippet"><span>asc versions check-readiness --version-id v21</span><span class="copy-btn">Copy</span></div>
+          <div class="code-snippet"><span>asc versions submit --version-id v21</span><span class="copy-btn">Copy</span></div>
+          <div class="code-snippet" style="margin-bottom:14px;"><span>asc versions set-build --version-id v21</span><span class="copy-btn">Copy</span></div>
+          <div class="action-bar">
+            <div class="bar-btn primary" style="background:linear-gradient(135deg,#ff9f0a,#ff6b00);">🚀 Submit</div>
+            <div class="bar-btn ghost">🔍 Check</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+        <div class="annotation right" style="top:170px;right:-165px;">New detail panel (proposed)</div>
+        <div class="annotation right" style="top:310px;right:-170px;">All 3 CLI commands inline</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- 6. Readiness check -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">6</div><span class="step-name">Readiness ✦ new</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header" style="border-bottom:none;">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;cursor:pointer;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              2.1.0
+            </div>
+            <div style="flex:1;text-align:center;font-size:14px;font-weight:700;">Readiness Check</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="section-header" style="padding-top:10px;">
+            <h4 style="color:var(--red);">🚨 Must Fix</h4>
+            <span style="font-size:11px;font-weight:700;color:var(--red);">2 issues</span>
+          </div>
+          <div style="margin:0 16px;background:rgba(255,69,58,.06);border:1px solid rgba(255,69,58,.15);border-radius:var(--radius-card);overflow:hidden;margin-bottom:10px;">
+            <div class="check-row">
+              <div class="check-icon fail">✕</div>
+              <div class="check-text"><div class="ct-title">No Build Attached</div><div class="ct-desc">Link a processed build before submitting</div></div>
+            </div>
+            <div class="check-row">
+              <div class="check-icon fail">✕</div>
+              <div class="check-text"><div class="ct-title">Pricing Not Set</div><div class="ct-desc">Configure app pricing for required territories</div></div>
+            </div>
+          </div>
+          <div class="section-header">
+            <h4 style="color:var(--orange);">⚠ Should Fix</h4>
+            <span style="font-size:11px;font-weight:700;color:var(--orange);">1 warning</span>
+          </div>
+          <div style="margin:0 16px;background:rgba(255,159,10,.06);border:1px solid rgba(255,159,10,.15);border-radius:var(--radius-card);overflow:hidden;margin-bottom:10px;">
+            <div class="check-row">
+              <div class="check-icon warn">!</div>
+              <div class="check-text"><div class="ct-title">Missing What's New (EN)</div><div class="ct-desc">Release notes empty for English locale</div></div>
+            </div>
+          </div>
+          <div class="section-header">
+            <h4 style="color:var(--green);">✓ Passing</h4>
+            <span style="font-size:11px;font-weight:700;color:var(--green);">3 checks</span>
+          </div>
+          <div style="margin:0 16px 12px;background:rgba(48,209,88,.05);border:1px solid rgba(48,209,88,.12);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="check-row"><div class="check-icon pass">✓</div><div class="check-text"><div class="ct-title">Version State — editable</div></div></div>
+            <div class="check-row"><div class="check-icon pass">✓</div><div class="check-text"><div class="ct-title">Review Contact set</div></div></div>
+            <div class="check-row"><div class="check-icon pass">✓</div><div class="check-text"><div class="ct-title">Screenshots uploaded</div></div></div>
+          </div>
+          <div class="action-bar">
+            <div class="bar-btn primary" style="opacity:.4;background:rgba(255,255,255,.1);cursor:default;">Fix issues to submit</div>
+            <div class="bar-spacer"></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

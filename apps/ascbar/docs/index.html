@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCBar — UX Prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="page-header">
+    <div class="badge">🍎 macOS menu bar · 400 px popover</div>
+    <h1>ASCBar</h1>
+    <p>Full UX flow prototype for the macOS menu bar app. Every popover reflects the real <code style="font-family:monospace;font-size:14px;color:rgba(100,210,255,.8);">MenuContentView</code> layout: logo header → app pills → 2-column version grid → action bar.</p>
+  </header>
+
+  <div class="nav-grid">
+    <a class="nav-card" href="row-1-core-states.html">
+      <div class="nav-card-icon" style="background:rgba(10,132,255,.15);">🖥</div>
+      <div class="nav-card-body">
+        <h3>Row 1 — Core States</h3>
+        <p>Loading skeleton, main popover with apps, error / no-auth state</p>
+      </div>
+      <div class="nav-card-arrow">›</div>
+    </a>
+    <a class="nav-card" href="row-2-version-actions.html">
+      <div class="nav-card-icon" style="background:rgba(191,90,242,.15);">⚡</div>
+      <div class="nav-card-body">
+        <h3>Row 2 — Version Actions</h3>
+        <p>Hover copy, version detail panel, readiness check (CAEOAS)</p>
+      </div>
+      <div class="nav-card-arrow">›</div>
+    </a>
+    <a class="nav-card" href="row-3-build-upload.html">
+      <div class="nav-card-icon" style="background:rgba(100,210,255,.15);">📦</div>
+      <div class="nav-card-body">
+        <h3>Row 3 — Build Upload</h3>
+        <p>Upload form, 5-step progress indicator, alerts / notifications</p>
+      </div>
+      <div class="nav-card-arrow">›</div>
+    </a>
+    <a class="nav-card" href="row-4-settings.html">
+      <div class="nav-card-icon" style="background:rgba(48,209,88,.15);">⚙️</div>
+      <div class="nav-card-body">
+        <h3>Row 4 — Settings &amp; Auth</h3>
+        <p>Credential status, theme swatches, behaviour toggles</p>
+      </div>
+      <div class="nav-card-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="insight-box">
+    <h3>Implementation Roadmap</h3>
+    <p class="ib-sub">Existing screens (✅) + proposed new panels (✦) based on the current domain layer</p>
+    <div class="insight-grid">
+      <div class="insight-item">
+        <div class="ii-icon">✅</div>
+        <h4>Already Built</h4>
+        <p>Main popover · app pills · 2-col version grid · hover copy · dark/light theme · loading/error states</p>
+      </div>
+      <div class="insight-item">
+        <div class="ii-icon">✦</div>
+        <h4>Version Detail Panel</h4>
+        <p>Drill into a card to see build, pricing, localizations and all 3 relevant CLI commands at once.</p>
+      </div>
+      <div class="insight-item">
+        <div class="ii-icon">✦</div>
+        <h4>Build Upload Flow</h4>
+        <p>Platform picker + file drop + 5-step progress (reserve → chunks → MD5 → process → ready).</p>
+      </div>
+      <div class="insight-item">
+        <div class="ii-icon">✦</div>
+        <h4>Alerts Tab</h4>
+        <p>Poll <code style="font-family:monospace;font-size:11px;color:rgba(100,210,255,.8);">AppStoreMonitor</code> for state transitions and surface them as timestamped notifications.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

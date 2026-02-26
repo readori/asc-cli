@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCBar — Row 4: Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="sub-header">
+    <a class="sub-header-back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      All Flows
+    </a>
+    <div>
+      <h1>Row 4 — Settings &amp; Auth</h1>
+      <p>Credential status · theme swatches · behaviour toggles</p>
+    </div>
+  </header>
+
+  <div class="row-label">
+    <div class="row-label-line"></div>
+    <span>Settings &amp; Auth</span>
+    <div class="row-label-line"></div>
+  </div>
+
+  <div class="flow-row" style="justify-content:center;">
+
+    <!-- 10. Settings -->
+    <div class="flow-step">
+      <div class="step-label"><div class="step-num">10</div><span class="step-name">Settings</span></div>
+      <div style="position:relative;">
+        <div class="popover-caret"></div>
+        <div class="popover">
+          <div class="pop-header" style="border-bottom:none;">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;cursor:pointer;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </div>
+            <div style="flex:1;text-align:center;font-size:14px;font-weight:700;">Settings</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="divider"></div>
+
+          <div class="section-header" style="padding-top:10px;"><h4>Auth</h4></div>
+          <div style="margin:0 16px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="settings-row">
+              <div class="dr-icon green" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🔑</div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">Credentials</div>
+                <div style="font-size:11px;color:var(--text-secondary);">Source: file · ~/.asc/credentials.json</div>
+              </div>
+              <span class="dr-badge green">Active</span>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Key ID</span>
+              <span class="sr-value" style="font-family:monospace;">ABCD123456</span>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Issuer ID</span>
+              <span class="sr-value" style="font-family:monospace;">69a6de78…</span>
+            </div>
+          </div>
+
+          <div class="section-header"><h4>Appearance</h4></div>
+          <div class="theme-grid">
+            <div class="theme-swatch selected" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+              <div class="ts-label">Dark</div>
+            </div>
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#f0f0f5,#e0e0ea);">
+              <div class="ts-label" style="color:#333;">Light</div>
+            </div>
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#1a0a2e,#2d1060);">
+              <div class="ts-label">Purple</div>
+            </div>
+            <div class="theme-swatch" style="background:linear-gradient(135deg,#0a1a2e,#103050);">
+              <div class="ts-label">Ocean</div>
+            </div>
+          </div>
+
+          <div class="section-header"><h4>Behaviour</h4></div>
+          <div style="margin:0 16px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="settings-row">
+              <span class="sr-label">Auto-refresh interval</span>
+              <span class="sr-value">5 min</span>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Show notifications</span>
+              <div class="toggle"></div>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Launch at login</span>
+              <div class="toggle off"></div>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Background orbs</span>
+              <div class="toggle"></div>
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <div class="bar-btn ghost" style="color:var(--red);">Sign Out</div>
+            <div class="bar-spacer"></div>
+            <div style="font-size:11px;color:var(--text-tertiary);">ASCBar v1.0.0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
