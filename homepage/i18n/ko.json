@@ -29,7 +29,8 @@
       "stat2Label": "AI 에이전트 지원",
       "stat3Value": "MIT",
       "stat3Label": "오픈소스"
-    }
+    },
+    "submittedMsg": "검토에 제출되었습니다"
   },
   "features": {
     "eyebrow": "기능",

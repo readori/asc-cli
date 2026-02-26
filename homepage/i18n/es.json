@@ -29,7 +29,8 @@
       "stat2Label": "Listo para IA",
       "stat3Value": "MIT",
       "stat3Label": "Código abierto"
-    }
+    },
+    "submittedMsg": "Enviado para revisión"
   },
   "features": {
     "eyebrow": "Funciones",

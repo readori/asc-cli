@@ -29,7 +29,8 @@
       "stat2Label": "Поддержка ИИ",
       "stat3Value": "MIT",
       "stat3Label": "Открытый код"
-    }
+    },
+    "submittedMsg": "Отправлено на проверку"
   },
   "features": {
     "eyebrow": "Возможности",

@@ -29,7 +29,8 @@
       "stat2Label": "พร้อมใช้กับ AI",
       "stat3Value": "MIT",
       "stat3Label": "โอเพนซอร์ส"
-    }
+    },
+    "submittedMsg": "ส่งเพื่อตรวจสอบแล้ว"
   },
   "features": {
     "eyebrow": "คุณสมบัติ",

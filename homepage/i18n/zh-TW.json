@@ -29,7 +29,8 @@
       "stat2Label": "AI 智能體就緒",
       "stat3Value": "MIT",
       "stat3Label": "開源授權"
-    }
+    },
+    "submittedMsg": "已提交審核"
   },
   "features": {
     "eyebrow": "功能特性",

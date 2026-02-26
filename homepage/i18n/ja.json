@@ -29,7 +29,8 @@
       "stat2Label": "AI エージェント対応",
       "stat3Value": "MIT",
       "stat3Label": "オープンソース"
-    }
+    },
+    "submittedMsg": "レビューに提出しました"
   },
   "features": {
     "eyebrow": "機能",

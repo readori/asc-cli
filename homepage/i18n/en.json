@@ -29,7 +29,8 @@
       "stat2Label": "AI-Agent Ready",
       "stat3Value": "MIT",
       "stat3Label": "Open Source"
-    }
+    },
+    "submittedMsg": "Submitted for review"
   },
   "features": {
     "eyebrow": "Features",

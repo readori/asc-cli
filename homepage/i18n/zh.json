@@ -29,7 +29,8 @@
       "stat2Label": "AI 智能体就绪",
       "stat3Value": "MIT",
       "stat3Label": "开源许可"
-    }
+    },
+    "submittedMsg": "已提交审核"
   },
   "features": {
     "eyebrow": "功能特性",

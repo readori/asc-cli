@@ -29,7 +29,8 @@
       "stat2Label": "Sẵn sàng cho AI",
       "stat3Value": "MIT",
       "stat3Label": "Mã nguồn mở"
-    }
+    },
+    "submittedMsg": "Đã gửi để xem xét"
   },
   "features": {
     "eyebrow": "Tính năng",

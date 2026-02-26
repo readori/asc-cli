@@ -29,7 +29,8 @@
       "stat2Label": "Prêt pour les agents IA",
       "stat3Value": "MIT",
       "stat3Label": "Open Source"
-    }
+    },
+    "submittedMsg": "Soumis pour révision"
   },
   "features": {
     "eyebrow": "Fonctionnalités",
