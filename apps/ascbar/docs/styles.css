@@ -450,3 +450,115 @@ body {
 .nav-card-body h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
 .nav-card-body p  { font-size:13px; color:var(--text-secondary); line-height:1.4; }
 .nav-card-arrow { margin-left:auto; color:var(--text-tertiary); font-size:20px; }
+
+/* ================================================================
+   Light mode — overrides dark defaults
+   Matches LightTheme.swift: white cards, near-black text, no orbs
+   ================================================================ */
+
+html[data-theme="light"] {
+  --bg-base:       #f7f7f8;
+  --bg-card:       rgba(0,0,0,0.045);
+  --bg-card-hover: rgba(0,0,0,0.075);
+  --bg-input:      rgba(0,0,0,0.05);
+  --border:        rgba(0,0,0,0.09);
+  --border-focus:  rgba(0,0,0,0.16);
+
+  --text-primary:   rgba(26,26,31,0.92);
+  --text-secondary: rgba(102,102,112,1);
+  --text-tertiary:  rgba(158,158,166,1);
+  --text-mono:      #007acc;
+
+  --accent:  #007af9;
+  --green:   #1cb255;
+  --orange:  #d97b00;
+  --red:     #e03030;
+  --purple:  #7b35d9;
+  --yellow:  #c8a800;
+  --cyan:    #0088cc;
+
+  /* hide background orbs */
+  --orb1: transparent;
+  --orb2: transparent;
+}
+
+html[data-theme="light"] body {
+  background: #e8e8ed;
+}
+
+/* Popover: lighter shadow, flip inset highlight */
+html[data-theme="light"] .popover {
+  box-shadow: 0 8px 40px rgba(0,0,0,.13), 0 0 0 0.5px rgba(0,0,0,.08) inset;
+}
+
+/* Page title: white→invisible on light bg; flip to dark gradient */
+html[data-theme="light"] .page-header h1 {
+  background: linear-gradient(135deg,#1a1a1f 0%,rgba(26,26,31,.55) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Section / row dividers that hard-code white alpha */
+html[data-theme="light"] .sub-header       { border-bottom-color: rgba(0,0,0,.09); }
+html[data-theme="light"] .row-label-line   { background: rgba(0,0,0,.09); }
+html[data-theme="light"] .divider          { background: rgba(0,0,0,.09); }
+html[data-theme="light"] .section-divider-line { background: rgba(0,0,0,.09); }
+html[data-theme="light"] .pills-row        { border-bottom-color: rgba(0,0,0,.09); }
+html[data-theme="light"] .pop-header       { border-bottom-color: rgba(0,0,0,.09); }
+html[data-theme="light"] .action-bar       { border-top-color: rgba(0,0,0,.09); }
+
+/* Row-level separators */
+html[data-theme="light"] .detail-row   { border-bottom-color: rgba(0,0,0,.07); }
+html[data-theme="light"] .check-row    { border-bottom-color: rgba(0,0,0,.07); }
+html[data-theme="light"] .notif-item   { border-bottom-color: rgba(0,0,0,.07); }
+html[data-theme="light"] .settings-row { border-bottom-color: rgba(0,0,0,.07); }
+
+/* Small surfaces that use white-on-dark tinting */
+html[data-theme="light"] .vc-platform  { background: rgba(0,0,0,.07); color: var(--text-tertiary); }
+html[data-theme="light"] .us-icon.pending { background: rgba(0,0,0,.07); }
+html[data-theme="light"] .progress-track  { background: rgba(0,0,0,.09); }
+
+/* Toggle (off state) */
+html[data-theme="light"] .toggle.off { background: rgba(0,0,0,.18); }
+
+/* Skeleton shimmer */
+html[data-theme="light"] .skeleton {
+  background: linear-gradient(90deg,rgba(0,0,0,.04) 0%,rgba(0,0,0,.09) 50%,rgba(0,0,0,.04) 100%);
+  background-size: 200% 100%;
+}
+
+/* Code snippet */
+html[data-theme="light"] .code-snippet {
+  background: rgba(0,0,0,.05);
+  border-color: rgba(0,122,204,.22);
+  color: var(--text-mono);
+}
+
+/* Insight / summary box */
+html[data-theme="light"] .insight-box {
+  background: rgba(0,0,0,.03);
+  border-color: rgba(0,0,0,.09);
+}
+
+/* Nav card hover border */
+html[data-theme="light"] .nav-card:hover { border-color: rgba(0,0,0,.18); }
+
+/* ── Theme toggle button (fixed, top-right) ── */
+#theme-toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 1000;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, border-color .15s, color .15s;
+  padding: 0;
+}
