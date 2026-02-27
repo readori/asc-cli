@@ -273,7 +273,15 @@ IAP_ID=$(asc iap create \
 asc iap-localizations create --iap-id "$IAP_ID" --locale en-US --name "Gold Coins" --description "In-game currency"
 asc iap-localizations create --iap-id "$IAP_ID" --locale zh-Hans --name "金币" --description "游戏货币"
 
-# 3. Create a subscription group
+# 3. Set pricing (Tier 1 in USA, Apple auto-calculates other territories)
+PRICE_ID=$(asc iap price-points list --iap-id "$IAP_ID" --territory USA \
+  | jq -r '.data[] | select(.customerPrice == "0.99") | .id')
+asc iap prices set --iap-id "$IAP_ID" --base-territory USA --price-point-id "$PRICE_ID"
+
+# 4. Submit for review
+asc iap submit --iap-id "$IAP_ID"
+
+# 5. Create a subscription group
 GROUP_ID=$(asc subscription-groups create \
   --app-id "$APP_ID" \
   --reference-name "Premium Plans" \
@@ -307,13 +315,16 @@ asc subscription-localizations create --subscription-id "$ANNUAL_ID" --locale en
 ## Architecture
 
 ```
-ASCCommand                    Infrastructure                Domain
-──────────────────────────────────────────────────────────────────
-IAPList / IAPCreate           SDKInAppPurchaseRepository   InAppPurchase
-IAPLocalizationsList/Create   SDKIAPLocalizationRepo       InAppPurchaseLocalization
-SubscriptionGroupsList/Create SDKSubscriptionGroupRepo     SubscriptionGroup
-SubscriptionsList/Create      SDKSubscriptionRepository    Subscription
-SubLocalizationsList/Create   SDKSubLocalizationRepo       SubscriptionLocalization
+ASCCommand                       Infrastructure                       Domain
+────────────────────────────────────────────────────────────────────────────
+IAPList / IAPCreate              SDKInAppPurchaseRepository           InAppPurchase
+IAPSubmit                        SDKInAppPurchaseSubmissionRepository InAppPurchaseSubmission
+IAPPricePointsList               SDKInAppPurchasePriceRepository      InAppPurchasePricePoint
+IAPPricesSet                     SDKInAppPurchasePriceRepository      InAppPurchasePriceSchedule
+IAPLocalizationsList/Create      SDKIAPLocalizationRepo               InAppPurchaseLocalization
+SubscriptionGroupsList/Create    SDKSubscriptionGroupRepo             SubscriptionGroup
+SubscriptionsList/Create         SDKSubscriptionRepository            Subscription
+SubLocalizationsList/Create      SDKSubLocalizationRepo               SubscriptionLocalization
 ```
 
 All Infrastructure repositories inject the parent ID from the request parameter since the ASC API does not return it in responses.
@@ -352,7 +363,49 @@ CLI arguments: `consumable`, `non-consumable`, `non-renewing-subscription`
 - `isEditable` — `true` when `MISSING_METADATA`, `REJECTED`, or `DEVELOPER_ACTION_NEEDED`
 - `isPendingReview` — `true` when `WAITING_FOR_REVIEW` or `IN_REVIEW`
 
-**Affordances:** `listLocalizations`, `createLocalization`
+**Affordances:** `listLocalizations`, `createLocalization`, `listPricePoints` (always); `submit` only when `state == .readyToSubmit`
+
+---
+
+### `InAppPurchaseSubmission`
+
+```swift
+public struct InAppPurchaseSubmission: Sendable, Equatable, Identifiable, Codable {
+    public let id: String
+    public let iapId: String          // parent — injected by Infrastructure
+}
+```
+
+**Affordances:** `listLocalizations`
+
+---
+
+### `InAppPurchasePricePoint`
+
+```swift
+public struct InAppPurchasePricePoint: Sendable, Equatable, Identifiable {
+    public let id: String
+    public let iapId: String          // parent — injected by Infrastructure
+    public let territory: String?     // omitted from JSON when nil
+    public let customerPrice: String? // omitted from JSON when nil
+    public let proceeds: String?      // omitted from JSON when nil
+}
+```
+
+**Affordances:** `listPricePoints` (always); `setPrice` only when `territory != nil`
+
+---
+
+### `InAppPurchasePriceSchedule`
+
+```swift
+public struct InAppPurchasePriceSchedule: Sendable, Equatable, Identifiable, Codable {
+    public let id: String
+    public let iapId: String          // parent — injected by Infrastructure
+}
+```
+
+**Affordances:** `listPricePoints`
 
 ---
 
@@ -438,6 +491,11 @@ Sources/Domain/Apps/
 ├── InAppPurchases/
 │   ├── InAppPurchase.swift
 │   ├── InAppPurchaseRepository.swift
+│   ├── InAppPurchaseSubmission.swift
+│   ├── InAppPurchaseSubmissionRepository.swift
+│   ├── InAppPurchasePricePoint.swift
+│   ├── InAppPurchasePriceSchedule.swift
+│   ├── InAppPurchasePriceRepository.swift
 │   └── Localizations/
 │       ├── InAppPurchaseLocalization.swift
 │       └── InAppPurchaseLocalizationRepository.swift
@@ -453,6 +511,8 @@ Sources/Domain/Apps/
 Sources/Infrastructure/Apps/
 ├── InAppPurchases/
 │   ├── SDKInAppPurchaseRepository.swift
+│   ├── SDKInAppPurchaseSubmissionRepository.swift
+│   ├── SDKInAppPurchasePriceRepository.swift
 │   └── Localizations/
 │       └── SDKInAppPurchaseLocalizationRepository.swift
 └── Subscriptions/
@@ -465,7 +525,12 @@ Sources/ASCCommand/Commands/
 ├── IAP/
 │   ├── IAPCommand.swift
 │   ├── IAPList.swift
-│   └── IAPCreate.swift
+│   ├── IAPCreate.swift
+│   ├── IAPSubmit.swift
+│   ├── IAPPricePointsCommand.swift
+│   ├── IAPPricePointsList.swift
+│   ├── IAPPricesCommand.swift
+│   └── IAPPricesSet.swift
 ├── IAPLocalizations/
 │   ├── IAPLocalizationsCommand.swift
 │   ├── IAPLocalizationsList.swift
@@ -488,8 +553,8 @@ Sources/ASCCommand/Commands/
 | File | Change |
 |------|--------|
 | `Sources/ASCCommand/ASC.swift` | Register 6 new command groups |
-| `Sources/ASCCommand/ClientProvider.swift` | 5 new factory methods |
-| `Sources/Infrastructure/Client/ClientFactory.swift` | 5 new factory methods |
+| `Sources/ASCCommand/ClientProvider.swift` | 7 new factory methods |
+| `Sources/Infrastructure/Client/ClientFactory.swift` | 7 new factory methods |
 
 ---
 
@@ -499,6 +564,9 @@ Sources/ASCCommand/Commands/
 |---------|-------------|-------------|
 | `iap list` | `APIEndpoint.v1.apps.id(appId).inAppPurchasesV2.get()` | v1 |
 | `iap create` | `APIEndpoint.v2.inAppPurchases.post(InAppPurchaseV2CreateRequest)` | v2 |
+| `iap submit` | `APIEndpoint.v1.inAppPurchaseSubmissions.post(InAppPurchaseSubmissionCreateRequest)` | v1 |
+| `iap price-points list` | `APIEndpoint.v2.inAppPurchases.id(iapId).pricePoints.get()` | v2 |
+| `iap prices set` | `APIEndpoint.v1.inAppPurchasePriceSchedules.post(InAppPurchasePriceScheduleCreateRequest)` | v1 |
 | `iap-localizations list` | `APIEndpoint.v2.inAppPurchases.id(iapId).inAppPurchaseLocalizations.get()` | v2 |
 | `iap-localizations create` | `APIEndpoint.v1.inAppPurchaseLocalizations.post(InAppPurchaseLocalizationCreateRequest)` | v1 |
 | `subscription-groups list` | `APIEndpoint.v1.apps.id(appId).subscriptionGroups.get()` | v1 |
@@ -548,7 +616,7 @@ Sources/ASCCommand/Commands/
 ```
 
 ```bash
-swift test --filter 'IAPListTests|IAPCreateTests|SubscriptionGroupsListTests|SubscriptionsListTests'
+swift test --filter 'IAPListTests|IAPCreateTests|IAPSubmitTests|IAPPricePointsListTests|IAPPricesSetTests|SubscriptionGroupsListTests|SubscriptionsListTests'
 ```
 
 ---
@@ -557,21 +625,7 @@ swift test --filter 'IAPListTests|IAPCreateTests|SubscriptionGroupsListTests|Sub
 
 Natural next steps:
 
-**Prices** — set pricing tiers via `GET /v1/inAppPurchasePricePoints`, `POST /v1/inAppPurchasePriceSchedules`:
-```swift
-// Domain
-func makeInAppPurchasePriceRepository() -> InAppPurchasePriceRepository
-
-// Command
-asc iap prices set --iap-id <id> --territory US --price-point <id>
-```
-
 **Subscription Introductory Offers** — `POST /v1/subscriptionIntroductoryOffers`:
 ```bash
 asc subscription-offers create --subscription-id <id> --duration ONE_MONTH --mode PAY_UP_FRONT
-```
-
-**Submit IAP for review** — `POST /v1/inAppPurchaseSubmissions`:
-```bash
-asc iap submit --iap-id <id>
 ```

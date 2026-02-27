@@ -76,7 +76,7 @@ $ asc versions list --app-id app-abc
 - **Builds upload** — upload IPA/PKG with 5-step flow; list/get/delete upload records
 - **TestFlight** — list groups; add/remove/import/export testers; distribute builds to groups; update What's New notes
 - **Code signing** — manage bundle IDs, certificates, devices, and provisioning profiles
-- **In-App Purchases** — create and list IAPs (consumable, non-consumable, non-renewing); manage per-locale name and description
+- **In-App Purchases** — create and list IAPs; set per-territory pricing; submit for review; manage per-locale name and description
 - **Subscriptions** — create subscription groups and tiers (weekly–yearly); manage per-locale name and description
 - **Version readiness check** — pre-flight check aggregating all Apple submission requirements
 - **TUI mode** — interactive terminal UI for human browsing

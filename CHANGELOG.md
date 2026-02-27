@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `asc subscriptions create` — create a subscription with period (ONE_WEEK–ONE_YEAR), family sharing, and group level
 - `asc subscription-localizations list` — list per-locale metadata for a subscription
 - `asc subscription-localizations create` — create a per-locale name and description for a subscription
+- `asc iap submit` — submit an in-app purchase for App Store review
+- `asc iap price-points list` — list available price tiers for an IAP, optionally filtered by territory
+- `asc iap prices set` — set the price schedule for an IAP (base territory + auto-pricing for all others)
+- `InAppPurchaseSubmission`, `InAppPurchasePricePoint`, `InAppPurchasePriceSchedule` domain models with CAEOAS affordances
 - `InAppPurchaseState` and `SubscriptionState` enums with semantic booleans (`isApproved`, `isLive`, `isEditable`, `isPendingReview`)
 - CAEOAS affordances on all new models linking to sibling and child commands
 - `asc app-preview-sets list` — list App Store video preview sets for a version localization
