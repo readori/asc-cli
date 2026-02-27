@@ -29,7 +29,9 @@ struct SubscriptionsListTests {
           "data" : [
             {
               "affordances" : {
+                "createIntroductoryOffer" : "asc subscription-offers create --subscription-id sub-1 --duration ONE_MONTH --mode FREE_TRIAL --periods 1",
                 "createLocalization" : "asc subscription-localizations create --subscription-id sub-1 --locale en-US --name <name>",
+                "listIntroductoryOffers" : "asc subscription-offers list --subscription-id sub-1",
                 "listLocalizations" : "asc subscription-localizations list --subscription-id sub-1"
               },
               "groupId" : "grp-1",

@@ -103,7 +103,9 @@ extension Subscription: Codable {
 extension Subscription: AffordanceProviding {
     public var affordances: [String: String] {
         [
+            "createIntroductoryOffer": "asc subscription-offers create --subscription-id \(id) --duration ONE_MONTH --mode FREE_TRIAL --periods 1",
             "createLocalization": "asc subscription-localizations create --subscription-id \(id) --locale en-US --name <name>",
+            "listIntroductoryOffers": "asc subscription-offers list --subscription-id \(id)",
             "listLocalizations": "asc subscription-localizations list --subscription-id \(id)",
         ]
     }

@@ -440,6 +440,28 @@ struct MockRepositoryFactory {
         )
     }
 
+    static func makeSubscriptionIntroductoryOffer(
+        id: String = "offer-1",
+        subscriptionId: String = "sub-1",
+        duration: SubscriptionOfferDuration = .oneMonth,
+        offerMode: SubscriptionOfferMode = .freeTrial,
+        numberOfPeriods: Int = 1,
+        startDate: String? = nil,
+        endDate: String? = nil,
+        territory: String? = nil
+    ) -> SubscriptionIntroductoryOffer {
+        SubscriptionIntroductoryOffer(
+            id: id,
+            subscriptionId: subscriptionId,
+            duration: duration,
+            offerMode: offerMode,
+            numberOfPeriods: numberOfPeriods,
+            startDate: startDate,
+            endDate: endDate,
+            territory: territory
+        )
+    }
+
     static func makeSubscriptionLocalization(
         id: String = "sub-loc-1",
         subscriptionId: String = "sub-1",
