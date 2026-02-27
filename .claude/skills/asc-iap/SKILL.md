@@ -6,10 +6,13 @@ description: |
   (1) Listing IAPs for an app: "asc iap list --app-id ID"
   (2) Creating an IAP: "asc iap create --app-id ID --type consumable|non-consumable|non-renewing-subscription"
   (3) Adding IAP localizations: "asc iap-localizations create --iap-id ID --locale en-US --name 'Gold Coins'"
-  (4) Creating subscription groups: "asc subscription-groups create --app-id ID --reference-name 'Premium'"
-  (5) Creating subscriptions: "asc subscriptions create --group-id ID --period ONE_MONTH"
-  (6) Adding subscription localizations: "asc subscription-localizations create --subscription-id ID --locale en-US --name 'Monthly'"
-  (7) User says "set up IAP", "create in-app purchase", "add subscription tier", "manage subscriptions", "localize IAP"
+  (4) Submitting an IAP for review: "asc iap submit --iap-id ID"
+  (5) Listing IAP price points: "asc iap price-points list --iap-id ID [--territory USA]"
+  (6) Setting IAP pricing: "asc iap prices set --iap-id ID --base-territory USA --price-point-id ID"
+  (7) Creating subscription groups: "asc subscription-groups create --app-id ID --reference-name 'Premium'"
+  (8) Creating subscriptions: "asc subscriptions create --group-id ID --period ONE_MONTH"
+  (9) Adding subscription localizations: "asc subscription-localizations create --subscription-id ID --locale en-US --name 'Monthly'"
+  (10) User says "set up IAP", "create in-app purchase", "add subscription tier", "manage subscriptions", "localize IAP", "submit IAP", "set price"
 ---
 
 # asc In-App Purchases & Subscriptions
@@ -35,6 +38,29 @@ asc iap create \
 ```
 
 **`--type`** values: `consumable`, `non-consumable`, `non-renewing-subscription`
+
+### Submit IAP for Review
+
+```bash
+asc iap submit --iap-id <IAP_ID>
+```
+
+State must be `READY_TO_SUBMIT`. The `submit` affordance appears on `InAppPurchase` only when `state == READY_TO_SUBMIT`.
+
+### IAP Price Points
+
+```bash
+# List available price tiers for an IAP (optionally filtered by territory)
+asc iap price-points list --iap-id <IAP_ID> [--territory USA]
+
+# Set price schedule (base territory; Apple auto-prices all other territories)
+asc iap prices set \
+  --iap-id <IAP_ID> \
+  --base-territory USA \
+  --price-point-id <PRICE_POINT_ID>
+```
+
+Each price point result includes a `setPrice` affordance with the ready-to-run `prices set` command.
 
 ### IAP Localizations
 
@@ -145,7 +171,13 @@ IAP_ID=$(asc iap create \
 asc iap-localizations create --iap-id "$IAP_ID" --locale en-US --name "Gold Coins" --description "In-game currency"
 asc iap-localizations create --iap-id "$IAP_ID" --locale zh-Hans --name "金币"
 
-# 3. Create a subscription group
+# 3. Set pricing and submit
+PRICE_ID=$(asc iap price-points list --iap-id "$IAP_ID" --territory USA \
+  | jq -r '.data[] | select(.customerPrice == "0.99") | .id')
+asc iap prices set --iap-id "$IAP_ID" --base-territory USA --price-point-id "$PRICE_ID"
+asc iap submit --iap-id "$IAP_ID"
+
+# 4. Create a subscription group
 GROUP_ID=$(asc subscription-groups create \
   --app-id "$APP_ID" \
   --reference-name "Premium Plans" \

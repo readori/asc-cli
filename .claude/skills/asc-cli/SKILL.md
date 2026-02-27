@@ -97,6 +97,9 @@ See [api_reference.md](references/api_reference.md) for the underlying App Store
 | **In-App Purchases** | |
 | List IAPs | `asc iap list --app-id <id>` |
 | Create IAP | `asc iap create --app-id <id> --reference-name <n> --product-id <id> --type consumable` |
+| Submit IAP for review | `asc iap submit --iap-id <id>` |
+| List price points | `asc iap price-points list --iap-id <id> [--territory USA]` |
+| Set price | `asc iap prices set --iap-id <id> --base-territory USA --price-point-id <id>` |
 | IAP localizations | `asc iap-localizations list --iap-id <id>` |
 | Add IAP locale | `asc iap-localizations create --iap-id <id> --locale en-US --name <n>` |
 | **Subscriptions** | |

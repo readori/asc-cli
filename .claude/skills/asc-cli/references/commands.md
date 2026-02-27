@@ -170,6 +170,27 @@ asc iap create \
 ```
 **`--type`** values: `consumable`, `non-consumable`, `non-renewing-subscription`
 
+### submit
+```bash
+asc iap submit --iap-id <id>
+```
+Submits the IAP for App Store review. Requires state `READY_TO_SUBMIT`.
+
+### price-points list
+```bash
+asc iap price-points list --iap-id <id> [--territory USA]
+```
+Lists available price tiers. Each result has a `setPrice` affordance with the ready-to-run `asc iap prices set` command.
+
+### prices set
+```bash
+asc iap prices set \
+  --iap-id <id> \
+  --base-territory USA \
+  --price-point-id <id>
+```
+Sets a price schedule. The base territory price is used; Apple auto-calculates all other territories.
+
 ---
 
 ## iap-localizations

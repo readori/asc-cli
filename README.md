@@ -195,6 +195,23 @@ asc testflight testers remove --beta-group-id <id> --tester-id <id>
 asc testflight testers import --beta-group-id <id> --file testers.csv
 asc testflight testers export --beta-group-id <id>
 
+# In-App Purchases
+asc iap list --app-id <id>
+asc iap create --app-id <id> --reference-name <n> --product-id <id> --type consumable
+asc iap submit --iap-id <id>
+asc iap price-points list --iap-id <id> [--territory USA]
+asc iap prices set --iap-id <id> --base-territory USA --price-point-id <id>
+asc iap-localizations list --iap-id <id>
+asc iap-localizations create --iap-id <id> --locale en-US --name <n>
+
+# Subscriptions
+asc subscription-groups list --app-id <id>
+asc subscription-groups create --app-id <id> --reference-name <n>
+asc subscriptions list --group-id <id>
+asc subscriptions create --group-id <id> --name <n> --product-id <id> --period ONE_MONTH
+asc subscription-localizations list --subscription-id <id>
+asc subscription-localizations create --subscription-id <id> --locale en-US --name <n>
+
 # Code Signing
 asc bundle-ids list [--platform ios|macos|universal] [--identifier com.example.app]
 asc bundle-ids create --name "My App" --identifier com.example.app --platform ios
