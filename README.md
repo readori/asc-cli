@@ -341,6 +341,37 @@ Apps that use and support asc-cli development:
   <b>AppNexus for App Store Connect</b>
 </a>
 
+## App Wall
+
+Apps published on the App Store using asc CLI. Your app could be here!
+
+To add your app, edit [`homepage/apps.json`](homepage/apps.json) and open a pull request. Two formats are supported:
+
+**Option A — Developer ID (recommended):** Provide your Apple developer ID and all your apps are loaded automatically from the App Store.
+
+```json
+{
+  "developer": "your-github-handle",
+  "developerId": "1234567890"
+}
+```
+
+Find your developer ID on your App Store developer page:
+`https://apps.apple.com/us/developer/your-name/id<NUMBER>`
+
+**Option B — Specific app URLs:** List individual App Store URLs.
+
+```json
+{
+  "developer": "your-github-handle",
+  "apps": [
+    "https://apps.apple.com/us/app/your-app/idXXXXXXXXX"
+  ]
+}
+```
+
+Both fields can be combined. App Wall entries are displayed live at [asccli.app/#app-wall](https://asccli.app/#app-wall).
+
 ## License
 
 MIT

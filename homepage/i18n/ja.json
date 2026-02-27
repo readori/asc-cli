@@ -13,6 +13,7 @@
     "download": "インストール",
     "github": "GitHub",
     "getApp": "インストール",
+    "appWall": "ショーケース",
     "editor": "エディター"
   },
   "hero": {
@@ -93,6 +94,14 @@
     "title": "App Store Connect のワークフローを自動化",
     "install": "Homebrew でインストール",
     "github": "GitHub でソースを見る"
+  },
+  "appWall": {
+    "eyebrow": "コミュニティ",
+    "title": "アプリショーケース",
+    "subtitle": "asc CLI を使ってApp Storeに公開された実際のアプリです。",
+    "submitCta": "アプリを掲載する",
+    "ctaHint": "homepage/apps.json を編集してPRを送る →",
+    "empty": "まだアプリがありません — 最初に掲載してみましょう！"
   },
   "footer": {
     "description": "App Store Connect 向けオープンソース CLI ツール。Swift で構築。",

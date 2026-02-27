@@ -13,6 +13,7 @@
     "download": "설치",
     "github": "GitHub",
     "getApp": "설치",
+    "appWall": "쇼케이스",
     "editor": "에디터"
   },
   "hero": {
@@ -93,6 +94,14 @@
     "title": "App Store Connect 워크플로우를 자동화하세요",
     "install": "Homebrew로 설치",
     "github": "GitHub에서 소스 보기"
+  },
+  "appWall": {
+    "eyebrow": "커뮤니티",
+    "title": "앱 쇼케이스",
+    "subtitle": "asc CLI를 사용해 App Store에 출시된 실제 앱입니다.",
+    "submitCta": "앱 등록하기",
+    "ctaHint": "homepage/apps.json 수정 후 PR 열기 →",
+    "empty": "아직 등록된 앱이 없습니다 — 첫 번째로 등록해보세요!"
   },
   "footer": {
     "description": "App Store Connect용 오픈소스 CLI 도구. Swift로 빌드됨.",

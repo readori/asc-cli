@@ -11,6 +11,7 @@
     "features": "Features",
     "howItWorks": "Quick Start",
     "download": "Install",
+    "appWall": "Showcase",
     "github": "GitHub",
     "getApp": "Install",
     "editor": "Editor"
@@ -93,6 +94,14 @@
     "title": "Automate your App Store Connect workflow",
     "install": "Install via Homebrew",
     "github": "View Source on GitHub"
+  },
+  "appWall": {
+    "eyebrow": "Community",
+    "title": "App Wall",
+    "subtitle": "Real apps on the App Store published by developers using asc CLI.",
+    "submitCta": "Submit Your App",
+    "ctaHint": "Edit homepage/apps.json and open a pull request →",
+    "empty": "No apps yet — be the first to submit!"
   },
   "footer": {
     "description": "Open-source CLI tool for App Store Connect. Built with Swift.",

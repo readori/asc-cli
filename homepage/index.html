@@ -74,6 +74,7 @@
       <li><a href="#features">Features</a></li>
       <li><a href="#how-it-works">Quick Start</a></li>
       <li><a href="#install">Install</a></li>
+      <li><a href="#app-wall">Showcase</a></li>
       <li><a href="https://asccli.app/editor/" target="_blank" rel="noopener">Editor</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
@@ -370,6 +371,28 @@
     </div>
   </section>
 
+  <!-- App Wall -->
+  <section class="section app-wall-section" id="app-wall">
+    <div class="section-header">
+      <p class="section-eyebrow" data-animate="fade-up">Community</p>
+      <h2 class="section-title" data-animate="fade-up" data-delay="1">App Wall</h2>
+      <p class="section-subtitle" data-animate="fade-up" data-delay="2">Real apps on the App Store published by developers using asc CLI.</p>
+    </div>
+    <div class="app-wall-grid" id="app-wall-grid" data-empty="No apps yet — be the first to submit!">
+      <div class="app-wall-loading" id="app-wall-loading">
+        <span class="app-wall-loading-dot"></span>
+        <span class="app-wall-loading-dot"></span>
+        <span class="app-wall-loading-dot"></span>
+      </div>
+    </div>
+    <div class="app-wall-cta" data-animate="fade-up">
+      <a href="https://github.com/tddworks/asc-cli/blob/main/homepage/apps.json" class="btn btn-secondary" target="_blank" rel="noopener">
+        Submit Your App
+      </a>
+      <p class="app-wall-cta-hint">Edit homepage/apps.json and open a pull request →</p>
+    </div>
+  </section>
+
   <!-- Sponsors -->
   <section class="sponsors-section" id="sponsors">
     <div class="sponsors-inner">
@@ -526,6 +549,92 @@
       });
     }
     function copyInstallCTA(box) { copyInstall(box); }
+
+    // App Wall — fetch apps.json, lookup iTunes metadata, render cards
+    // Supports two modes per entry:
+    //   developerId: auto-fetches ALL apps from that Apple developer
+    //   apps[]:      renders specific app Store URLs only
+    (async function loadAppWall() {
+      const grid = document.getElementById('app-wall-grid');
+      const loading = document.getElementById('app-wall-loading');
+      if (!grid) return;
+      try {
+        const res = await fetch('apps.json');
+        if (!res.ok) throw new Error('not found');
+        const data = await res.json();
+
+        // Phase 1: fetch all apps from developer IDs in parallel
+        const devResults = [];
+        await Promise.all(data.filter(e => e.developerId).map(async ({ developer, developerId }) => {
+          try {
+            const r = await fetch(
+              'https://itunes.apple.com/lookup?id=' + developerId + '&entity=software&limit=200'
+            );
+            const j = await r.json();
+            for (const app of (j.results || [])) {
+              if (app.wrapperType === 'software') {
+                devResults.push({ developer, info: app, url: app.trackViewUrl });
+              }
+            }
+          } catch (_) {}
+        }));
+
+        // Phase 2: batch-fetch specific app URLs
+        const appResults = [];
+        const appEntries = [];
+        for (const { developer, apps } of data) {
+          for (const url of (apps || [])) {
+            const m = url.match(/\/id(\d+)/);
+            if (m) appEntries.push({ developer, appId: m[1], url });
+          }
+        }
+        if (appEntries.length) {
+          const ids = [...new Set(appEntries.map(e => e.appId))].join(',');
+          const lr = await fetch('https://itunes.apple.com/lookup?id=' + ids);
+          const lj = await lr.json();
+          const byId = {};
+          for (const r of (lj.results || [])) byId[String(r.trackId)] = r;
+          for (const entry of appEntries) {
+            const info = byId[entry.appId];
+            if (info) appResults.push({ developer: entry.developer, info, url: entry.url });
+          }
+        }
+
+        // Combine, dedup by trackId (developerId results first)
+        const seen = new Set();
+        const all = [];
+        for (const item of [...devResults, ...appResults]) {
+          const key = String(item.info.trackId);
+          if (!seen.has(key)) { seen.add(key); all.push(item); }
+        }
+
+        loading.remove();
+        if (!all.length) {
+          const empty = document.createElement('span');
+          empty.className = 'app-wall-empty';
+          empty.textContent = grid.dataset.empty || 'No apps yet.';
+          grid.appendChild(empty);
+          return;
+        }
+        for (const { developer, info, url } of all) {
+          const card = document.createElement('a');
+          card.href = url;
+          card.target = '_blank';
+          card.rel = 'noopener';
+          card.className = 'app-card';
+          const name = (info.trackName || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          const dev = developer.replace(/</g,'&lt;');
+          card.innerHTML =
+            '<img class="app-card-icon" src="' + info.artworkUrl100 + '" alt="" loading="lazy">' +
+            '<div class="app-card-name">' + name + '</div>' +
+            '<div class="app-card-dev"><a href="https://github.com/' + dev + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">@' + dev + '</a></div>' +
+            (info.primaryGenreName ? '<div class="app-card-category">' + info.primaryGenreName + '</div>' : '');
+          grid.appendChild(card);
+        }
+      } catch (e) {
+        if (loading) loading.remove();
+      }
+    })();
 
     // Scroll animations
     const observer = new IntersectionObserver((entries) => {

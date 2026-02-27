@@ -13,6 +13,7 @@
     "download": "安装",
     "github": "GitHub",
     "getApp": "安装",
+    "appWall": "应用展示",
     "editor": "编辑器"
   },
   "hero": {
@@ -93,6 +94,14 @@
     "title": "自动化您的 App Store Connect 工作流",
     "install": "通过 Homebrew 安装",
     "github": "在 GitHub 上查看源码"
+  },
+  "appWall": {
+    "eyebrow": "社区",
+    "title": "应用展示",
+    "subtitle": "开发者使用 asc CLI 发布到 App Store 的真实应用。",
+    "submitCta": "提交您的应用",
+    "ctaHint": "编辑 homepage/apps.json 并提交 Pull Request →",
+    "empty": "暂无应用 — 成为第一个提交的开发者！"
   },
   "footer": {
     "description": "开源的 App Store Connect 命令行工具，使用 Swift 构建。",

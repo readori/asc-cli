@@ -13,6 +13,7 @@
     "download": "ติดตั้ง",
     "github": "GitHub",
     "getApp": "ติดตั้ง",
+    "appWall": "ผลงาน",
     "editor": "ตัวแก้ไข"
   },
   "hero": {
@@ -93,6 +94,14 @@
     "title": "ทำให้ workflow App Store Connect ของคุณเป็นอัตโนมัติ",
     "install": "ติดตั้งผ่าน Homebrew",
     "github": "ดูซอร์สโค้ดบน GitHub"
+  },
+  "appWall": {
+    "eyebrow": "ชุมชน",
+    "title": "App Wall",
+    "subtitle": "แอปจริงบน App Store ที่นักพัฒนาเผยแพร่โดยใช้ asc CLI",
+    "submitCta": "ส่งแอปของคุณ",
+    "ctaHint": "แก้ไข homepage/apps.json แล้วเปิด pull request →",
+    "empty": "ยังไม่มีแอป — เป็นคนแรกที่ส่ง!"
   },
   "footer": {
     "description": "เครื่องมือ CLI โอเพนซอร์สสำหรับ App Store Connect สร้างด้วย Swift",

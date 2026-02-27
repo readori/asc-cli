@@ -13,6 +13,7 @@
     "download": "Cài đặt",
     "github": "GitHub",
     "getApp": "Cài đặt",
+    "appWall": "Showcase",
     "editor": "Trình soạn thảo"
   },
   "hero": {
@@ -93,6 +94,14 @@
     "title": "Tự động hóa quy trình App Store Connect của bạn",
     "install": "Cài đặt qua Homebrew",
     "github": "Xem mã nguồn trên GitHub"
+  },
+  "appWall": {
+    "eyebrow": "Cộng đồng",
+    "title": "App Wall",
+    "subtitle": "Ứng dụng thực tế trên App Store được xuất bản bởi các nhà phát triển dùng asc CLI.",
+    "submitCta": "Gửi ứng dụng của bạn",
+    "ctaHint": "Chỉnh sửa homepage/apps.json và mở pull request →",
+    "empty": "Chưa có ứng dụng — hãy là người đầu tiên gửi!"
   },
   "footer": {
     "description": "Công cụ CLI mã nguồn mở cho App Store Connect. Được xây dựng bằng Swift.",
