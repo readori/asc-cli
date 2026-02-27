@@ -440,6 +440,13 @@ struct MockRepositoryFactory {
         )
     }
 
+    static func makeSubscriptionSubmission(
+        id: String = "sub-submit-1",
+        subscriptionId: String = "sub-1"
+    ) -> SubscriptionSubmission {
+        SubscriptionSubmission(id: id, subscriptionId: subscriptionId)
+    }
+
     static func makeSubscriptionIntroductoryOffer(
         id: String = "offer-1",
         subscriptionId: String = "sub-1",

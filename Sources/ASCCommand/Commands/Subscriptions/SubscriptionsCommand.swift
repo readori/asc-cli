@@ -7,6 +7,7 @@ struct SubscriptionsCommand: AsyncParsableCommand {
         subcommands: [
             SubscriptionsList.self,
             SubscriptionsCreate.self,
+            SubscriptionsSubmit.self,
         ]
     )
 }
