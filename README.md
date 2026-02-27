@@ -70,11 +70,15 @@ $ asc versions list --app-id app-abc
 - **Full resource hierarchy** — Apps → Versions → Localizations → Screenshot Sets → Screenshots
 - **Version localizations** — update What's New, description, keywords, and URLs per locale
 - **App info localizations** — read and write per-locale name, subtitle, and privacy policy
-- **Create & submit** — create versions, localizations, screenshot sets; upload screenshots; submit for App Store review
-- **TestFlight** — list beta groups and testers
+- **Screenshots** — create screenshot sets and upload images (3-step ASC upload flow)
+- **Create & submit** — create versions, link builds, check readiness, submit for App Store review
+- **Builds upload** — upload IPA/PKG with 5-step flow; list/get/delete upload records
+- **TestFlight** — list groups; add/remove/import/export testers; distribute builds to groups; update What's New notes
+- **Code signing** — manage bundle IDs, certificates, devices, and provisioning profiles
+- **Version readiness check** — pre-flight check aggregating all Apple submission requirements
 - **TUI mode** — interactive terminal UI for human browsing
 - **Swift 6.2** — strict concurrency, async/await throughout
-- **Clean architecture** — Domain / Infrastructure / Command layers
+- **Clean architecture** — Domain / Infrastructure / Command layers with Chicago School TDD
 
 ## Requirements
 
@@ -140,12 +144,14 @@ asc auth logout
 asc auth check
 
 # Apps & Versions
-asc apps list                                              # list all apps
-asc versions list --app-id <id>                           # list versions for an app
-asc versions create --app-id <id> --version <v> --platform ios
-asc versions submit --version-id <id>                     # submit for App Store review
+asc apps list                                                         # list all apps
+asc versions list --app-id <id>                                       # list versions
+asc versions create --app-id <id> --version <v> --platform ios        # create version
+asc versions check-readiness --version-id <id>                        # pre-flight check
+asc versions set-build --version-id <id> --build-id <id>             # link build
+asc versions submit --version-id <id>                                 # submit for review
 
-# Localizations
+# Version Localizations
 asc version-localizations list --version-id <id>
 asc version-localizations create --version-id <id> --locale zh-Hans
 asc version-localizations update --localization-id <id> --whats-new "Bug fixes"
@@ -162,11 +168,39 @@ asc app-info-localizations list --app-info-id <id>
 asc app-info-localizations create --app-info-id <id> --locale zh-Hans --name "我的应用"
 asc app-info-localizations update --localization-id <id> --name "My App" --subtitle "Do things faster"
 
-# Other
+# Builds
 asc builds list [--app-id <id>]
-asc testflight groups [--app-id <id>]
-asc testflight testers --group-id <id>
-asc tui                                                    # interactive browser
+asc builds upload --app-id <id> --file MyApp.ipa --version 1.0.0 --build-number 42
+asc builds uploads list --app-id <id>
+asc builds uploads get --upload-id <id>
+asc builds uploads delete --upload-id <id>
+asc builds add-beta-group --build-id <id> --beta-group-id <id>
+asc builds remove-beta-group --build-id <id> --beta-group-id <id>
+asc builds update-beta-notes --build-id <id> --locale en-US --notes "What's new"
+
+# TestFlight
+asc testflight groups list [--app-id <id>]
+asc testflight testers list --beta-group-id <id>
+asc testflight testers add --beta-group-id <id> --email user@example.com
+asc testflight testers remove --beta-group-id <id> --tester-id <id>
+asc testflight testers import --beta-group-id <id> --file testers.csv
+asc testflight testers export --beta-group-id <id>
+
+# Code Signing
+asc bundle-ids list [--platform ios|macos|universal] [--identifier com.example.app]
+asc bundle-ids create --name "My App" --identifier com.example.app --platform ios
+asc bundle-ids delete --bundle-id-id <id>
+asc certificates list [--type IOS_DISTRIBUTION]
+asc certificates create --type IOS_DISTRIBUTION --csr-content "$(cat MyApp.certSigningRequest)"
+asc certificates revoke --certificate-id <id>
+asc devices list [--platform ios|macos]
+asc devices register --name "My iPhone" --udid <udid> --platform ios
+asc profiles list [--bundle-id-id <id>] [--type IOS_APP_STORE]
+asc profiles create --name "My Profile" --type IOS_APP_STORE --bundle-id-id <id> --certificate-ids <id>
+asc profiles delete --profile-id <id>
+
+# Interactive
+asc tui                                                               # interactive browser
 ```
 
 ### Agent Workflow Example
@@ -178,25 +212,29 @@ asc auth login --key-id KEY --issuer-id ISSUER --private-key-path ~/.asc/AuthKey
 # 1. Find your app — response includes affordances.listVersions and affordances.listAppInfos
 asc apps list
 
-# 2. List versions for a platform
-asc versions list --app-id APP_ID
+# 2. Upload a build and wait for processing
+asc builds upload --app-id APP_ID --file ./MyApp.ipa --version 1.2.0 --build-number 55 --wait
 
-# 3. Navigate to localizations (command is in the version affordances)
-asc version-localizations list --version-id VERSION_ID
+# 3. Distribute to TestFlight beta group
+GROUP_ID=$(asc testflight groups list --app-id APP_ID | jq -r '.data[0].id')
+BUILD_ID=$(asc builds list --app-id APP_ID | jq -r '.data[0].id')
+asc builds add-beta-group --build-id "$BUILD_ID" --beta-group-id "$GROUP_ID"
+asc builds update-beta-notes --build-id "$BUILD_ID" --locale en-US --notes "What's new in 1.2.0"
 
-# 4. Browse screenshot sets and upload new screenshots
-asc screenshot-sets list --localization-id LOC_ID
+# 4. Prepare the App Store version
+VERSION_ID=$(asc versions list --app-id APP_ID | jq -r '.data[0].id')
+asc versions set-build --version-id "$VERSION_ID" --build-id "$BUILD_ID"
+
+# 5. Update per-locale content
+LOC_ID=$(asc version-localizations list --version-id "$VERSION_ID" | jq -r '.data[0].id')
+asc version-localizations update --localization-id "$LOC_ID" --whats-new "Bug fixes and performance improvements"
 asc screenshots upload --set-id SET_ID --file ./hero.png
 
-# 5. Update What's New text for each locale
-asc version-localizations update --localization-id LOC_ID --whats-new "Bug fixes and performance improvements"
-
-# 6. Update app name / subtitle per locale
-asc app-infos list --app-id APP_ID
-asc app-info-localizations update --localization-id LOC_ID --name "My App" --subtitle "Do things faster"
+# 6. Pre-flight check — affordances.submit appears only when isReadyToSubmit == true
+asc versions check-readiness --version-id "$VERSION_ID" --pretty
 
 # 7. Submit for review
-asc versions submit --version-id VERSION_ID
+asc versions submit --version-id "$VERSION_ID"
 ```
 
 ### Output Formats
@@ -221,9 +259,13 @@ Navigate interactively: **arrow keys** to move, **Enter** to drill in, **Escape*
 Detailed documentation for each feature area:
 
 - [Auth Login](docs/features/auth-login.md) — persistent credential storage, login/logout/check
-- [Version Localizations](docs/features/version-localizations.md) — updating What's New, description, keywords, and URLs
-- [Screenshots](docs/features/screenshots.md) — listing, creating sets, uploading images
-- [App Info Localizations](docs/features/app-info-localizations.md) — managing per-locale name, subtitle, and privacy policy
+- [Version Localizations](docs/features/version-localizations.md) — What's New, description, keywords, and URLs
+- [Screenshots](docs/features/screenshots.md) — screenshot sets and image uploads
+- [App Info Localizations](docs/features/app-info-localizations.md) — per-locale name, subtitle, and privacy policy
+- [TestFlight](docs/features/testflight.md) — beta groups, tester management, CSV import/export
+- [Builds Upload](docs/features/builds-upload.md) — upload IPA/PKG, TestFlight distribution, beta notes
+- [Code Signing](docs/features/code-signing.md) — bundle IDs, certificates, devices, profiles
+- [Version Check-Readiness](docs/features/version-check-readiness.md) — pre-flight submission checks
 
 ## Development
 

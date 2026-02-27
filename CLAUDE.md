@@ -74,21 +74,33 @@ Commands mirror the App Store Connect API hierarchy exactly:
 ```
 App → AppStoreVersion → AppStoreVersionLocalization → AppScreenshotSet → AppScreenshot
 App → AppInfo → AppInfoLocalization
-App → Build
+App → Build → BetaBuildLocalization
+App → BuildUpload
 App → TestFlight (BetaGroup → BetaTester)
+AppStoreVersion → VersionReadiness
+AppStoreVersion → AppStoreReviewDetail
+CodeSigning: BundleID → Profile
 ```
 
 Domain folders are nested to mirror the resource hierarchy:
 ```
 Domain/
 ├── Apps/                          → App, AppRepository
-│   ├── Versions/                  → AppStoreVersion, AppStoreVersionState, VersionRepository
+│   ├── Versions/                  → AppStoreVersion, AppStoreVersionState, VersionReadiness,
+│   │   │                            VersionRepository, ReviewDetailRepository
 │   │   └── Localizations/         → AppStoreVersionLocalization, VersionLocalizationRepository
-│   │       └── ScreenshotSets/    → AppScreenshotSet, ScreenshotDisplayType, ScreenshotImport, ScreenshotRepository
+│   │       └── ScreenshotSets/    → AppScreenshotSet, ScreenshotDisplayType, ScreenshotRepository
 │   │           └── Screenshots/   → AppScreenshot
 │   ├── AppInfos/                  → AppInfo, AppInfoLocalization, AppInfoRepository
-│   ├── Builds/                    → Build, BuildRepository
+│   ├── Builds/                    → Build, BuildUpload, BetaBuildLocalization,
+│   │                                BuildRepository, BuildUploadRepository, BetaBuildLocalizationRepository
+│   ├── Pricing/                   → PricingRepository
 │   └── TestFlight/                → BetaGroup, BetaTester, TestFlightRepository
+├── CodeSigning/                   → BundleID, Certificate, Device, Profile + their repositories
+│   ├── BundleIDs/                 → BundleID, BundleIDRepository
+│   ├── Certificates/              → Certificate, CertificateRepository
+│   ├── Devices/                   → Device, DeviceRepository
+│   └── Profiles/                  → Profile, ProfileRepository
 ├── Submissions/                   → ReviewSubmission, ReviewSubmissionState, SubmissionRepository
 ├── Auth/                          → AuthCredentials, AuthProvider, AuthStatus, AuthStorage, CredentialSource, AuthError
 └── Shared/                        → AffordanceProviding, APIError, OutputFormat, PaginatedResponse
