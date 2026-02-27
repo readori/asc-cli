@@ -380,6 +380,13 @@ Fields:
 - `x` — X/Twitter handle, links the card to your X profile (optional)
 - `apps` — explicit App Store URLs (optional, used if no `developerId` or to supplement it)
 
+After your PR is merged, run the fetch script to regenerate the static metadata cache, then commit both files:
+
+```bash
+node homepage/fetch-apps-data.js   # fetches iTunes metadata → writes apps-data.json
+node homepage/build-i18n.js        # rebuilds all localized HTML pages
+```
+
 App Wall entries are displayed live at [asccli.app/#app-wall](https://asccli.app/#app-wall).
 
 ## License
