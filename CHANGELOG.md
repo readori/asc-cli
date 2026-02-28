@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `--device-type` flag on `asc app-shots generate` and `asc app-shots translate` — accepts named App Store display type constants (`APP_IPHONE_69`, `APP_IPHONE_67`, `APP_IPAD_PRO_129`, etc.) and automatically sets the correct `--output-width`/`--output-height`; overrides explicit dimension flags when both are provided; all 16 device types supported across iPhone, iPad, Apple TV, Mac, and Apple Vision Pro
+
 ### Fixed
 - `asc app-shots generate` and `asc app-shots translate` now upscale Gemini output to the correct App Store dimensions using CoreGraphics. Gemini returns ~704×1520; the required iPhone 6.9" size is 1320×2868. New `--output-width` (default `1320`) and `--output-height` (default `2868`) flags control the target size for all other device types.
 
