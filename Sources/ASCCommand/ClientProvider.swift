@@ -157,4 +157,8 @@ struct ClientProvider {
         let factory = ClientFactory()
         return try factory.makeSubscriptionIntroductoryOfferRepository(authProvider: authProvider)
     }
+
+    static func makeScreenshotGenerationRepository(apiKey: String, model: String = "gemini-2.0-flash-preview-image-generation") -> any ScreenshotGenerationRepository {
+        GeminiScreenshotGenerationRepository(apiKey: apiKey, model: model)
+    }
 }

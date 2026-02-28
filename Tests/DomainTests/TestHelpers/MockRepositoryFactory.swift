@@ -487,6 +487,46 @@ struct MockRepositoryFactory {
         )
     }
 
+    // MARK: - ScreenshotPlans
+
+    static func makeScreenPlan(
+        appId: String = "app-1",
+        appName: String = "Test App",
+        tagline: String = "Great app for everyone",
+        tone: ScreenTone = .professional,
+        colors: ScreenColors = ScreenColors(primary: "#000000", accent: "#FF0000", text: "#FFFFFF", subtext: "#CCCCCC"),
+        screens: [ScreenConfig] = []
+    ) -> ScreenPlan {
+        ScreenPlan(
+            appId: appId,
+            appName: appName,
+            tagline: tagline,
+            tone: tone,
+            colors: colors,
+            screens: screens
+        )
+    }
+
+    static func makeScreenConfig(
+        index: Int = 0,
+        screenshotFile: String = "screen1.png",
+        heading: String = "Work Smarter",
+        subheading: String = "Organize your tasks effortlessly",
+        layoutMode: LayoutMode = .center,
+        visualDirection: String = "Main dashboard with task list",
+        imagePrompt: String = "Clean dark UI with colorful task cards"
+    ) -> ScreenConfig {
+        ScreenConfig(
+            index: index,
+            screenshotFile: screenshotFile,
+            heading: heading,
+            subheading: subheading,
+            layoutMode: layoutMode,
+            visualDirection: visualDirection,
+            imagePrompt: imagePrompt
+        )
+    }
+
     static func makeProfile(
         id: String = "prof-1",
         name: String = "My Profile",
