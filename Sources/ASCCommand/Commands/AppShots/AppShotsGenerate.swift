@@ -1,6 +1,7 @@
 import ArgumentParser
 import Domain
 import Foundation
+import Infrastructure
 
 struct AppShotsGenerate: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
@@ -26,12 +27,19 @@ struct AppShotsGenerate: AsyncParsableCommand {
     var screenshots: [String] = []
 
     func run() async throws {
-        let resolvedKey = geminiApiKey ?? ProcessInfo.processInfo.environment["GEMINI_API_KEY"]
-        guard let apiKey = resolvedKey, !apiKey.isEmpty else {
-            throw ValidationError("Gemini API key required. Use --gemini-api-key or set GEMINI_API_KEY env var.")
-        }
+        let configStorage = FileAppShotsConfigStorage()
+        let apiKey = try resolveApiKey(configStorage: configStorage)
         let repo = ClientProvider.makeScreenshotGenerationRepository(apiKey: apiKey, model: model)
         print(try await execute(repo: repo))
+    }
+
+    func resolveApiKey(configStorage: any AppShotsConfigStorage) throws -> String {
+        if let key = geminiApiKey, !key.isEmpty { return key }
+        if let key = ProcessInfo.processInfo.environment["GEMINI_API_KEY"], !key.isEmpty { return key }
+        if let config = try configStorage.load(), !config.geminiApiKey.isEmpty { return config.geminiApiKey }
+        throw ValidationError(
+            "Gemini API key required. Use --gemini-api-key, set GEMINI_API_KEY env var, or run:\n  asc app-shots config --gemini-api-key KEY"
+        )
     }
 
     func execute(repo: any ScreenshotGenerationRepository) async throws -> String {
