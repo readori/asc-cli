@@ -7,7 +7,7 @@ description: |
   Use this skill when:
   (1) User asks to "analyze my screenshots for App Store"
   (2) User asks to "create an app shots plan" or "generate screenshot plan"
-  (3) User says "plan my App Store screenshots for app <id>"
+  (3) User says "plan my App Store screenshots for app ID"
   (4) User mentions "asc-app-shots" or asks for screenshot marketing copy planning
 ---
 
@@ -63,7 +63,7 @@ For each screenshot file provided, use your multimodal vision to:
 3. Note the visual style (colors, typography, layout)
 4. Suggest a short heading (3-5 words) and subheading (6-10 words)
 5. Write a `visualDirection` description of the screenshot content
-6. Write an `imagePrompt` for enhancing the image
+6. Write an `imagePrompt` for Gemini image generation — 1-3 sentences describing the full composition: device presentation, text placement, background style, mood, and atmosphere. Include the heading/subheading text in the prompt so Gemini renders it. Example: "Premium App Store screenshot. Uploaded iPhone UI centered on a near-black (#0a0a0a) background with a deep blue radial glow (#3b82f6). Bold heading 'Write. Encrypt. Sync.' at top, subheading 'Beautiful Markdown, fully private' below in muted blue-gray. Cinematic studio lighting, editorial quality."
 
 Choose a `tone` for the app based on the app category and metadata:
 - `minimal` — clean, sparse, functional
@@ -98,13 +98,14 @@ After writing the file, print:
 ```
 ✅ Plan written to app-shots-plan.json
 
-Next step — enhance with Gemini:
+Next step — generate images with Gemini:
   asc app-shots generate \
     --plan app-shots-plan.json \
     --gemini-api-key $GEMINI_API_KEY \
-    --output-file enhanced-plan.json \
-    --pretty \
+    --output-dir app-shots-output \
     <screenshot files...>
+
+Generated PNGs will be saved to app-shots-output/screen-{index}.png
 ```
 
 ## Example invocation
