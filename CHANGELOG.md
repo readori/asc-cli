@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.27] - 2026-02-28
+
 ### Added
 - `asc app-shots translate` — one-shot localization of generated screenshots; reads the English plan + existing `screen-{n}.png` files, sends them to Gemini with per-locale translation instructions, writes `{output-dir}/{locale}/screen-{n}.png`; supports multiple locales in one invocation (`--to zh --to ja --to ko`); locales processed in parallel via `TaskGroup`
 - `asc app-shots generate` — AI-powered App Store screenshot generation using Gemini; reads a `ScreenPlan` JSON + screenshot images, calls Gemini image generation API, writes `screen-{index}.png` files; `--plan` defaults to `.asc/app-shots/app-shots-plan.json`, `--output-dir` defaults to `.asc/app-shots/output`, screenshots auto-discovered from plan directory when not provided — zero-argument happy path: `asc app-shots generate`
@@ -213,7 +217,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.25...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.27...HEAD
+[0.1.27]: https://github.com/tddworks/asc-cli/compare/v0.1.25...v0.1.27
 [0.1.25]: https://github.com/tddworks/asc-cli/compare/v0.1.24...v0.1.25
 [0.1.24]: https://github.com/tddworks/asc-cli/compare/v0.1.23...v0.1.24
 [0.1.23]: https://github.com/tddworks/asc-cli/compare/v0.1.22...v0.1.23
