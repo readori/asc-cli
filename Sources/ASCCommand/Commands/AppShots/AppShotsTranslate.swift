@@ -40,6 +40,9 @@ struct AppShotsTranslate: AsyncParsableCommand {
     @Option(name: .long, help: "Output image height in pixels (default: 2868 — iPhone 6.9\" required)")
     var outputHeight: Int = 2868
 
+    @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_69 (1320×2868), APP_IPHONE_67 (1290×2796), APP_IPAD_PRO_129 (2048×2732)")
+    var deviceType: AppShotsDisplayType?
+
     func run() async throws {
         let configStorage = FileAppShotsConfigStorage()
         let apiKey = try resolveApiKey(configStorage: configStorage)
@@ -57,6 +60,10 @@ struct AppShotsTranslate: AsyncParsableCommand {
     }
 
     func execute(repo: any ScreenshotGenerationRepository) async throws -> String {
+        // Resolve effective dimensions — --device-type overrides explicit --output-width/height
+        let effectiveWidth = deviceType.map { $0.dimensions.width } ?? outputWidth
+        let effectiveHeight = deviceType.map { $0.dimensions.height } ?? outputHeight
+
         guard !to.isEmpty else {
             throw ValidationError("At least one --to locale is required. Example: --to zh --to ja")
         }
@@ -98,7 +105,7 @@ struct AppShotsTranslate: AsyncParsableCommand {
 
                     for (index, data) in images.sorted(by: { $0.key < $1.key }) {
                         let fileURL = localeDirURL.appendingPathComponent("screen-\(index).png")
-                        let resized = resizeImageData(data, toWidth: outputWidth, height: outputHeight)
+                        let resized = resizeImageData(data, toWidth: effectiveWidth, height: effectiveHeight)
                         try resized.write(to: fileURL)
                     }
 

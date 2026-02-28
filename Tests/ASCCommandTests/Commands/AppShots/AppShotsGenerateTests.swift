@@ -173,6 +173,35 @@ struct AppShotsGenerateTests {
         #expect(output.contains("screen-1.png"))
     }
 
+    @Test func `--device-type APP_IPHONE_67 overrides default output dimensions`() async throws {
+        let plan = makePlan(screens: [makeScreen()])
+        let planPath = try writePlanFile(plan)
+        let outputDir = makeTempOutputDir()
+
+        let mockRepo = MockScreenshotGenerationRepository()
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+            .willReturn([0: Self.fakePNG])
+
+        let cmd = try AppShotsGenerate.parse([
+            "--plan", planPath,
+            "--output-dir", outputDir,
+            "--device-type", "APP_IPHONE_67"
+        ])
+        #expect(cmd.deviceType == .iphone67)
+        #expect(cmd.deviceType?.dimensions.width == 1290)
+        #expect(cmd.deviceType?.dimensions.height == 2796)
+
+        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(atPath: outputDir)
+    }
+
+    @Test func `--device-type APP_IPAD_PRO_129 overrides default output dimensions`() async throws {
+        let cmd = try AppShotsGenerate.parse(["--device-type", "APP_IPAD_PRO_129"])
+        #expect(cmd.deviceType == .ipadPro129)
+        #expect(cmd.deviceType?.dimensions.width == 2048)
+        #expect(cmd.deviceType?.dimensions.height == 2732)
+    }
+
     @Test func `generate throws when screenshot file not found`() async throws {
         let plan = makePlan()
         let planPath = try writePlanFile(plan)

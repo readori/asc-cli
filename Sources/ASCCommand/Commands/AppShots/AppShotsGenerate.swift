@@ -31,6 +31,9 @@ struct AppShotsGenerate: AsyncParsableCommand {
     @Option(name: .long, help: "Output image height in pixels (default: 2868 — iPhone 6.9\" required)")
     var outputHeight: Int = 2868
 
+    @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_69 (1320×2868), APP_IPHONE_67 (1290×2796), APP_IPAD_PRO_129 (2048×2732)")
+    var deviceType: AppShotsDisplayType?
+
     @Argument(help: "Screenshot files — omit to auto-discover *.png/*.jpg from the plan's directory")
     var screenshots: [String] = []
 
@@ -51,6 +54,10 @@ struct AppShotsGenerate: AsyncParsableCommand {
     }
 
     func execute(repo: any ScreenshotGenerationRepository) async throws -> String {
+        // Resolve effective dimensions — --device-type overrides explicit --output-width/height
+        let effectiveWidth = deviceType.map { $0.dimensions.width } ?? outputWidth
+        let effectiveHeight = deviceType.map { $0.dimensions.height } ?? outputHeight
+
         // Load plan
         let planURL = URL(fileURLWithPath: plan)
         let planData = try Data(contentsOf: planURL)
@@ -91,7 +98,7 @@ struct AppShotsGenerate: AsyncParsableCommand {
         for (index, data) in images.sorted(by: { $0.key < $1.key }) {
             let fileName = "screen-\(index).png"
             let fileURL = outputDirURL.appendingPathComponent(fileName)
-            let resized = resizeImageData(data, toWidth: outputWidth, height: outputHeight)
+            let resized = resizeImageData(data, toWidth: effectiveWidth, height: effectiveHeight)
             try resized.write(to: fileURL)
             entries.append((index: index, path: fileURL.path))
         }

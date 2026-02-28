@@ -261,6 +261,20 @@ struct AppShotsTranslateTests {
         try? FileManager.default.removeItem(atPath: outputBase)
     }
 
+    @Test func `--device-type APP_IPHONE_67 overrides default output dimensions`() async throws {
+        let cmd = try AppShotsTranslate.parse(["--device-type", "APP_IPHONE_67", "--to", "zh"])
+        #expect(cmd.deviceType == .iphone67)
+        #expect(cmd.deviceType?.dimensions.width == 1290)
+        #expect(cmd.deviceType?.dimensions.height == 2796)
+    }
+
+    @Test func `--device-type APP_IPAD_PRO_129 overrides default output dimensions`() async throws {
+        let cmd = try AppShotsTranslate.parse(["--device-type", "APP_IPAD_PRO_129", "--to", "ja"])
+        #expect(cmd.deviceType == .ipadPro129)
+        #expect(cmd.deviceType?.dimensions.width == 2048)
+        #expect(cmd.deviceType?.dimensions.height == 2732)
+    }
+
     @Test func `translate table output contains locale column header`() async throws {
         let plan = makePlan(screens: [makeScreen(index: 0)])
         let planPath = try writePlanFile(plan)
