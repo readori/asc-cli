@@ -299,32 +299,32 @@ asc testflight testers list --app-id <id>
 asc app-shots generate \
   --plan app-shots-plan.json \
   --gemini-api-key $GEMINI_API_KEY \
-  [--model gemini-2.0-flash] \
-  [--output-file enhanced-plan.json] \
+  [--model gemini-3.1-flash-image-preview] \
+  [--output-dir app-shots-output] \
   [screen1.png screen2.png ...]
 ```
-Calls Gemini AI (OpenAI-compatible endpoint) to enhance a `ScreenPlan` JSON with compelling headings, subheadings, and image prompts. Does **not** require ASC credentials.
+Calls Gemini image generation API (OpenAI-compatible endpoint) to generate actual PNG background images for each screen in the plan. Each screen's `imagePrompt` + its matched screenshot are sent to Gemini; the returned PNG is saved to `--output-dir`. Does **not** require ASC credentials.
 
 - `--plan` — path to plan JSON written by the `asc-app-shots` skill
 - `--gemini-api-key` — falls back to `GEMINI_API_KEY` env var
-- `--model` — Gemini model (default: `gemini-2.0-flash`)
-- `--output-file` — write enhanced plan to file in addition to stdout
-- positional args — screenshot PNG/JPG files sent as base64 image context
+- `--model` — Gemini image generation model (default: `gemini-3.1-flash-image-preview`)
+- `--output-dir` — directory to write generated PNG files (default: `app-shots-output`; created if needed)
+- positional args — screenshot files matched to screens by filename or index order
 
-Output: `ScreenPlan` JSON with `affordances.generate` for re-running.
+Output: JSON list of generated file paths. Generated images saved as `{output-dir}/screen-{index}.png`.
 
 **Typical two-step workflow:**
 ```bash
-# Step 1 (Claude Code skill): analyze screenshots → write plan
+# Step 1 (Claude Code skill): analyze screenshots → write plan with imagePrompts
 # invoke asc-app-shots skill in Claude Code
 
-# Step 2 (CLI): enhance plan with Gemini
+# Step 2 (CLI): generate images with Gemini
 asc app-shots generate \
   --plan app-shots-plan.json \
   --gemini-api-key $GEMINI_API_KEY \
-  --output-file enhanced-plan.json \
-  --pretty \
+  --output-dir app-shots-output \
   screen1.png screen2.png screen3.png
+# → saves app-shots-output/screen-0.png, screen-1.png, screen-2.png
 ```
 
 ---
