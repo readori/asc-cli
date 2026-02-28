@@ -17,7 +17,7 @@ struct AppShotsGenerate: AsyncParsableCommand {
     var geminiApiKey: String?
 
     @Option(name: .long, help: "Gemini image generation model to use")
-    var model: String = "gemini-2.0-flash-preview-image-generation"
+    var model: String = "gemini-3.1-flash-image-preview"
 
     @Option(name: .long, help: "Directory to write generated PNG images (created if needed)")
     var outputDir: String = "app-shots-output"

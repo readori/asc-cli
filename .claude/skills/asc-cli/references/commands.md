@@ -292,6 +292,43 @@ asc testflight testers list --app-id <id>
 
 ---
 
+## app-shots
+
+### generate
+```bash
+asc app-shots generate \
+  --plan app-shots-plan.json \
+  --gemini-api-key $GEMINI_API_KEY \
+  [--model gemini-2.0-flash] \
+  [--output-file enhanced-plan.json] \
+  [screen1.png screen2.png ...]
+```
+Calls Gemini AI (OpenAI-compatible endpoint) to enhance a `ScreenPlan` JSON with compelling headings, subheadings, and image prompts. Does **not** require ASC credentials.
+
+- `--plan` — path to plan JSON written by the `asc-app-shots` skill
+- `--gemini-api-key` — falls back to `GEMINI_API_KEY` env var
+- `--model` — Gemini model (default: `gemini-2.0-flash`)
+- `--output-file` — write enhanced plan to file in addition to stdout
+- positional args — screenshot PNG/JPG files sent as base64 image context
+
+Output: `ScreenPlan` JSON with `affordances.generate` for re-running.
+
+**Typical two-step workflow:**
+```bash
+# Step 1 (Claude Code skill): analyze screenshots → write plan
+# invoke asc-app-shots skill in Claude Code
+
+# Step 2 (CLI): enhance plan with Gemini
+asc app-shots generate \
+  --plan app-shots-plan.json \
+  --gemini-api-key $GEMINI_API_KEY \
+  --output-file enhanced-plan.json \
+  --pretty \
+  screen1.png screen2.png screen3.png
+```
+
+---
+
 ## auth
 
 ### login

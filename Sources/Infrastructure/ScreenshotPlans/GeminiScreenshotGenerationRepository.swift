@@ -22,7 +22,7 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
 
     public init(
         apiKey: String,
-        model: String = "gemini-2.0-flash-preview-image-generation",
+        model: String = "gemini-3.1-flash-image-preview",
         baseURL: String = "https://generativelanguage.googleapis.com/v1beta/openai",
         httpClient: (any HTTPPerforming)? = nil
     ) {

@@ -140,7 +140,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(
             apiKey: "key",
-            model: "gemini-2.0-flash-preview-image-generation",
+            model: "gemini-3.1-flash-image-preview",
             httpClient: stub
         )
         _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
