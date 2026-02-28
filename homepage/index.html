@@ -264,6 +264,28 @@
       <!-- Panel 1: Content & Media -->
       <div class="feature-tab-panel">
         <div class="feature-grid">
+          <!-- Feature 17: AI Screenshot Generator -->
+          <div class="feature-card">
+            <div class="feature-card-preview">
+              <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/></svg></div>
+              <div class="code-snippet">
+                <div class="t-line"><span class="t-dim"># save key once</span></div>
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc app-shots config \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--gemini-api-key KEY</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-dim"># drop PNGs in .asc/app-shots/ → run</span></div>
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc app-shots generate</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-success">✓</span> <span class="t-dim">screen-0.png  ← hero</span></div>
+                <div class="t-line"><span class="t-success">✓</span> <span class="t-dim">screen-1.png  ← standard</span></div>
+              </div>
+            </div>
+            <div class="feature-card-content">
+              <h3 class="feature-card-title">AI Screenshot Generator</h3>
+              <p class="feature-card-description">Drop screenshots in .asc/app-shots/, run asc app-shots generate — Gemini AI creates polished hero and standard marketing images in parallel. Save your Gemini key once with asc app-shots config.</p>
+            </div>
+          </div>
+
           <!-- Feature 7: Version Localizations -->
           <div class="feature-card">
             <div class="feature-card-preview">
