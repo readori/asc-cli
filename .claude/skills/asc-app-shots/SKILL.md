@@ -47,18 +47,31 @@ Ask the user for (skip if already provided):
 
 ## Step 3 — Fetch App Store metadata
 
-Run these commands and extract the fields:
+Run each command as a single direct pipe — never `cat` intermediate files.
+
+Our `asc` CLI **flattens all fields to the top level** (no `.attributes` wrapper).
 
 ```bash
-# 1. App name + tagline (subtitle)
-APP_INFO_ID=$(asc app-infos list --app-id <APP_ID> | jq -r '.data[0].id')
-asc app-info-localizations list --app-info-id "$APP_INFO_ID"
-# → appName from .name, tagline from .subtitle (fallback: empty string)
+# 1. List apps — fields: id, name, bundleId, primaryLocale, sku
+asc apps list | jq '.data[] | {id, name}'
 
-# 2. Full description + keywords
-asc version-localizations list --version-id <VERSION_ID>
-# → description from .description (for locale), keywords from .keywords
+# 2. App info ID + localization — fields: id, locale, name, subtitle, privacyPolicyUrl, appInfoId
+APP_INFO_ID=$(asc app-infos list --app-id <APP_ID> | jq -r '.data[0].id')
+asc app-info-localizations list --app-info-id "$APP_INFO_ID" \
+  | jq '.data[] | select(.locale == "<LOCALE>") | {name, subtitle}'
+
+# 3. Version ID (if not already known) — use first result
+VERSION_ID=$(asc versions list --app-id <APP_ID> | jq -r '.data[0].id')
+
+# 4. Version localization — fields: id, locale, description, keywords, marketingUrl, supportUrl, versionId
+asc version-localizations list --version-id "$VERSION_ID" \
+  | jq '.data[] | select(.locale == "<LOCALE>") | {description, keywords}'
 ```
+
+Extract:
+- `appName` ← `.name`; `tagline` ← `.subtitle` (use empty string if null)
+- `appDescription` ← summarize `.description` to 2-3 sentences (see below)
+- `keywords` for reference only (not written to the plan)
 
 **Summarize `appDescription`** from the full `.description`:
 - Write 2-3 focused sentences capturing the app's **purpose** and **target audience**
@@ -138,44 +151,49 @@ Choose based on app category + metadata:
 
 ## Step 5 — Write plan file
 
-Combine metadata + vision analysis into `app-shots-plan.json` (see `references/plan-schema.md` for schema).
+Combine metadata + vision analysis into `app-shots-plan.json`.
 
-Use the Write tool to save the file in the current directory (or alongside the screenshots if in a subdirectory).
+**CRITICAL: The root JSON key is `appId` (not `id`).** See `references/plan-schema.md` for the full schema.
+
+Use the Write tool to save the file alongside the screenshots.
 
 ---
 
-## Step 6 — Print next step
+## Step 6 — Auto-run generate (do NOT stop and wait)
 
-Use the correct `asc` command form detected in Step 1:
+After writing the plan, **immediately run `asc app-shots generate`** — do not print instructions and wait for the user to say "continue".
 
+Resolve the Gemini API key:
+1. Check `$GEMINI_API_KEY` env var — if set, use it
+2. If not set, ask the user once: "Please provide your Gemini API key"
+
+Then run:
+```bash
+asc app-shots generate \
+  --plan <plan-file-path> \
+  --gemini-api-key <key> \
+  --model gemini-3.1-flash-image-preview \
+  --output-dir <screenshots-dir>/output \
+  <screenshot files...>
 ```
-✅ Plan written to app-shots-plan.json
 
-Next step — generate marketing screenshots with Gemini:
-  asc app-shots generate \
-    --plan app-shots-plan.json \
-    --gemini-api-key $GEMINI_API_KEY \
-    --output-dir app-shots-output \
-    <screenshot files...>
+(Use `swift run asc` if `asc` is not installed globally, as detected in Step 1.)
 
-Generated PNGs → app-shots-output/screen-0.png, screen-1.png, ...
-```
-
-(Replace `asc` with `swift run asc` if the CLI is not installed globally.)
+After generation completes, show the paths of the generated PNG files.
 
 ---
 
 ## Example invocation
 
-User: "Plan App Store screenshots for app 6736834466, version v123. Screenshots: screen1.png screen2.png"
+User: "Plan App Store screenshots for app 6736834466. Screenshots: screen1.png screen2.png"
 
 Claude:
-1. Runs `which asc` → not found → will use `swift run asc` for all commands
-2. Runs `swift run asc app-infos list --app-id 6736834466` → gets `appInfoId`
-3. Runs `swift run asc app-info-localizations list --app-info-id <id>` → `appName`, `tagline`
-4. Runs `swift run asc version-localizations list --version-id v123` → full `description`
-5. Summarizes description → `appDescription` (2-3 sentences, ≤200 chars)
-6. Reads `screen1.png`, `screen2.png` with vision → extracts `colors`, builds per-screen configs
-7. Generates `ScreenPlan` JSON with 2 screens (index 0 = hero, index 1 = standard)
-8. Writes `app-shots-plan.json`
-9. Prints generate command with correct `asc` / `swift run asc` form
+1. `which asc` → not found → uses `swift run asc`
+2. `swift run asc app-infos list --app-id 6736834466` → appInfoId
+3. `swift run asc app-info-localizations list ...` → appName, tagline
+4. `swift run asc version-localizations list ...` → description
+5. Summarizes description → appDescription
+6. Reads screen1.png, screen2.png with vision → colors + per-screen configs
+7. Writes `app-shots-plan.json` with `appId` key
+8. Checks `$GEMINI_API_KEY` → set → runs generate immediately
+9. Shows generated PNG paths

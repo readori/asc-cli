@@ -27,11 +27,12 @@ asc app-info-localizations list --app-info-id <APP_INFO_ID> [--locale en-US]
 # Returns: id, locale, name, subtitle, privacyPolicyUrl
 ```
 
-## Get version localizations (description, keywords, whatsNew)
+## Get version localizations (description, keywords)
 
 ```bash
 asc version-localizations list --version-id <VERSION_ID> [--pretty]
-# Returns: id, locale, whatsNew, description, keywords, marketingUrl
+# Returns: id, locale, description, keywords, marketingUrl, supportUrl, versionId
+# Note: fields are flat — no .attributes wrapper
 ```
 
 ## Filter by locale with jq
@@ -64,7 +65,6 @@ SUBTITLE=$(asc app-info-localizations list --app-info-id "$APP_INFO_ID" \
 VERSION_DATA=$(asc version-localizations list --version-id "$VERSION_ID")
 DESCRIPTION=$(echo "$VERSION_DATA" | jq -r --arg locale "$LOCALE" '.data[] | select(.locale == $locale) | .description // ""')
 KEYWORDS=$(echo "$VERSION_DATA" | jq -r --arg locale "$LOCALE" '.data[] | select(.locale == $locale) | .keywords // ""')
-WHATS_NEW=$(echo "$VERSION_DATA" | jq -r --arg locale "$LOCALE" '.data[] | select(.locale == $locale) | .whatsNew // ""')
 
 echo "App: $APP_NAME ($APP_ID)"
 echo "Subtitle: $SUBTITLE"
