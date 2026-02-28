@@ -1,6 +1,8 @@
 import ArgumentParser
+import CoreGraphics
 import Domain
 import Foundation
+import ImageIO
 import Infrastructure
 
 struct AppShotsGenerate: AsyncParsableCommand {
@@ -22,6 +24,12 @@ struct AppShotsGenerate: AsyncParsableCommand {
 
     @Option(name: .long, help: "Directory to write generated PNG images (default: .asc/app-shots/output)")
     var outputDir: String = ".asc/app-shots/output"
+
+    @Option(name: .long, help: "Output image width in pixels (default: 1320 — iPhone 6.9\" required)")
+    var outputWidth: Int = 1320
+
+    @Option(name: .long, help: "Output image height in pixels (default: 2868 — iPhone 6.9\" required)")
+    var outputHeight: Int = 2868
 
     @Argument(help: "Screenshot files — omit to auto-discover *.png/*.jpg from the plan's directory")
     var screenshots: [String] = []
@@ -78,16 +86,42 @@ struct AppShotsGenerate: AsyncParsableCommand {
         // Generate images (parallel Gemini calls)
         let images = try await repo.generateImages(plan: loadedPlan, screenshotURLs: screenshotURLs)
 
-        // Write each image as screen-{index}.png
+        // Write each image as screen-{index}.png, resized to target App Store dimensions
         var entries: [(index: Int, path: String)] = []
         for (index, data) in images.sorted(by: { $0.key < $1.key }) {
             let fileName = "screen-\(index).png"
             let fileURL = outputDirURL.appendingPathComponent(fileName)
-            try data.write(to: fileURL)
+            let resized = resizeImageData(data, toWidth: outputWidth, height: outputHeight)
+            try resized.write(to: fileURL)
             entries.append((index: index, path: fileURL.path))
         }
 
         return formatOutput(entries: entries)
+    }
+
+    /// Resizes PNG/JPEG data to the given pixel dimensions using CoreGraphics.
+    /// Falls back to the original data if anything fails (e.g. in unit tests with fake PNG bytes).
+    private func resizeImageData(_ data: Data, toWidth width: Int, height: Int) -> Data {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil),
+              let context = CGContext(
+                data: nil, width: width, height: height,
+                bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+              )
+        else { return data }
+
+        context.interpolationQuality = .high
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        guard let resized = context.makeImage() else { return data }
+
+        let mutableData = NSMutableData()
+        guard let dest = CGImageDestinationCreateWithData(mutableData, "public.png" as CFString, 1, nil) else { return data }
+        CGImageDestinationAddImage(dest, resized, nil)
+        guard CGImageDestinationFinalize(dest) else { return data }
+        return mutableData as Data
     }
 
     private func formatOutput(entries: [(index: Int, path: String)]) -> String {

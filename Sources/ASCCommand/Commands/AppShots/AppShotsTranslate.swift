@@ -1,6 +1,8 @@
 import ArgumentParser
+import CoreGraphics
 import Domain
 import Foundation
+import ImageIO
 import Infrastructure
 
 struct AppShotsTranslate: AsyncParsableCommand {
@@ -31,6 +33,12 @@ struct AppShotsTranslate: AsyncParsableCommand {
 
     @Option(name: .long, help: "Directory containing existing generated screenshots (default: .asc/app-shots/output)")
     var sourceDir: String = ".asc/app-shots/output"
+
+    @Option(name: .long, help: "Output image width in pixels (default: 1320 — iPhone 6.9\" required)")
+    var outputWidth: Int = 1320
+
+    @Option(name: .long, help: "Output image height in pixels (default: 2868 — iPhone 6.9\" required)")
+    var outputHeight: Int = 2868
 
     func run() async throws {
         let configStorage = FileAppShotsConfigStorage()
@@ -90,7 +98,8 @@ struct AppShotsTranslate: AsyncParsableCommand {
 
                     for (index, data) in images.sorted(by: { $0.key < $1.key }) {
                         let fileURL = localeDirURL.appendingPathComponent("screen-\(index).png")
-                        try data.write(to: fileURL)
+                        let resized = resizeImageData(data, toWidth: outputWidth, height: outputHeight)
+                        try resized.write(to: fileURL)
                     }
 
                     return (locale: locale, count: images.count, dir: localeDirURL.path)
@@ -104,6 +113,29 @@ struct AppShotsTranslate: AsyncParsableCommand {
 
         localeResults.sort { $0.locale < $1.locale }
         return formatOutput(results: localeResults)
+    }
+
+    private func resizeImageData(_ data: Data, toWidth width: Int, height: Int) -> Data {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil),
+              let context = CGContext(
+                data: nil, width: width, height: height,
+                bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+              )
+        else { return data }
+
+        context.interpolationQuality = .high
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        guard let resized = context.makeImage() else { return data }
+
+        let mutableData = NSMutableData()
+        guard let dest = CGImageDestinationCreateWithData(mutableData, "public.png" as CFString, 1, nil) else { return data }
+        CGImageDestinationAddImage(dest, resized, nil)
+        guard CGImageDestinationFinalize(dest) else { return data }
+        return mutableData as Data
     }
 
     private func buildTranslationPlan(plan: ScreenPlan, targetLocale: String) -> ScreenPlan {
