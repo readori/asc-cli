@@ -34,6 +34,9 @@ struct AppShotsGenerate: AsyncParsableCommand {
     @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_69 (1320×2868), APP_IPHONE_67 (1290×2796), APP_IPAD_PRO_129 (2048×2732)")
     var deviceType: AppShotsDisplayType?
 
+    @Option(name: .long, help: "Path to a reference image whose visual style (colors, typography, layout) Gemini should replicate. Content is not copied — only the aesthetic.")
+    var styleReference: String?
+
     @Argument(help: "Screenshot files — omit to auto-discover *.png/*.jpg from the plan's directory")
     var screenshots: [String] = []
 
@@ -86,12 +89,22 @@ struct AppShotsGenerate: AsyncParsableCommand {
             screenshotURLs.append(fileURL)
         }
 
+        // Resolve optional style reference image
+        let styleReferenceURL: URL? = try {
+            guard let path = styleReference, !path.isEmpty else { return nil }
+            let url = URL(fileURLWithPath: path)
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                throw ValidationError("Style reference file not found: \(path)")
+            }
+            return url
+        }()
+
         // Create output directory
         let outputDirURL = URL(fileURLWithPath: outputDir)
         try FileManager.default.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
 
         // Generate images (parallel Gemini calls)
-        let images = try await repo.generateImages(plan: loadedPlan, screenshotURLs: screenshotURLs)
+        let images = try await repo.generateImages(plan: loadedPlan, screenshotURLs: screenshotURLs, styleReferenceURL: styleReferenceURL)
 
         // Write each image as screen-{index}.png, resized to target App Store dimensions
         var entries: [(index: Int, path: String)] = []

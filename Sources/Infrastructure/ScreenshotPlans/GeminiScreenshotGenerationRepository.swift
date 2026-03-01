@@ -37,7 +37,7 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
 
     // MARK: - Protocol conformance
 
-    public func generateImages(plan: ScreenPlan, screenshotURLs: [URL]) async throws -> [Int: Data] {
+    public func generateImages(plan: ScreenPlan, screenshotURLs: [URL], styleReferenceURL: URL?) async throws -> [Int: Data] {
         // Build app context prefix once — shared across all screen generations
         let appContext = buildAppContext(plan: plan)
 
@@ -56,7 +56,8 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
                 group.addTask {
                     let imageData = try await self.generateSingleImage(
                         prompt: prompt,
-                        screenshotURL: screenshotURL
+                        screenshotURL: screenshotURL,
+                        styleReferenceURL: styleReferenceURL
                     )
                     return (index, imageData)
                 }
@@ -94,17 +95,17 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
         baseURL.contains("generativelanguage.googleapis.com")
     }
 
-    private func generateSingleImage(prompt: String, screenshotURL: URL?) async throws -> Data {
+    private func generateSingleImage(prompt: String, screenshotURL: URL?, styleReferenceURL: URL?) async throws -> Data {
         if isGeminiNativeEndpoint {
-            return try await generateNativeGemini(prompt: prompt, screenshotURL: screenshotURL)
+            return try await generateNativeGemini(prompt: prompt, screenshotURL: screenshotURL, styleReferenceURL: styleReferenceURL)
         } else {
-            return try await generateOpenAICompat(prompt: prompt, screenshotURL: screenshotURL)
+            return try await generateOpenAICompat(prompt: prompt, screenshotURL: screenshotURL, styleReferenceURL: styleReferenceURL)
         }
     }
 
     // MARK: - Native Gemini generateContent API
 
-    private func generateNativeGemini(prompt: String, screenshotURL: URL?) async throws -> Data {
+    private func generateNativeGemini(prompt: String, screenshotURL: URL?, styleReferenceURL: URL?) async throws -> Data {
         // Strip /openai suffix if present — native API doesn't use it
         var base = baseURL
         if base.hasSuffix("/") { base = String(base.dropLast()) }
@@ -119,8 +120,14 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
             throw APIError.unknown("Could not build Gemini URL")
         }
 
-        // Build parts: optional screenshot inlineData + text prompt
+        // Build parts: optional style reference + optional screenshot + text prompt
         var parts: [[String: Any]] = []
+        if let styleReferenceURL, let refData = try? Data(contentsOf: styleReferenceURL) {
+            let ext = styleReferenceURL.pathExtension.lowercased()
+            let mimeType = (ext == "jpg" || ext == "jpeg") ? "image/jpeg" : "image/png"
+            parts.append(["inlineData": ["mimeType": mimeType, "data": refData.base64EncodedString()]])
+            parts.append(["text": "Use the above image as a STYLE GUIDE only — match its colors, typography, background gradients, and visual composition. Do NOT copy its content."])
+        }
         if let screenshotURL, let imageData = try? Data(contentsOf: screenshotURL) {
             let ext = screenshotURL.pathExtension.lowercased()
             let mimeType = (ext == "jpg" || ext == "jpeg") ? "image/jpeg" : "image/png"
@@ -184,14 +191,24 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
 
     // MARK: - OpenAI-compatible Chat Completions (non-Gemini endpoints)
 
-    private func generateOpenAICompat(prompt: String, screenshotURL: URL?) async throws -> Data {
-        var base = baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
+    private func generateOpenAICompat(prompt: String, screenshotURL: URL?, styleReferenceURL: URL?) async throws -> Data {
+        let base = baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
         let urlString = base.hasSuffix("/chat/completions") ? base : "\(base)/chat/completions"
         guard let url = URL(string: urlString) else {
             throw APIError.unknown("Invalid URL: \(urlString)")
         }
 
         var messageContent: [[String: Any]] = []
+        if let styleReferenceURL, let refData = try? Data(contentsOf: styleReferenceURL) {
+            let ext = styleReferenceURL.pathExtension.lowercased()
+            let mimeType = (ext == "jpg" || ext == "jpeg") ? "image/jpeg" : "image/png"
+            let base64 = refData.base64EncodedString()
+            messageContent.append([
+                "type": "image_url",
+                "image_url": ["url": "data:\(mimeType);base64,\(base64)"]
+            ])
+            messageContent.append(["type": "text", "text": "Use the above image as a STYLE GUIDE only — match its colors, typography, background gradients, and visual composition. Do NOT copy its content."])
+        }
         if let screenshotURL, let imageData = try? Data(contentsOf: screenshotURL) {
             let ext = screenshotURL.pathExtension.lowercased()
             let mimeType = (ext == "jpg" || ext == "jpeg") ? "image/jpeg" : "image/png"

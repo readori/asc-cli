@@ -111,7 +111,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://generativelanguage.googleapis.com/v1beta/openai",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
 
         // Must use native endpoint, not /chat/completions
         let url = stub.lastRequest?.url?.absoluteString ?? ""
@@ -131,7 +131,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://generativelanguage.googleapis.com/v1beta/openai",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url == "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=my-key")
@@ -142,7 +142,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
         stub.response = (makeNativeGeminiImageResponse(), makeHTTPResponse())
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "test-key", httpClient: stub)
-        let results = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+        let results = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
 
         #expect(results.count == 1)
         #expect(results[0] != nil)
@@ -156,7 +156,8 @@ struct GeminiScreenshotGenerationRepositoryTests {
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
         _ = try await repo.generateImages(
             plan: makeSingleScreenPlan(imagePrompt: "Dark navy with glowing accents"),
-            screenshotURLs: []
+            screenshotURLs: [],
+            styleReferenceURL: nil
         )
 
         let bodyData = stub.lastRequest?.httpBody ?? Data()
@@ -175,7 +176,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             model: "gemini-3.1-flash-image-preview",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url.contains("gemini-3.1-flash-image-preview"))
@@ -187,7 +188,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "bad-key", httpClient: stub)
         do {
-            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
             Issue.record("Expected error to be thrown")
         } catch let error as Domain.APIError {
             if case .unknown(let msg) = error {
@@ -205,7 +206,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
         do {
-            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
             Issue.record("Expected error to be thrown")
         } catch let error as Domain.APIError {
             if case .unknown(let msg) = error {
@@ -225,7 +226,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
         )
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
-        let results = try await repo.generateImages(plan: emptyPlan, screenshotURLs: [])
+        let results = try await repo.generateImages(plan: emptyPlan, screenshotURLs: [], styleReferenceURL: nil)
 
         #expect(results.isEmpty)
     }
@@ -241,10 +242,35 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://api.openai.com/v1",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [])
+        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url.contains("chat/completions"))
         #expect(stub.lastRequest?.value(forHTTPHeaderField: "Authorization") == "Bearer sk-test")
+    }
+
+    @Test func `generateImages includes style reference image and instruction before screenshot`() async throws {
+        let stub = StubHTTPClient()
+        stub.response = (makeNativeGeminiImageResponse(), makeHTTPResponse())
+
+        // Write a real temp PNG as the style reference
+        let refDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gemini-ref-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: refDir, withIntermediateDirectories: true)
+        let refFile = refDir.appendingPathComponent("style.png")
+        try fakePNGData.write(to: refFile)
+        defer { try? FileManager.default.removeItem(at: refDir) }
+
+        let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
+        _ = try await repo.generateImages(
+            plan: makeSingleScreenPlan(),
+            screenshotURLs: [],
+            styleReferenceURL: refFile
+        )
+
+        let bodyData = stub.lastRequest?.httpBody ?? Data()
+        let bodyString = String(data: bodyData, encoding: .utf8) ?? ""
+        #expect(bodyString.contains("STYLE GUIDE"))
+        #expect(bodyString.contains("Do NOT copy its content"))
     }
 }

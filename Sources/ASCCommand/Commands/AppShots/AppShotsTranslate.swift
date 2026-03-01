@@ -43,6 +43,9 @@ struct AppShotsTranslate: AsyncParsableCommand {
     @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_69 (1320×2868), APP_IPHONE_67 (1290×2796), APP_IPAD_PRO_129 (2048×2732)")
     var deviceType: AppShotsDisplayType?
 
+    @Option(name: .long, help: "Path to a reference image whose visual style (colors, typography, layout) Gemini should replicate. Content is not copied — only the aesthetic.")
+    var styleReference: String?
+
     func run() async throws {
         let configStorage = FileAppShotsConfigStorage()
         let apiKey = try resolveApiKey(configStorage: configStorage)
@@ -87,6 +90,16 @@ struct AppShotsTranslate: AsyncParsableCommand {
             )
         }
 
+        // Resolve optional style reference image
+        let styleReferenceURL: URL? = try {
+            guard let path = styleReference, !path.isEmpty else { return nil }
+            let url = URL(fileURLWithPath: path)
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                throw ValidationError("Style reference file not found: \(path)")
+            }
+            return url
+        }()
+
         let outputDirURL = URL(fileURLWithPath: outputDir)
 
         // Process each locale in parallel
@@ -97,7 +110,8 @@ struct AppShotsTranslate: AsyncParsableCommand {
                     let translatedPlan = buildTranslationPlan(plan: loadedPlan, targetLocale: locale)
                     let images = try await repo.generateImages(
                         plan: translatedPlan,
-                        screenshotURLs: existingScreenshots
+                        screenshotURLs: existingScreenshots,
+                        styleReferenceURL: styleReferenceURL
                     )
 
                     let localeDirURL = outputDirURL.appendingPathComponent(locale)

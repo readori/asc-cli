@@ -74,7 +74,7 @@ struct AppShotsTranslateTests {
         let outputBase = makeTempDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG, 1: Self.fakePNG])
 
         let cmd = try AppShotsTranslate.parse([
@@ -101,9 +101,9 @@ struct AppShotsTranslateTests {
         let outputBase = makeTempDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsTranslate.parse([
@@ -133,7 +133,7 @@ struct AppShotsTranslateTests {
 
         var capturedPlan: ScreenPlan?
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any).willProduce { capturedPlanArg, _ in
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { capturedPlanArg, _, _ in
             capturedPlan = capturedPlanArg
             return [0: Self.fakePNG]
         }
@@ -163,7 +163,7 @@ struct AppShotsTranslateTests {
 
         var capturedPlan: ScreenPlan?
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any).willProduce { p, _ in
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { p, _, _ in
             capturedPlan = p
             return [0: Self.fakePNG]
         }
@@ -242,7 +242,7 @@ struct AppShotsTranslateTests {
         let outputBase = makeTempDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsTranslate.parse([
@@ -275,6 +275,41 @@ struct AppShotsTranslateTests {
         #expect(cmd.deviceType?.dimensions.height == 2732)
     }
 
+    @Test func `--style-reference passes reference URL to repository during translation`() async throws {
+        let refFile = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ref-\(UUID().uuidString).png")
+        try Self.fakePNG.write(to: refFile)
+        defer { try? FileManager.default.removeItem(at: refFile) }
+
+        let plan = makePlan(screens: [makeScreen(index: 0)])
+        let planPath = try writePlanFile(plan)
+        let sourceDir = try makeSourceDir(count: 1)
+        let outputBase = makeTempDir()
+        defer {
+            try? FileManager.default.removeItem(atPath: planPath)
+            try? FileManager.default.removeItem(atPath: sourceDir)
+            try? FileManager.default.removeItem(atPath: outputBase)
+        }
+
+        var capturedStyleRef: URL?
+        let mockRepo = MockScreenshotGenerationRepository()
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { _, _, styleRef in
+            capturedStyleRef = styleRef
+            return [0: Self.fakePNG]
+        }
+
+        let cmd = try AppShotsTranslate.parse([
+            "--plan", planPath,
+            "--to", "zh",
+            "--source-dir", sourceDir,
+            "--output-dir", outputBase,
+            "--style-reference", refFile.path
+        ])
+        _ = try await cmd.execute(repo: mockRepo)
+
+        #expect(capturedStyleRef == refFile)
+    }
+
     @Test func `translate table output contains locale column header`() async throws {
         let plan = makePlan(screens: [makeScreen(index: 0)])
         let planPath = try writePlanFile(plan)
@@ -282,7 +317,7 @@ struct AppShotsTranslateTests {
         let outputBase = makeTempDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsTranslate.parse([

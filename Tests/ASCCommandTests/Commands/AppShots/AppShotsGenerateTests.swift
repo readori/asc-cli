@@ -61,7 +61,7 @@ struct AppShotsGenerateTests {
         let outputDir = makeTempOutputDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsGenerate.parse(["--plan", planPath, "--output-dir", outputDir])
@@ -80,7 +80,7 @@ struct AppShotsGenerateTests {
         let outputDir = makeTempOutputDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG, 1: Self.fakePNG])
 
         let cmd = try AppShotsGenerate.parse(["--plan", planPath, "--output-dir", outputDir])
@@ -101,7 +101,7 @@ struct AppShotsGenerateTests {
         let outputDir = makeTempOutputDir() + "/nested/dir"
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsGenerate.parse(["--plan", planPath, "--output-dir", outputDir])
@@ -119,7 +119,7 @@ struct AppShotsGenerateTests {
         let outputDir = makeTempOutputDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsGenerate.parse(["--plan", planPath, "--output-dir", outputDir, "--output", "table"])
@@ -162,7 +162,7 @@ struct AppShotsGenerateTests {
 
         let outputDir = tmpDir.appendingPathComponent("output").path
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG, 1: Self.fakePNG])
 
         // No screenshots argument — auto-discovery should find screen1.png and screen2.png
@@ -179,7 +179,7 @@ struct AppShotsGenerateTests {
         let outputDir = makeTempOutputDir()
 
         let mockRepo = MockScreenshotGenerationRepository()
-        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any)
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
             .willReturn([0: Self.fakePNG])
 
         let cmd = try AppShotsGenerate.parse([
@@ -219,5 +219,56 @@ struct AppShotsGenerateTests {
         }
 
         try? FileManager.default.removeItem(atPath: planPath)
+    }
+
+    @Test func `--style-reference passes reference URL to repository`() async throws {
+        // Write a real temp file so the file-existence check passes
+        let refFile = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ref-\(UUID().uuidString).png")
+        try Self.fakePNG.write(to: refFile)
+        defer { try? FileManager.default.removeItem(at: refFile) }
+
+        let plan = makePlan(screens: [makeScreen(index: 0)])
+        let planPath = try writePlanFile(plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(atPath: planPath)
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        var capturedStyleRef: URL?
+        let mockRepo = MockScreenshotGenerationRepository()
+        given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any)
+            .willProduce { _, _, styleRef in
+                capturedStyleRef = styleRef
+                return [0: Self.fakePNG]
+            }
+
+        let cmd = try AppShotsGenerate.parse([
+            "--plan", planPath,
+            "--output-dir", outputDir,
+            "--style-reference", refFile.path
+        ])
+        _ = try await cmd.execute(repo: mockRepo)
+
+        #expect(capturedStyleRef == refFile)
+    }
+
+    @Test func `--style-reference throws when file does not exist`() async throws {
+        let plan = makePlan(screens: [makeScreen()])
+        let planPath = try writePlanFile(plan)
+        defer { try? FileManager.default.removeItem(atPath: planPath) }
+
+        let mockRepo = MockScreenshotGenerationRepository()
+        let cmd = try AppShotsGenerate.parse([
+            "--plan", planPath,
+            "--style-reference", "/nonexistent/style-ref.png"
+        ])
+        do {
+            _ = try await cmd.execute(repo: mockRepo)
+            Issue.record("Expected error to be thrown")
+        } catch {
+            #expect(String(describing: error).contains("Style reference file not found"))
+        }
     }
 }
