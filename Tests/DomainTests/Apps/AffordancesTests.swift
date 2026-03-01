@@ -213,4 +213,21 @@ struct AffordancesTests {
         let preview = MockRepositoryFactory.makePreview(id: "p-1", setId: "set-1")
         #expect(preview.affordances["listPreviews"] == "asc app-previews list --set-id set-1")
     }
+
+    // MARK: - AppInfo affordances (getAgeRating)
+
+    @Test
+    func `app info affordances include getAgeRating command`() {
+        let info = MockRepositoryFactory.makeAppInfo(id: "info-1", appId: "app-abc")
+        #expect(info.affordances["getAgeRating"] == "asc age-rating get --app-info-id info-1")
+    }
+
+    // MARK: - AgeRatingDeclaration affordances
+
+    @Test
+    func `age rating declaration affordances include update and getAgeRating`() {
+        let decl = MockRepositoryFactory.makeAgeRatingDeclaration(id: "decl-1", appInfoId: "info-42")
+        #expect(decl.affordances["update"] == "asc age-rating update --declaration-id decl-1")
+        #expect(decl.affordances["getAgeRating"] == "asc age-rating get --app-info-id info-42")
+    }
 }

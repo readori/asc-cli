@@ -487,6 +487,28 @@ struct MockRepositoryFactory {
         )
     }
 
+    // MARK: - AgeRating
+
+    static func makeAgeRatingDeclaration(
+        id: String = "decl-1",
+        appInfoId: String = "info-1",
+        isAdvertising: Bool? = nil,
+        isGambling: Bool? = nil,
+        violenceRealistic: ContentIntensity? = nil,
+        ageRatingOverride: AgeRatingOverride? = nil,
+        kidsAgeBand: KidsAgeBand? = nil
+    ) -> AgeRatingDeclaration {
+        AgeRatingDeclaration(
+            id: id,
+            appInfoId: appInfoId,
+            isAdvertising: isAdvertising,
+            isGambling: isGambling,
+            violenceRealistic: violenceRealistic,
+            kidsAgeBand: kidsAgeBand,
+            ageRatingOverride: ageRatingOverride
+        )
+    }
+
     // MARK: - ScreenshotPlans
 
     static func makeAppShotsConfig(

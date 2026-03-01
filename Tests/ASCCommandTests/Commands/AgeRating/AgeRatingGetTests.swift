@@ -30,7 +30,7 @@ struct AgeRatingGetTests {
         """)
     }
 
-    @Test func `age-rating get includes non-nil content fields`() async throws {
+    @Test func `age-rating get includes non-nil content fields in output`() async throws {
         let mockRepo = MockAgeRatingDeclarationRepository()
         given(mockRepo).getDeclaration(appInfoId: .any)
             .willReturn(AgeRatingDeclaration(
@@ -44,8 +44,22 @@ struct AgeRatingGetTests {
         let cmd = try AgeRatingGet.parse(["--app-info-id", "info-1", "--pretty"])
         let output = try await cmd.execute(repo: mockRepo)
 
-        #expect(output.contains("\"isAdvertising\" : true"))
-        #expect(output.contains("\"FREQUENT_OR_INTENSE\""))
-        #expect(output.contains("\"EIGHTEEN_PLUS\""))
+        #expect(output == """
+        {
+          "data" : [
+            {
+              "affordances" : {
+                "getAgeRating" : "asc age-rating get --app-info-id info-1",
+                "update" : "asc age-rating update --declaration-id decl-2"
+              },
+              "ageRatingOverride" : "EIGHTEEN_PLUS",
+              "appInfoId" : "info-1",
+              "id" : "decl-2",
+              "isAdvertising" : true,
+              "violenceRealistic" : "FREQUENT_OR_INTENSE"
+            }
+          ]
+        }
+        """)
     }
 }

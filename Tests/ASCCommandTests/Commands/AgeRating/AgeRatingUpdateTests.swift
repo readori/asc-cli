@@ -6,12 +6,12 @@ import Testing
 @Suite
 struct AgeRatingUpdateTests {
 
-    @Test func `age-rating update returns updated declaration`() async throws {
+    @Test func `age-rating update returns updated declaration with exact JSON`() async throws {
         let mockRepo = MockAgeRatingDeclarationRepository()
         given(mockRepo).updateDeclaration(id: .any, update: .any)
             .willReturn(AgeRatingDeclaration(
                 id: "decl-1",
-                appInfoId: "",
+                appInfoId: "info-42",
                 isAdvertising: false,
                 violenceRealistic: ContentIntensity.none
             ))
@@ -24,9 +24,22 @@ struct AgeRatingUpdateTests {
         ])
         let output = try await cmd.execute(repo: mockRepo)
 
-        #expect(output.contains("\"id\" : \"decl-1\""))
-        #expect(output.contains("\"isAdvertising\" : false"))
-        #expect(output.contains("\"NONE\""))
+        #expect(output == """
+        {
+          "data" : [
+            {
+              "affordances" : {
+                "getAgeRating" : "asc age-rating get --app-info-id info-42",
+                "update" : "asc age-rating update --declaration-id decl-1"
+              },
+              "appInfoId" : "info-42",
+              "id" : "decl-1",
+              "isAdvertising" : false,
+              "violenceRealistic" : "NONE"
+            }
+          ]
+        }
+        """)
     }
 
     @Test func `age-rating update passes only specified flags`() async throws {
