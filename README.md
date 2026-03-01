@@ -79,6 +79,7 @@ $ asc versions list --app-id app-abc
 - **In-App Purchases** — create and list IAPs; set per-territory pricing; submit for review; manage per-locale name and description
 - **Subscriptions** — create subscription groups and tiers (weekly–yearly); submit for review; introductory offers (free trial, pay-as-you-go, pay-up-front); manage per-locale name and description
 - **App Shots** — AI-powered screenshot generation and localization; `generate` produces polished marketing PNGs via Gemini; `translate` recreates them in any locale (`--to zh --to ja --to ko`) in one command
+- **Age rating** — get and update age rating declarations; configure content intensity (violence, gambling, sexual content, etc.), boolean flags, kids age band, and regional overrides
 - **Version readiness check** — pre-flight check aggregating all Apple submission requirements
 - **TUI mode** — interactive terminal UI for human browsing
 - **Swift 6.2** — strict concurrency, async/await throughout
@@ -177,6 +178,10 @@ asc app-infos list --app-id <id>
 asc app-info-localizations list --app-info-id <id>
 asc app-info-localizations create --app-info-id <id> --locale zh-Hans --name "我的应用"
 asc app-info-localizations update --localization-id <id> --name "My App" --subtitle "Do things faster"
+
+# Age Rating
+asc age-rating get --app-info-id <id>
+asc age-rating update --declaration-id <id> --violence-realistic NONE --gambling false --kids-age-band NINE_TO_ELEVEN
 
 # Builds
 asc builds list [--app-id <id>]
