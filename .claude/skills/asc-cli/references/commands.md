@@ -45,6 +45,32 @@ Requires version to be in `PREPARE_FOR_SUBMISSION` with all required content pre
 
 ---
 
+## version-review-detail
+
+### get
+```bash
+asc version-review-detail get --version-id <id>
+```
+Fetch the App Store review contact info and demo account settings for a version.
+Returns empty record (with `id: ""`) if review info has never been set.
+
+### update
+```bash
+asc version-review-detail update --version-id <id> \
+  [--contact-first-name <name>] \
+  [--contact-last-name <name>] \
+  [--contact-phone <phone>] \
+  [--contact-email <email>] \
+  [--demo-account-required <true|false>] \
+  [--demo-account-name <username>] \
+  [--demo-account-password <password>] \
+  [--notes <text>]
+```
+Upsert review info: creates a new record if none exists (POST), or patches the existing one (PATCH).
+Set contact info before submitting for review — `asc versions check-readiness` will warn if missing.
+
+---
+
 ## version-localizations
 
 ### list
