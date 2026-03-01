@@ -127,7 +127,63 @@ Options: `--output`, `--pretty`
 ```bash
 asc app-infos list --app-id <id>
 ```
-Returns AppInfo records for an app (typically one per active state). Each AppInfo has affordances for `listLocalizations` and `getAgeRating`.
+Returns AppInfo records for an app (typically one per active state). Each AppInfo has affordances for `listLocalizations`, `getAgeRating`, and `updateCategories`.
+
+### update (categories)
+```bash
+asc app-infos update --app-info-id <id> \
+  [--primary-category <ID>] \
+  [--primary-subcategory-one <ID>] \
+  [--primary-subcategory-two <ID>] \
+  [--secondary-category <ID>] \
+  [--secondary-subcategory-one <ID>] \
+  [--secondary-subcategory-two <ID>]
+```
+Updates category relationships on an AppInfo. All flags are optional (PATCH semantics). Use `asc app-categories list` to look up valid IDs.
+
+---
+
+## app-categories
+
+### list
+```bash
+asc app-categories list [--platform IOS|MAC_OS|TV_OS]
+```
+Lists all available App Store categories and subcategories. Returns a flat list combining top-level categories (`data[]`) and subcategories (`included[]`). Subcategories have a non-nil `parentId`. Use returned IDs with `asc app-infos update`.
+
+---
+
+## app-info-localizations
+
+### list
+```bash
+asc app-info-localizations list --app-info-id <id>
+```
+
+### create
+```bash
+asc app-info-localizations create \
+  --app-info-id <id> \
+  --locale en-US \
+  --name "My App"
+```
+`--name` is required (up to 30 characters).
+
+### update
+```bash
+asc app-info-localizations update --localization-id <id> \
+  [--name "New Name"] \
+  [--subtitle "New Subtitle"] \
+  [--privacy-policy-url "https://example.com/privacy"] \
+  [--privacy-choices-url "https://example.com/choices"] \
+  [--privacy-policy-text "Our privacy policy"]
+```
+All flags optional — PATCH semantics.
+
+### delete
+```bash
+asc app-info-localizations delete --localization-id <id>
+```
 
 ---
 

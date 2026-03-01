@@ -4,16 +4,19 @@ description: |
   Manage App Store app info and per-locale metadata using the `asc` CLI tool.
   Use this skill when:
   (1) Listing app info records: "asc app-infos list --app-id ID"
-  (2) Listing per-locale app metadata: "asc app-info-localizations list --app-info-id ID"
-  (3) Creating a new locale entry: "asc app-info-localizations create --app-info-id ID --locale en-US --name 'My App'"
-  (4) Updating name, subtitle, or privacy URLs: "asc app-info-localizations update --localization-id ID --name 'New Name'"
-  (5) Navigating to age rating: "asc age-rating get --app-info-id ID" (use getAgeRating affordance)
-  (6) User says "update app name", "update subtitle", "set privacy policy URL", "list app info", "manage app metadata"
+  (2) Updating app categories: "asc app-infos update --app-info-id ID --primary-category 6014"
+  (3) Browsing categories: "asc app-categories list --platform IOS"
+  (4) Listing per-locale app metadata: "asc app-info-localizations list --app-info-id ID"
+  (5) Creating a new locale entry: "asc app-info-localizations create --app-info-id ID --locale en-US --name 'My App'"
+  (6) Updating name, subtitle, or privacy URLs: "asc app-info-localizations update --localization-id ID --name 'New Name'"
+  (7) Deleting a locale entry: "asc app-info-localizations delete --localization-id ID"
+  (8) Navigating to age rating: "asc age-rating get --app-info-id ID" (use getAgeRating affordance)
+  (9) User says "update app name", "update subtitle", "set privacy policy URL", "list app info", "manage app metadata", "set category", "update category"
 ---
 
 # asc App Info & Localizations
 
-Manage app-level metadata (name, subtitle, privacy policy URLs) via the `asc` CLI.
+Manage app-level metadata (name, subtitle, privacy policy URLs, categories) via the `asc` CLI.
 
 > **Note**: This is distinct from version-level metadata (`asc version-localizations`) which handles
 > "What's New", description, and keywords. App info localizations hold the persistent app name and subtitle.
@@ -34,14 +37,48 @@ asc app-infos list --app-id <APP_ID> [--pretty]
       "id": "info-abc123",
       "appId": "6746148194",
       "affordances": {
-        "listLocalizations": "asc app-info-localizations list --app-info-id info-abc123",
+        "getAgeRating":      "asc age-rating get --app-info-id info-abc123",
         "listAppInfos":      "asc app-infos list --app-id 6746148194",
-        "getAgeRating":      "asc age-rating get --app-info-id info-abc123"
+        "listLocalizations": "asc app-info-localizations list --app-info-id info-abc123",
+        "updateCategories":  "asc app-infos update --app-info-id info-abc123"
       }
     }
   ]
 }
 ```
+
+## Update App Info (Categories)
+
+Set primary and/or secondary category. All flags are optional (PATCH semantics).
+
+```bash
+asc app-infos update --app-info-id <APP_INFO_ID> \
+  [--primary-category <ID>] \
+  [--primary-subcategory-one <ID>] \
+  [--primary-subcategory-two <ID>] \
+  [--secondary-category <ID>] \
+  [--secondary-subcategory-one <ID>] \
+  [--secondary-subcategory-two <ID>]
+```
+
+## List App Categories
+
+Browse all App Store category IDs (required for `app-infos update`).
+
+```bash
+asc app-categories list [--platform IOS|MAC_OS|TV_OS] [--output table]
+```
+
+**Table output:**
+```
+ID      Platforms     ParentId
+------  ------------  --------
+6014    IOS, MAC_OS   -
+7001    IOS, MAC_OS   6014
+6005    IOS, MAC_OS   -
+```
+
+Categories with a `ParentId` are subcategories of that parent.
 
 ## List Localizations
 
@@ -92,6 +129,14 @@ asc app-info-localizations update \
 | `--privacy-choices-url` | Privacy choices/opt-out URL |
 | `--privacy-policy-text` | Inline privacy policy text |
 
+## Delete Localization
+
+Remove a locale entry permanently.
+
+```bash
+asc app-info-localizations delete --localization-id <LOCALIZATION_ID>
+```
+
 ## CAEOAS Affordances
 
 Every response includes ready-to-run follow-up commands:
@@ -100,9 +145,10 @@ Every response includes ready-to-run follow-up commands:
 ```json
 {
   "affordances": {
-    "listLocalizations": "asc app-info-localizations list --app-info-id <ID>",
+    "getAgeRating":      "asc age-rating get --app-info-id <ID>",
     "listAppInfos":      "asc app-infos list --app-id <APP_ID>",
-    "getAgeRating":      "asc age-rating get --app-info-id <ID>"
+    "listLocalizations": "asc app-info-localizations list --app-info-id <ID>",
+    "updateCategories":  "asc app-infos update --app-info-id <ID>"
   }
 }
 ```
@@ -111,8 +157,18 @@ Every response includes ready-to-run follow-up commands:
 ```json
 {
   "affordances": {
+    "delete":             "asc app-info-localizations delete --localization-id <ID>",
     "listLocalizations":  "asc app-info-localizations list --app-info-id <APP_INFO_ID>",
     "updateLocalization": "asc app-info-localizations update --localization-id <ID>"
+  }
+}
+```
+
+**AppCategory:**
+```json
+{
+  "affordances": {
+    "listCategories": "asc app-categories list"
   }
 }
 ```
@@ -143,7 +199,16 @@ asc app-info-localizations create \
   --locale zh-Hans \
   --name "我的应用"
 
-# 4. Check age rating (navigate via affordance)
+# 3c. Remove an unwanted locale
+asc app-info-localizations delete --localization-id <LOCALIZATION_ID>
+
+# 4. Set app category
+asc app-categories list --platform IOS --output table
+asc app-infos update \
+  --app-info-id "$APP_INFO_ID" \
+  --primary-category 6014
+
+# 5. Check age rating (navigate via affordance)
 asc age-rating get --app-info-id "$APP_INFO_ID"
 ```
 
