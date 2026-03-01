@@ -78,12 +78,20 @@ echo "Keywords: $KEYWORDS"
 # Zero-argument happy path — iPhone 6.9" (APP_IPHONE_69) at 1320×2868 by default
 asc app-shots generate
 
+# Match visual style of a reference screenshot (competitor, inspiration, etc.)
+asc app-shots generate --style-reference ~/Downloads/inspiration.png
+
 # Named device type — preferred over raw dimensions
 asc app-shots generate --device-type APP_IPHONE_69   # 1320×2868 Required
 asc app-shots generate --device-type APP_IPHONE_67   # 1290×2796 Required
 asc app-shots generate --device-type APP_IPHONE_65   # 1242×2688
 asc app-shots generate --device-type APP_IPHONE_55   # 1242×2208
 asc app-shots generate --device-type APP_IPAD_PRO_129  # 2048×2732
+
+# Style reference + device type combined
+asc app-shots generate \
+  --style-reference ~/Downloads/inspiration.png \
+  --device-type APP_IPHONE_69
 
 # Raw dimensions (alternative to --device-type)
 asc app-shots generate --output-width 1290 --output-height 2796
@@ -98,6 +106,8 @@ asc app-shots generate \
 # With explicit API key
 asc app-shots generate --gemini-api-key AIzaSy...
 ```
+
+**`--style-reference`:** Pass any PNG or JPEG as a visual style guide. Gemini replicates its colors, typography, background gradients, and layout patterns — without copying the content. The reference image is sent as the first part in the Gemini request, before the app screenshot and imagePrompt.
 
 **Output size note:** Gemini returns images at ~704×1520. The CLI automatically upscales to the target size using CoreGraphics with `.high` interpolation before saving. `--device-type` overrides `--output-width`/`--output-height` when both are specified.
 
@@ -153,6 +163,7 @@ asc app-shots translate --to fr
 | `--output-width` | `1320` | Output PNG width in pixels |
 | `--output-height` | `2868` | Output PNG height in pixels |
 | `--device-type` | — | Named device type (e.g. `APP_IPHONE_69`) — overrides width/height |
+| `--style-reference` | — | Reference image to replicate visual style (colors, typography, layout) |
 | `--gemini-api-key` | — | API key (flag → env var → config file) |
 | `--model` | `gemini-3.1-flash-image-preview` | Gemini model |
 
