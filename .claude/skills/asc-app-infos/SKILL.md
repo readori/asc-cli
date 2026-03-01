@@ -53,12 +53,9 @@ Set primary and/or secondary category. All flags are optional (PATCH semantics).
 
 ```bash
 asc app-infos update --app-info-id <APP_INFO_ID> \
-  [--primary-category <ID>] \
-  [--primary-subcategory-one <ID>] \
-  [--primary-subcategory-two <ID>] \
-  [--secondary-category <ID>] \
-  [--secondary-subcategory-one <ID>] \
-  [--secondary-subcategory-two <ID>]
+  [--primary-category GAMES] \
+  [--primary-subcategory-one GAMES_ACTION] \
+  [--secondary-category UTILITIES]
 ```
 
 ## List App Categories
@@ -69,16 +66,9 @@ Browse all App Store category IDs (required for `app-infos update`).
 asc app-categories list [--platform IOS|MAC_OS|TV_OS] [--output table]
 ```
 
-**Table output:**
-```
-ID      Platforms     ParentId
-------  ------------  --------
-6014    IOS, MAC_OS   -
-7001    IOS, MAC_OS   6014
-6005    IOS, MAC_OS   -
-```
+**Sample IDs:** `GAMES`, `GAMES_ACTION`, `GAMES_PUZZLE`, `GAMES_ADVENTURE`, `BUSINESS`, `UTILITIES`, `EDUCATION`, `HEALTH_AND_FITNESS`, `ENTERTAINMENT`, `SOCIAL_NETWORKING`, `PRODUCTIVITY`, `FINANCE`, `MUSIC`, `TRAVEL`, `SPORTS`
 
-Categories with a `ParentId` are subcategories of that parent.
+Subcategories follow the pattern `PARENT_SUBTYPE` (e.g. `GAMES_ACTION` is under `GAMES`). The API does not return a `parentId` field.
 
 ## List Localizations
 
@@ -206,7 +196,8 @@ asc app-info-localizations delete --localization-id <LOCALIZATION_ID>
 asc app-categories list --platform IOS --output table
 asc app-infos update \
   --app-info-id "$APP_INFO_ID" \
-  --primary-category 6014
+  --primary-category GAMES \
+  --primary-subcategory-one GAMES_ACTION
 
 # 5. Check age rating (navigate via affordance)
 asc age-rating get --app-info-id "$APP_INFO_ID"

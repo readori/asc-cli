@@ -175,7 +175,7 @@ asc app-previews upload --set-id <id> --file ./preview.mp4 [--preview-frame-time
 
 # App Info
 asc app-infos list --app-id <id>
-asc app-infos update --app-info-id <id> --primary-category 6014 [--secondary-category 6005]
+asc app-infos update --app-info-id <id> --primary-category GAMES --primary-subcategory-one GAMES_ACTION
 asc app-categories list [--platform IOS]
 asc app-info-localizations list --app-info-id <id>
 asc app-info-localizations create --app-info-id <id> --locale zh-Hans --name "我的应用"

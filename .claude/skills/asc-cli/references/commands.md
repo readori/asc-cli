@@ -132,14 +132,14 @@ Returns AppInfo records for an app (typically one per active state). Each AppInf
 ### update (categories)
 ```bash
 asc app-infos update --app-info-id <id> \
-  [--primary-category <ID>] \
-  [--primary-subcategory-one <ID>] \
-  [--primary-subcategory-two <ID>] \
-  [--secondary-category <ID>] \
+  [--primary-category GAMES] \
+  [--primary-subcategory-one GAMES_ACTION] \
+  [--primary-subcategory-two GAMES_ADVENTURE] \
+  [--secondary-category UTILITIES] \
   [--secondary-subcategory-one <ID>] \
   [--secondary-subcategory-two <ID>]
 ```
-Updates category relationships on an AppInfo. All flags are optional (PATCH semantics). Use `asc app-categories list` to look up valid IDs.
+Updates category relationships on an AppInfo. All flags are optional (PATCH semantics). Category IDs are strings like `GAMES`, `GAMES_ACTION`, `BUSINESS`, `UTILITIES` — use `asc app-categories list` to see all valid IDs.
 
 ---
 

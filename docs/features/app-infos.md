@@ -81,8 +81,8 @@ asc app-infos update --app-info-id <APP_INFO_ID> \
 # Set Games as primary, Action as subcategory
 asc app-infos update \
   --app-info-id info-abc123 \
-  --primary-category 6014 \
-  --primary-subcategory-one 7001
+  --primary-category GAMES \
+  --primary-subcategory-one GAMES_ACTION
 ```
 
 ---
@@ -116,13 +116,18 @@ asc app-categories list --platform IOS --output table
 **Table output:**
 
 ```
-ID      Platforms     ParentId
-------  ------------  --------
-6014    IOS, MAC_OS   -
-7001    IOS, MAC_OS   6014
-7002    IOS, MAC_OS   6014
-6005    IOS, MAC_OS   -
+ID                   Platforms                  ParentId
+-------------------  -------------------------  --------
+GAMES                IOS, MAC_OS, TV_OS         -
+GAMES_ACTION         IOS, MAC_OS, TV_OS         -
+GAMES_ADVENTURE      IOS, MAC_OS, TV_OS         -
+GAMES_PUZZLE         IOS, MAC_OS, TV_OS         -
+BUSINESS             IOS, MAC_OS, TV_OS         -
+UTILITIES            IOS, MAC_OS, TV_OS         -
+...
 ```
+
+> **Note**: The API does not return `parentId` for subcategory entries. Subcategories are identifiable by naming convention — `GAMES_ACTION`, `GAMES_PUZZLE`, etc. are subcategories of `GAMES`.
 
 ---
 
@@ -266,8 +271,9 @@ asc app-info-localizations delete --localization-id <LOCALIZATION_ID>
 asc app-categories list --platform IOS --output table
 asc app-infos update \
   --app-info-id "$APP_INFO_ID" \
-  --primary-category 6014 \
-  --secondary-category 6005
+  --primary-category GAMES \
+  --primary-subcategory-one GAMES_ACTION \
+  --secondary-category UTILITIES
 
 # 6. Navigate to age rating from AppInfo affordance
 asc age-rating get --app-info-id "$APP_INFO_ID"
