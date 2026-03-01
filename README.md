@@ -308,7 +308,7 @@ Detailed documentation for each feature area:
 - [Version Localizations](docs/features/version-localizations.md) — What's New, description, keywords, and URLs
 - [Screenshots](docs/features/screenshots.md) — screenshot sets and image uploads
 - [App Previews](docs/features/app-previews.md) — preview sets and video uploads (`.mp4`, `.mov`, `.m4v`)
-- [App Info Localizations](docs/features/app-info-localizations.md) — per-locale name, subtitle, and privacy policy
+- [App Infos](docs/features/app-infos.md) — per-locale name, subtitle, privacy policy, and age rating navigation
 - [TestFlight](docs/features/testflight.md) — beta groups, tester management, CSV import/export
 - [Builds Upload](docs/features/builds-upload.md) — upload IPA/PKG, TestFlight distribution, beta notes
 - [Code Signing](docs/features/code-signing.md) — bundle IDs, certificates, devices, profiles

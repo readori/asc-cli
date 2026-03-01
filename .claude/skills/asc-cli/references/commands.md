@@ -127,7 +127,37 @@ Options: `--output`, `--pretty`
 ```bash
 asc app-infos list --app-id <id>
 ```
-Returns AppInfo records for an app (typically one per active state). Each AppInfo has an affordance for `listLocalizations`.
+Returns AppInfo records for an app (typically one per active state). Each AppInfo has affordances for `listLocalizations` and `getAgeRating`.
+
+---
+
+## age-rating
+
+### get
+```bash
+asc age-rating get --app-info-id <id>
+```
+Returns the full age rating declaration for an app info. Includes all content intensity ratings, boolean flags, kids age band, and regional overrides.
+
+### update
+```bash
+asc age-rating update --declaration-id <id> \
+  [--advertising <bool>] [--gambling <bool>] [--loot-box <bool>] \
+  [--messaging-and-chat <bool>] [--parental-controls <bool>] \
+  [--age-assurance <bool>] [--unrestricted-web-access <bool>] \
+  [--user-generated-content <bool>] [--health-or-wellness <bool>] \
+  [--violence-realistic <NONE|INFREQUENT_OR_MILD|FREQUENT_OR_INTENSE|INFREQUENT|FREQUENT>] \
+  [--violence-cartoon <intensity>] [--violence-realistic-prolonged <intensity>] \
+  [--profanity <intensity>] [--sexual-content <intensity>] \
+  [--sexual-content-graphic <intensity>] [--horror-fear <intensity>] \
+  [--mature-suggestive <intensity>] [--alcohol-tobacco-drugs <intensity>] \
+  [--contests <intensity>] [--gambling-simulated <intensity>] [--guns-weapons <intensity>] \
+  [--medical-treatment <intensity>] \
+  [--kids-age-band <FIVE_AND_UNDER|SIX_TO_EIGHT|NINE_TO_ELEVEN>] \
+  [--age-rating-override <NONE|NINE_PLUS|THIRTEEN_PLUS|SIXTEEN_PLUS|EIGHTEEN_PLUS|UNRATED>] \
+  [--korea-age-rating-override <NONE|FIFTEEN_PLUS|NINETEEN_PLUS>]
+```
+All flags are optional — only provided fields are changed (PATCH semantics).
 
 ---
 
@@ -147,7 +177,12 @@ Creates a new locale entry. `--name` is required (up to 30 characters).
 
 ### update
 ```bash
-asc app-info-localizations update --localization-id <id> [--name <n>] [--subtitle <s>] [--privacy-policy-url <url>]
+asc app-info-localizations update --localization-id <id> \
+  [--name <n>] \
+  [--subtitle <s>] \
+  [--privacy-policy-url <url>] \
+  [--privacy-choices-url <url>] \
+  [--privacy-policy-text <text>]
 ```
 All fields are optional — only provided fields are changed.
 

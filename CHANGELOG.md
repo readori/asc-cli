@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `asc age-rating get --app-info-id <id>` — fetch the full age rating declaration for an app info, including all content intensity ratings, boolean flags, kids age band, and region overrides
 - `asc age-rating update --declaration-id <id> [flags]` — update individual age rating fields via PATCH; supports all 9 boolean flags (`--advertising`, `--gambling`, `--loot-box`, etc.) and 13 intensity ratings (`--violence-realistic`, `--profanity`, `--sexual-content`, etc.) plus `--kids-age-band`, `--age-rating-override`, and `--korea-age-rating-override`
 - `getAgeRating` affordance added to `AppInfo` for agent navigation
+- `--privacy-choices-url` and `--privacy-policy-text` flags on `asc app-info-localizations update` — expose the two remaining updatable privacy fields from the App Store Connect API
 
 ---
 
