@@ -89,7 +89,8 @@ Domain folders are nested to mirror the resource hierarchy:
 Domain/
 ├── Apps/                          → App, AppRepository
 │   ├── Versions/                  → AppStoreVersion, AppStoreVersionState, VersionReadiness,
-│   │   │                            VersionRepository, ReviewDetailRepository
+│   │   │                            VersionRepository, ReviewDetailRepository,
+│   │   │                            AppStoreReviewDetail, ReviewDetailUpdate
 │   │   └── Localizations/         → AppStoreVersionLocalization, VersionLocalizationRepository
 │   │       └── ScreenshotSets/    → AppScreenshotSet, ScreenshotDisplayType, ScreenshotRepository
 │   │           └── Screenshots/   → AppScreenshot
@@ -178,7 +179,7 @@ After every code change — new feature, improvement, or bug fix — update all 
 Key skills to keep in sync:
 - `implement-feature/SKILL.md` — workflow + checklist
 - `asc-cli/references/commands.md` — command reference
-- Feature-specific skills (`asc-testflight`, `asc-builds-upload`, `asc-code-signing`, `asc-check-readiness`, `asc-app-previews`, `asc-app-shots`, etc.)
+- Feature-specific skills (`asc-testflight`, `asc-builds-upload`, `asc-code-signing`, `asc-check-readiness`, `asc-app-previews`, `asc-app-shots`, `asc-review-detail`, etc.)
 
 **`CLAUDE.md`** — update when architecture patterns, file locations, or design rules change.
 
