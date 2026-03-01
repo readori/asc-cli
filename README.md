@@ -231,12 +231,14 @@ asc profiles create --name "My Profile" --type IOS_APP_STORE --bundle-id-id <id>
 asc profiles delete --profile-id <id>
 
 # App Shots (AI Screenshot Generation & Translation)
-asc app-shots config --gemini-api-key KEY                    # save key once
-asc app-shots generate                                        # generate English PNGs at 1320×2868 (iPhone 6.9")
-asc app-shots generate --device-type APP_IPHONE_67            # iPhone 6.7" (1290×2796)
-asc app-shots generate --device-type APP_IPAD_PRO_129         # iPad 13" (2048×2732)
-asc app-shots translate --to zh --to ja                      # localize all screens in parallel
-asc app-shots translate --to ko --device-type APP_IPHONE_67   # translate at iPhone 6.7" size
+asc app-shots config --gemini-api-key KEY                               # save key once
+asc app-shots generate                                                    # generate English PNGs at 1320×2868 (iPhone 6.9")
+asc app-shots generate --device-type APP_IPHONE_67                       # iPhone 6.7" (1290×2796)
+asc app-shots generate --device-type APP_IPAD_PRO_129                    # iPad 13" (2048×2732)
+asc app-shots generate --style-reference ~/Downloads/inspiration.png     # match visual style of reference image
+asc app-shots translate --to zh --to ja                                  # localize all screens in parallel
+asc app-shots translate --to ko --device-type APP_IPHONE_67              # translate at iPhone 6.7" size
+asc app-shots translate --to zh --style-reference ~/Downloads/ref.png    # translate while preserving reference style
 
 # Interactive
 asc tui                                                               # interactive browser

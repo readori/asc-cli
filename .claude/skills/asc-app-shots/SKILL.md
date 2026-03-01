@@ -178,6 +178,12 @@ asc app-shots generate
 
 This reads `.asc/app-shots/app-shots-plan.json`, discovers `*.png/*.jpg` from `.asc/app-shots/`, and writes output to `.asc/app-shots/output/`.
 
+**Optional: `--style-reference`** — if the user provides a reference image (competitor screenshot, inspiration image, previous best design), pass it to replicate its visual style (colors, typography, gradients, layout) without copying the content:
+
+```bash
+asc app-shots generate --style-reference ~/Downloads/inspiration.png
+```
+
 Only pass explicit paths if files are in non-default locations:
 ```bash
 asc app-shots generate \
@@ -217,6 +223,7 @@ for each locale. Outputs go to `{output-dir}/{locale}/screen-{n}.png`.
 - `--source-dir` — where the English PNGs live (default: `.asc/app-shots/output`)
 - `--output-dir` — base output dir; locale subdirs are created automatically
 - `--from` — source locale label, informational (default: `en`)
+- `--style-reference` — same reference image used in `generate`; pass it here too to preserve consistent visual style across all locales
 - Same `--gemini-api-key` / `--model` resolution as `generate`
 
 The translate command modifies each screen's `imagePrompt` with:
