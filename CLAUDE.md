@@ -75,6 +75,7 @@ Commands mirror the App Store Connect API hierarchy exactly:
 App → AppStoreVersion → AppStoreVersionLocalization → AppScreenshotSet → AppScreenshot
 App → AppInfo → AppInfoLocalization
 App → AppInfo → AgeRatingDeclaration
+AppCategory (top-level, not nested under App)
 App → Build → BetaBuildLocalization
 App → BuildUpload
 App → TestFlight (BetaGroup → BetaTester)
@@ -93,6 +94,7 @@ Domain/
 │   │       └── ScreenshotSets/    → AppScreenshotSet, ScreenshotDisplayType, ScreenshotRepository
 │   │           └── Screenshots/   → AppScreenshot
 │   ├── AppInfos/                  → AppInfo, AppInfoLocalization, AppInfoRepository,
+│   │                                AppCategory, AppCategoryRepository,
 │   │                                AgeRatingDeclaration, AgeRatingDeclarationRepository
 │   ├── Builds/                    → Build, BuildUpload, BetaBuildLocalization,
 │   │                                BuildRepository, BuildUploadRepository, BetaBuildLocalizationRepository
@@ -132,7 +134,7 @@ The codebase has two distinct localization concepts with separate repositories:
 | Type | Domain folder | Repository | Commands | Data |
 |------|--------------|------------|----------|------|
 | `AppStoreVersionLocalization` | `Domain/Localizations/` | `VersionLocalizationRepository` | `asc version-localizations *` | whatsNew, description, keywords, screenshots |
-| `AppInfoLocalization` | `Domain/AppInfos/` | `AppInfoRepository` | `asc app-info-localizations *` | name, subtitle, privacyPolicyUrl |
+| `AppInfoLocalization` | `Domain/AppInfos/` | `AppInfoRepository` | `asc app-info-localizations *` | name, subtitle, privacyPolicyUrl, privacyChoicesUrl, privacyPolicyText |
 
 `ScreenshotRepository` (in `Domain/ScreenshotSets/`) handles screenshot sets and screenshot images — **no localization methods**.
 

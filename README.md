@@ -175,9 +175,12 @@ asc app-previews upload --set-id <id> --file ./preview.mp4 [--preview-frame-time
 
 # App Info
 asc app-infos list --app-id <id>
+asc app-infos update --app-info-id <id> --primary-category 6014 [--secondary-category 6005]
+asc app-categories list [--platform IOS]
 asc app-info-localizations list --app-info-id <id>
 asc app-info-localizations create --app-info-id <id> --locale zh-Hans --name "我的应用"
 asc app-info-localizations update --localization-id <id> --name "My App" --subtitle "Do things faster"
+asc app-info-localizations delete --localization-id <id>
 
 # Age Rating
 asc age-rating get --app-info-id <id>
@@ -308,7 +311,7 @@ Detailed documentation for each feature area:
 - [Version Localizations](docs/features/version-localizations.md) — What's New, description, keywords, and URLs
 - [Screenshots](docs/features/screenshots.md) — screenshot sets and image uploads
 - [App Previews](docs/features/app-previews.md) — preview sets and video uploads (`.mp4`, `.mov`, `.m4v`)
-- [App Infos](docs/features/app-infos.md) — per-locale name, subtitle, privacy policy, and age rating navigation
+- [App Infos](docs/features/app-infos.md) — per-locale name, subtitle, privacy policy, category management, and age rating navigation
 - [TestFlight](docs/features/testflight.md) — beta groups, tester management, CSV import/export
 - [Builds Upload](docs/features/builds-upload.md) — upload IPA/PKG, TestFlight distribution, beta notes
 - [Code Signing](docs/features/code-signing.md) — bundle IDs, certificates, devices, profiles
