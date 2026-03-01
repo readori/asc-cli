@@ -146,6 +146,22 @@ public struct ClientFactory: Sendable {
         return SDKAgeRatingDeclarationRepository(client: provider)
     }
 
+    // MARK: - Plugins (no ASC auth needed — local filesystem + subprocess)
+
+    public func makePluginRepository() -> any PluginRepository {
+        LocalPluginRepository()
+    }
+
+    public func makePluginRunner() -> any PluginRunner {
+        ProcessPluginRunner()
+    }
+
+    public func makePluginEventBus() -> any PluginEventBus {
+        let repo = makePluginRepository()
+        let runner = makePluginRunner()
+        return LocalPluginEventBus(pluginRepository: repo, pluginRunner: runner)
+    }
+
     private func makeProvider(authProvider: any AuthProvider) throws -> APIProvider {
         let credentials = try authProvider.resolve()
         let strippedKey = credentials.privateKeyPEM

@@ -567,6 +567,55 @@ struct MockRepositoryFactory {
         )
     }
 
+    // MARK: - Plugins
+
+    static func makePlugin(
+        id: String = "slack-notify",
+        name: String = "slack-notify",
+        version: String = "1.0.0",
+        description: String = "Send Slack notifications for App Store events",
+        author: String? = "Test Author",
+        executablePath: String = "/tmp/slack-notify/run",
+        subscribedEvents: [PluginEvent] = [.buildUploaded, .versionSubmitted],
+        isEnabled: Bool = true
+    ) -> Plugin {
+        Plugin(
+            id: id,
+            name: name,
+            version: version,
+            description: description,
+            author: author,
+            executablePath: executablePath,
+            subscribedEvents: subscribedEvents,
+            isEnabled: isEnabled
+        )
+    }
+
+    static func makePluginEventPayload(
+        event: PluginEvent = .buildUploaded,
+        appId: String? = "app-1",
+        versionId: String? = nil,
+        buildId: String? = "build-1",
+        metadata: [String: String] = [:]
+    ) -> PluginEventPayload {
+        PluginEventPayload(
+            event: event,
+            appId: appId,
+            versionId: versionId,
+            buildId: buildId,
+            timestamp: Date(timeIntervalSince1970: 0),
+            metadata: metadata
+        )
+    }
+
+    static func makePluginResult(
+        success: Bool = true,
+        message: String? = "Notification sent",
+        error: String? = nil
+    ) -> PluginResult {
+        PluginResult(success: success, message: message, error: error)
+    }
+
     static func makeProfile(
         id: String = "prof-1",
         name: String = "My Profile",

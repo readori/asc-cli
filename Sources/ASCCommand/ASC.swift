@@ -35,6 +35,7 @@ struct ASC: AsyncParsableCommand {
             AgeRatingCommand.self,
             AppCategoriesCommand.self,
             VersionReviewDetailCommand.self,
+            PluginsCommand.self,
         ]
     )
 }

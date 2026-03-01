@@ -170,6 +170,20 @@ struct ClientProvider {
         return try factory.makeAgeRatingDeclarationRepository(authProvider: authProvider)
     }
 
+    // MARK: - Plugins
+
+    static func makePluginRepository() -> any PluginRepository {
+        ClientFactory().makePluginRepository()
+    }
+
+    static func makePluginRunner() -> any PluginRunner {
+        ClientFactory().makePluginRunner()
+    }
+
+    static func makePluginEventBus() -> any PluginEventBus {
+        ClientFactory().makePluginEventBus()
+    }
+
     static func makeScreenshotGenerationRepository(apiKey: String, model: String = "gemini-3.1-flash-image-preview") -> any ScreenshotGenerationRepository {
         GeminiScreenshotGenerationRepository(apiKey: apiKey, model: model)
     }
