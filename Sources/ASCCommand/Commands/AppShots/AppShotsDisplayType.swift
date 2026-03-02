@@ -28,8 +28,8 @@ enum AppShotsDisplayType: String, CaseIterable, ExpressibleByArgument {
     var dimensions: (width: Int, height: Int) {
         switch self {
         case .iphone69:       return (1320, 2868)
-        case .iphone67:       return (1284, 2778)
-        case .iphone65:       return (1242, 2688)
+        case .iphone67:       return (1290, 2796)
+        case .iphone65:       return (1260, 2736)
         case .iphone61:       return (1179, 2556)
         case .iphone58:       return (1125, 2436)
         case .iphone55:       return (1242, 2208)

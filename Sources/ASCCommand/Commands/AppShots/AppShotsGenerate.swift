@@ -25,13 +25,13 @@ struct AppShotsGenerate: AsyncParsableCommand {
     @Option(name: .long, help: "Directory to write generated PNG images (default: .asc/app-shots/output)")
     var outputDir: String = ".asc/app-shots/output"
 
-    @Option(name: .long, help: "Output image width in pixels (default: 1284 — iPhone 6.7\")")
-    var outputWidth: Int = 1284
+    @Option(name: .long, help: "Output image width in pixels (default: 1320 — iPhone 6.9\")")
+    var outputWidth: Int = 1320
 
-    @Option(name: .long, help: "Output image height in pixels (default: 2778 — iPhone 6.7\")")
-    var outputHeight: Int = 2778
+    @Option(name: .long, help: "Output image height in pixels (default: 2868 — iPhone 6.9\")")
+    var outputHeight: Int = 2868
 
-    @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_67 (1284×2778), APP_IPHONE_65 (1242×2688), APP_IPAD_PRO_129 (2048×2732)")
+    @Option(name: .long, help: "Named device type — overrides --output-width/height. E.g.: APP_IPHONE_69 (1320×2868), APP_IPHONE_67 (1290×2796), APP_IPHONE_65 (1260×2736), APP_IPAD_PRO_129 (2048×2732)")
     var deviceType: AppShotsDisplayType?
 
     @Option(name: .long, help: "Path to a reference image whose visual style (colors, typography, layout) Gemini should replicate. Content is not copied — only the aesthetic.")
