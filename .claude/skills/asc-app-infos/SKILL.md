@@ -163,10 +163,15 @@ Every response includes ready-to-run follow-up commands:
 }
 ```
 
+## Resolve App ID
+
+See [project-context.md](../shared/project-context.md) — check `.asc/project.json` before asking the user or running `asc apps list`.
+
 ## Typical Workflow
 
 ```bash
-APP_ID="6746148194"
+APP_ID=$(cat .asc/project.json 2>/dev/null | jq -r '.appId // empty')
+# If empty: ask user or run `asc apps list | jq -r '.data[0].id'`
 
 # 1. Get the AppInfo ID
 APP_INFO_ID=$(asc app-infos list --app-id "$APP_ID" | jq -r '.data[0].id')

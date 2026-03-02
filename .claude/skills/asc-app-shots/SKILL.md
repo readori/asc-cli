@@ -39,9 +39,11 @@ Use whichever works for all subsequent commands. In examples below, `asc` repres
 
 ## Step 2 — Gather inputs
 
-Ask the user for (skip if already provided):
-- **App ID** — e.g. `6736834466`; if unknown, run `asc apps list` and let user pick
-- **Version ID** — if unknown, run `asc versions list --app-id <APP_ID>` and use the first result
+See [project-context.md](../shared/project-context.md) for the app ID resolution order.
+
+Resolve each input (skip if already provided by the user):
+- **App ID** — read from `.asc/project.json` first; if not present, run `asc apps list` and let user pick
+- **Version ID** — run `asc versions list --app-id <APP_ID>` and use the first result
 - **Locale** — default: `en-US`
 - **Screenshot files** — check `.asc/app-shots/` in the current directory first; if `*.png` or `*.jpg` files are present there, use them automatically without asking. Only ask the user if no files are found there.
 

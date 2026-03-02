@@ -63,11 +63,18 @@ asc versions set-build --version-id <VERSION_ID> --build-id <BUILD_ID>
 
 Required before submitting a version for App Store review.
 
+## Resolve App ID
+
+See [project-context.md](../shared/project-context.md) — check `.asc/project.json` before asking the user or running `asc apps list`.
+
 ## Typical Workflow
 
 ```bash
+APP_ID=$(cat .asc/project.json 2>/dev/null | jq -r '.appId // empty')
+# If empty: ask user or run `asc apps list | jq -r '.data[0].id'`
+
 # 1. Upload and wait
-asc builds upload --app-id $APP_ID --file MyApp.ipa \
+asc builds upload --app-id "$APP_ID" --file MyApp.ipa \
   --version 1.2.0 --build-number 55 --wait
 
 # 2. Get the processed build ID

@@ -57,11 +57,18 @@ Every JSON response includes `"affordances"` with ready-to-run commands:
 
 Copy affordance commands directly — no need to look up IDs.
 
+## Resolve App ID
+
+See [project-context.md](../shared/project-context.md) — check `.asc/project.json` before asking the user or running `asc apps list`.
+
 ## Typical Workflow
 
 ```bash
+APP_ID=$(cat .asc/project.json 2>/dev/null | jq -r '.appId // empty')
+# If empty: ask user or run `asc apps list | jq -r '.data[0].id'`
+
 # 1. Find beta groups for an app
-asc testflight groups list --app-id 6450406024 --pretty
+asc testflight groups list --app-id "$APP_ID" --pretty
 
 # 2. List testers in a group (copy affordance "listTesters" from step 1)
 asc testflight testers list --group-id g-abc123 --pretty

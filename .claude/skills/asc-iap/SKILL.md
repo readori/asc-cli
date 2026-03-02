@@ -88,10 +88,15 @@ Every IAP response embeds ready-to-run follow-up commands:
 
 `submit` only appears when `state == READY_TO_SUBMIT`. Each price point includes `setPrice` only when territory is known.
 
+## Resolve App ID
+
+See [project-context.md](../shared/project-context.md) — check `.asc/project.json` before asking the user or running `asc apps list`.
+
 ## Typical Workflow
 
 ```bash
-APP_ID="A123456789"
+APP_ID=$(cat .asc/project.json 2>/dev/null | jq -r '.appId // empty')
+# If empty: ask user or run `asc apps list | jq -r '.data[0].id'`
 
 # 1. Create a consumable IAP
 IAP_ID=$(asc iap create \
