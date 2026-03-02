@@ -21,23 +21,23 @@ Generate marketing PNG images using Gemini AI. Reads a `ScreenPlan` JSON file, d
 | `--gemini-api-key` | — | Gemini API key (falls back to `GEMINI_API_KEY` env var, then stored config) |
 | `--model` | `gemini-3.1-flash-image-preview` | Gemini image generation model |
 | `--output-dir` | `.asc/app-shots/output` | Directory to write generated PNG files |
-| `--output-width` | `1320` | Output PNG width in pixels — see [Device Sizes](#device-sizes) |
-| `--output-height` | `2868` | Output PNG height in pixels — see [Device Sizes](#device-sizes) |
-| `--device-type` | — | Named device type (e.g. `APP_IPHONE_69`) — overrides `--output-width`/`--output-height` |
+| `--output-width` | `1284` | Output PNG width in pixels — see [Device Sizes](#device-sizes) |
+| `--output-height` | `2778` | Output PNG height in pixels — see [Device Sizes](#device-sizes) |
+| `--device-type` | — | Named device type (e.g. `APP_IPHONE_67`) — overrides `--output-width`/`--output-height` |
 | `--style-reference` | — | Path to a reference image whose visual style (colors, typography, layout) Gemini should replicate. Content is not copied — only the aesthetic. |
 | `<screenshots>` | *(auto-discovered)* | Screenshot files; omit to auto-discover `*.png/*.jpg` from plan directory |
 | `--output` | `json` | Output format: `json`, `table`, `markdown` |
 | `--pretty` | — | Pretty-print JSON output |
 
 ```bash
-# Zero-argument happy path — iPhone 6.9" (APP_IPHONE_69) at 1320×2868 by default
+# Zero-argument happy path — iPhone 6.7" (APP_IPHONE_67) at 1284×2778 by default
 asc app-shots generate
 
 # Match the visual style of a reference screenshot
 asc app-shots generate --style-reference ~/Downloads/competitor-shot.png
 
 # Named device type — no need to remember pixel dimensions
-asc app-shots generate --device-type APP_IPHONE_67   # 1290×2796
+asc app-shots generate --device-type APP_IPHONE_67   # 1284×2778
 asc app-shots generate --device-type APP_IPHONE_65   # 1242×2688
 asc app-shots generate --device-type APP_IPHONE_55   # 1242×2208
 asc app-shots generate --device-type APP_IPAD_PRO_129  # 2048×2732
@@ -45,10 +45,10 @@ asc app-shots generate --device-type APP_IPAD_PRO_129  # 2048×2732
 # Style reference + device type combined
 asc app-shots generate \
   --style-reference ~/Downloads/competitor-shot.png \
-  --device-type APP_IPHONE_69
+  --device-type APP_IPHONE_67
 
 # Explicit dimensions (alternative to --device-type)
-asc app-shots generate --output-width 1290 --output-height 2796
+asc app-shots generate --output-width 1284 --output-height 2778
 
 # Explicit plan + screenshots
 asc app-shots generate \
@@ -90,9 +90,9 @@ Translate already-generated screenshots into one or more locales. The command mo
 | `--to` | *(required, repeatable)* | Target locale(s): `--to zh --to ja --to ko` |
 | `--source-dir` | `.asc/app-shots/output` | Directory containing existing `screen-*.png` files |
 | `--output-dir` | `.asc/app-shots/output` | Base output directory; locale subdirs are created automatically |
-| `--output-width` | `1320` | Output PNG width in pixels — see [Device Sizes](#device-sizes) |
-| `--output-height` | `2868` | Output PNG height in pixels — see [Device Sizes](#device-sizes) |
-| `--device-type` | — | Named device type (e.g. `APP_IPHONE_69`) — overrides `--output-width`/`--output-height` |
+| `--output-width` | `1284` | Output PNG width in pixels — see [Device Sizes](#device-sizes) |
+| `--output-height` | `2778` | Output PNG height in pixels — see [Device Sizes](#device-sizes) |
+| `--device-type` | — | Named device type (e.g. `APP_IPHONE_67`) — overrides `--output-width`/`--output-height` |
 | `--style-reference` | — | Path to a reference image whose visual style Gemini should replicate (same aesthetic as in `generate`) |
 | `--gemini-api-key` | — | Gemini API key (same 3-level resolution as `generate`) |
 | `--model` | `gemini-3.1-flash-image-preview` | Gemini image generation model |
@@ -170,9 +170,8 @@ asc app-shots config --remove
 
 | Display Type | Device | `--output-width` | `--output-height` | App Store |
 |---|---|---|---|---|
-| `APP_IPHONE_69` | iPhone 6.9" | `1320` | `2868` | ✅ Required |
-| `APP_IPHONE_67` | iPhone 6.7" | `1290` | `2796` | ✅ Required |
-| `APP_IPHONE_65` | iPhone 6.5" | `1242` | `2688` | Optional |
+| `APP_IPHONE_67` | iPhone 6.7" | `1284` | `2778` | ✅ Required |
+| `APP_IPHONE_65` | iPhone 6.5" | `1242` | `2688` | ✅ Required |
 | `APP_IPHONE_61` | iPhone 6.1" | `1179` | `2556` | Optional |
 | `APP_IPHONE_58` | iPhone 5.8" | `1125` | `2436` | Optional |
 | `APP_IPHONE_55` | iPhone 5.5" | `1242` | `2208` | Optional |

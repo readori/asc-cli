@@ -75,32 +75,31 @@ echo "Keywords: $KEYWORDS"
 ## Generate screenshots (English)
 
 ```bash
-# Zero-argument happy path — iPhone 6.9" (APP_IPHONE_69) at 1320×2868 by default
+# Zero-argument happy path — iPhone 6.7" (APP_IPHONE_67) at 1284×2778 by default
 asc app-shots generate
 
 # Match visual style of a reference screenshot (competitor, inspiration, etc.)
 asc app-shots generate --style-reference ~/Downloads/inspiration.png
 
 # Named device type — preferred over raw dimensions
-asc app-shots generate --device-type APP_IPHONE_69   # 1320×2868 Required
-asc app-shots generate --device-type APP_IPHONE_67   # 1290×2796 Required
-asc app-shots generate --device-type APP_IPHONE_65   # 1242×2688
+asc app-shots generate --device-type APP_IPHONE_67   # 1284×2778 Required
+asc app-shots generate --device-type APP_IPHONE_65   # 1242×2688 Required
 asc app-shots generate --device-type APP_IPHONE_55   # 1242×2208
 asc app-shots generate --device-type APP_IPAD_PRO_129  # 2048×2732
 
 # Style reference + device type combined
 asc app-shots generate \
   --style-reference ~/Downloads/inspiration.png \
-  --device-type APP_IPHONE_69
+  --device-type APP_IPHONE_67
 
 # Raw dimensions (alternative to --device-type)
-asc app-shots generate --output-width 1290 --output-height 2796
+asc app-shots generate --output-width 1284 --output-height 2778
 
 # Explicit paths + device type
 asc app-shots generate \
   --plan .asc/app-shots/app-shots-plan.json \
   --output-dir .asc/app-shots/output \
-  --device-type APP_IPHONE_69 \
+  --device-type APP_IPHONE_67 \
   screen1.png screen2.png
 
 # With explicit API key
@@ -114,9 +113,8 @@ asc app-shots generate --gemini-api-key AIzaSy...
 **All supported device types:**
 | Device Type | Width × Height | App Store |
 |---|---|---|
-| `APP_IPHONE_69` | 1320 × 2868 | ✅ Required |
-| `APP_IPHONE_67` | 1290 × 2796 | ✅ Required |
-| `APP_IPHONE_65` | 1242 × 2688 | Optional |
+| `APP_IPHONE_67` | 1284 × 2778 | ✅ Required |
+| `APP_IPHONE_65` | 1242 × 2688 | ✅ Required |
 | `APP_IPHONE_61` | 1179 × 2556 | Optional |
 | `APP_IPHONE_58` | 1125 × 2436 | Optional |
 | `APP_IPHONE_55` | 1242 × 2208 | Optional |
@@ -160,9 +158,9 @@ asc app-shots translate --to fr
 | `--to` | *(required, repeatable)* | Target locale(s) |
 | `--source-dir` | `.asc/app-shots/output` | Dir with existing `screen-*.png` files |
 | `--output-dir` | `.asc/app-shots/output` | Base output dir; locale subdirs created automatically |
-| `--output-width` | `1320` | Output PNG width in pixels |
-| `--output-height` | `2868` | Output PNG height in pixels |
-| `--device-type` | — | Named device type (e.g. `APP_IPHONE_69`) — overrides width/height |
+| `--output-width` | `1284` | Output PNG width in pixels |
+| `--output-height` | `2778` | Output PNG height in pixels |
+| `--device-type` | — | Named device type (e.g. `APP_IPHONE_67`) — overrides width/height |
 | `--style-reference` | — | Reference image to replicate visual style (colors, typography, layout) |
 | `--gemini-api-key` | — | API key (flag → env var → config file) |
 | `--model` | `gemini-3.1-flash-image-preview` | Gemini model |
