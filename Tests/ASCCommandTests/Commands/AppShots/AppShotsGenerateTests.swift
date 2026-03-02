@@ -44,8 +44,11 @@ struct AppShotsGenerateTests {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let data = try encoder.encode(plan)
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("test-plan-\(UUID().uuidString).json")
+        // Use a unique subdirectory so auto-discovery doesn't pick up files from parallel tests
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("test-plan-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appendingPathComponent("plan.json")
         try data.write(to: url)
         return url.path
     }
@@ -70,7 +73,7 @@ struct AppShotsGenerateTests {
         #expect(output.contains("screen-0.png"))
         #expect(FileManager.default.fileExists(atPath: "\(outputDir)/screen-0.png"))
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
         try? FileManager.default.removeItem(atPath: outputDir)
     }
 
@@ -91,7 +94,7 @@ struct AppShotsGenerateTests {
         #expect(FileManager.default.fileExists(atPath: "\(outputDir)/screen-0.png"))
         #expect(FileManager.default.fileExists(atPath: "\(outputDir)/screen-1.png"))
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
         try? FileManager.default.removeItem(atPath: outputDir)
     }
 
@@ -109,7 +112,7 @@ struct AppShotsGenerateTests {
 
         #expect(FileManager.default.fileExists(atPath: outputDir))
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
         try? FileManager.default.removeItem(atPath: outputDir)
     }
 
@@ -128,7 +131,7 @@ struct AppShotsGenerateTests {
         #expect(output.contains("| Screen | File |"))
         #expect(output.contains("screen-0.png"))
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
         try? FileManager.default.removeItem(atPath: outputDir)
     }
 
@@ -191,7 +194,7 @@ struct AppShotsGenerateTests {
         #expect(cmd.deviceType?.dimensions.width == 1290)
         #expect(cmd.deviceType?.dimensions.height == 2796)
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
         try? FileManager.default.removeItem(atPath: outputDir)
     }
 
@@ -218,7 +221,7 @@ struct AppShotsGenerateTests {
             #expect(true)
         }
 
-        try? FileManager.default.removeItem(atPath: planPath)
+        try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
     }
 
     @Test func `--style-reference passes reference URL to repository`() async throws {
@@ -232,7 +235,7 @@ struct AppShotsGenerateTests {
         let planPath = try writePlanFile(plan)
         let outputDir = makeTempOutputDir()
         defer {
-            try? FileManager.default.removeItem(atPath: planPath)
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
             try? FileManager.default.removeItem(atPath: outputDir)
         }
 
@@ -257,7 +260,7 @@ struct AppShotsGenerateTests {
     @Test func `--style-reference throws when file does not exist`() async throws {
         let plan = makePlan(screens: [makeScreen()])
         let planPath = try writePlanFile(plan)
-        defer { try? FileManager.default.removeItem(atPath: planPath) }
+        defer { try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent()) }
 
         let mockRepo = MockScreenshotGenerationRepository()
         let cmd = try AppShotsGenerate.parse([

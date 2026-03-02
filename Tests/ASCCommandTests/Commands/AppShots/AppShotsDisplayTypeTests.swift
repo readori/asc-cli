@@ -20,10 +20,10 @@ struct AppShotsDisplayTypeTests {
 
     // MARK: - Optional iPhone sizes
 
-    @Test func `iphone65 dimensions are 1242 by 2688`() {
+    @Test func `iphone65 dimensions are 1260 by 2736`() {
         let t = AppShotsDisplayType.iphone65
-        #expect(t.dimensions.width == 1242)
-        #expect(t.dimensions.height == 2688)
+        #expect(t.dimensions.width == 1260)
+        #expect(t.dimensions.height == 2736)
     }
 
     @Test func `iphone55 dimensions are 1242 by 2208`() {
