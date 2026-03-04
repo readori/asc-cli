@@ -191,4 +191,8 @@ struct ClientProvider {
     static func makeAppShotsConfigStorage() -> any AppShotsConfigStorage {
         FileAppShotsConfigStorage()
     }
+
+    static func makeAppWallRepository(token: String) -> any AppWallRepository {
+        GitHubAppWallRepository(token: token)
+    }
 }
