@@ -36,6 +36,7 @@ asc init --app-id <id> # pin it — skip --app-id on every future command
 | **TestFlight** | Manage beta groups; add/remove/import/export testers |
 | **Monetization** | IAPs (consumable, non-consumable, non-renewing); subscriptions, offers, pricing |
 | **Code Signing** | Bundle IDs, certificates, devices, provisioning profiles |
+| **Authentication** | Multi-account credential management; named accounts, active-account switching |
 | **Project Init** | `asc init` pins app context to `.asc/project.json`; auto-detects from `.xcodeproj` |
 | **Plugins** | Install executable plugins in `~/.asc/plugins/` for custom event handlers |
 | **AI Agents** | JSON output with CAEOAS affordances — agents navigate without knowing the command tree |
