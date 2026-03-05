@@ -15,7 +15,8 @@ brew install tddworks/tap/asccli
 asc auth login \
   --key-id YOUR_KEY_ID \
   --issuer-id YOUR_ISSUER_ID \
-  --private-key-path ~/.asc/AuthKey_XXXXXX.p8
+  --private-key-path ~/.asc/AuthKey_XXXXXX.p8 \
+  --name personal        # optional alias; defaults to "default"
 
 asc apps list          # find your app ID
 asc init --app-id <id> # pin it — skip --app-id on every future command
@@ -67,16 +68,24 @@ cp .build/release/asc /usr/local/bin/
 ### Persistent login (recommended)
 
 ```bash
+# Single account (saves as "default")
 asc auth login \
   --key-id YOUR_KEY_ID \
   --issuer-id YOUR_ISSUER_ID \
   --private-key-path ~/.asc/AuthKey_XXXXXX.p8
 
-asc auth check   # → shows source: "file"
-asc auth logout  # remove saved credentials
+# Multiple accounts
+asc auth login --key-id K1 --issuer-id I1 --private-key-path work.p8 --name work
+asc auth login --key-id K2 --issuer-id I2 --private-key-path personal.p8 --name personal
+
+asc auth list            # list all saved accounts
+asc auth use work        # switch active account
+asc auth check           # → shows active account name + source: "file"
+asc auth logout          # remove active account
+asc auth logout --name personal  # remove a specific account
 ```
 
-Credentials are saved to `~/.asc/credentials.json`. All `asc` commands pick them up automatically — no environment variables needed per session.
+Credentials are saved to `~/.asc/credentials.json`. All `asc` commands use the active account automatically — no environment variables needed per session. Account names must not contain spaces.
 
 ### Environment variables (alternative)
 
@@ -94,9 +103,11 @@ export ASC_PRIVATE_KEY_PATH="~/.asc/AuthKey_XXXXXX.p8"
 ### Auth & Project
 
 ```bash
-asc auth login --key-id <id> --issuer-id <id> --private-key-path <path>
+asc auth login --key-id <id> --issuer-id <id> --private-key-path <path> [--name alias]
+asc auth list
+asc auth use <name>
 asc auth check
-asc auth logout
+asc auth logout [--name alias]
 
 asc init                     # auto-detect app from *.xcodeproj bundle ID
 asc init --name "My App"     # search by name
@@ -286,7 +297,7 @@ asc versions submit --version-id "$VERSION_ID"
 
 Detailed documentation for each feature:
 
-- [Auth](docs/features/auth-login.md) — persistent credential storage, login/logout/check
+- [Auth](docs/features/asc-auth.md) — multi-account credential management; login, list, use, logout, check
 - [Version Localizations](docs/features/version-localizations.md) — What's New, description, keywords
 - [Screenshots](docs/features/screenshots.md) — screenshot sets and image uploads
 - [App Previews](docs/features/app-previews.md) — preview sets and video uploads

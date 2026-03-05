@@ -14,7 +14,7 @@ Save API key credentials for a named account.
 |------|----------|-------------|
 | `--key-id` | Yes | App Store Connect API Key ID |
 | `--issuer-id` | Yes | App Store Connect Issuer ID |
-| `--name` | No | Account name (defaults to key ID) |
+| `--name` | No | Account name (defaults to `"default"`); no spaces allowed |
 | `--private-key-path` | One of two | Path to the `.p8` private key file (supports `~`) |
 | `--private-key` | One of two | Raw PEM content of the private key |
 | `--output` | No | Output format: `json` (default), `table`, `markdown` |
@@ -26,7 +26,7 @@ Save API key credentials for a named account.
 # Login with a name (recommended for multi-account)
 asc auth login --key-id KEYID123 --issuer-id abc-def-456 --private-key-path ~/.asc/AuthKey_KEYID123.p8 --name personal
 
-# Login using a .p8 key file (name defaults to key ID)
+# Login using a .p8 key file (name defaults to "default"; no spaces in name)
 asc auth login --key-id KEYID123 --issuer-id abc-def-456 --private-key-path ~/.asc/AuthKey_KEYID123.p8
 
 # Login using raw PEM content

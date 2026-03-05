@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `asc auth list` — list all saved App Store Connect accounts with active status and per-account affordances (`use`, `logout`)
 - `asc auth use <name>` — switch the active App Store Connect account; all subsequent commands use the newly active account
-- `asc auth login --name <alias>` — optional `--name` flag to save credentials under a human-readable alias (defaults to key ID); first saved account becomes active automatically; subsequent logins with new names are saved alongside existing accounts
+- `asc auth login --name <alias>` — optional `--name` flag to save credentials under a human-readable alias (defaults to `"default"`); first saved account becomes active automatically; subsequent logins with new names are saved alongside existing accounts; account names must not contain spaces (use hyphens or underscores)
 
 ### Changed
 - `asc auth logout` — now accepts optional `--name <alias>` flag; removes the named account or the active account if `--name` is omitted
