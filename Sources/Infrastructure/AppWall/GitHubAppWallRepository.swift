@@ -7,19 +7,22 @@ public struct GitHubAppWallRepository: AppWallRepository {
     private let upstreamOwner: String
     private let upstreamRepo: String
     private let filePath: String
+    private let sleep: @Sendable (Duration) async throws -> Void
 
     public init(
         token: String,
         httpClient: (any HTTPPerforming)? = nil,
         upstreamOwner: String = "tddworks",
         upstreamRepo: String = "asc-cli",
-        filePath: String = "homepage/apps.json"
+        filePath: String = "homepage/apps.json",
+        sleep: (@Sendable (Duration) async throws -> Void)? = nil
     ) {
         self.token = token
         self.httpClient = httpClient ?? URLSession.shared
         self.upstreamOwner = upstreamOwner
         self.upstreamRepo = upstreamRepo
         self.filePath = filePath
+        self.sleep = sleep ?? { try await Task.sleep(for: $0) }
     }
 
     // MARK: - AppWallRepository
@@ -98,7 +101,7 @@ public struct GitHubAppWallRepository: AppWallRepository {
             } catch {
                 lastError = error
                 if attempt < maxAttempts {
-                    try await Task.sleep(for: .seconds(3))
+                    try await self.sleep(.seconds(3))
                 }
             }
         }
