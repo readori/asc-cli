@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.36] - 2026-03-05
+
 ### Added
 - `asc auth list` — list all saved App Store Connect accounts with active status and per-account affordances (`use`, `logout`)
 - `asc auth use <name>` — switch the active App Store Connect account; all subsequent commands use the newly active account
@@ -304,7 +308,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.35...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.36...HEAD
+[0.1.36]: https://github.com/tddworks/asc-cli/compare/v0.1.35...v0.1.36
 [0.1.35]: https://github.com/tddworks/asc-cli/compare/v0.1.34...v0.1.35
 [0.1.34]: https://github.com/tddworks/asc-cli/compare/v0.1.33...v0.1.34
 [0.1.33]: https://github.com/tddworks/asc-cli/compare/v0.1.32...v0.1.33
