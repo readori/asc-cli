@@ -6,10 +6,10 @@ import Testing
 @Suite
 struct AuthLoginTests {
 
-    @Test func `login saves credentials under key ID name and returns status as JSON`() async throws {
+    @Test func `login without name defaults to default account name`() async throws {
         let mockStorage = MockAuthStorage()
-        given(mockStorage).save(.any, name: .any).willReturn()
-        given(mockStorage).setActive(name: .any).willReturn()
+        given(mockStorage).save(.any, name: .value("default")).willReturn()
+        given(mockStorage).setActive(name: .value("default")).willReturn()
 
         var cmd = try AuthLogin.parse([
             "--key-id", "KEY123",
@@ -31,7 +31,7 @@ struct AuthLoginTests {
               },
               "issuerID" : "ISSUER456",
               "keyID" : "KEY123",
-              "name" : "KEY123",
+              "name" : "default",
               "source" : "file"
             }
           ]
@@ -54,6 +54,21 @@ struct AuthLoginTests {
         let output = try await cmd.execute(storage: mockStorage)
 
         #expect(output.contains("\"name\" : \"myorg\""))
+    }
+
+    @Test func `login throws when name contains whitespace`() async throws {
+        let mockStorage = MockAuthStorage()
+
+        var cmd = try AuthLogin.parse([
+            "--key-id", "KEY123",
+            "--issuer-id", "ISSUER456",
+            "--private-key", "fake-private-key-content",
+            "--name", "my org",
+        ])
+
+        await #expect(throws: (any Error).self) {
+            try await cmd.execute(storage: mockStorage)
+        }
     }
 
     @Test func `login throws when private key and path are both missing`() async throws {

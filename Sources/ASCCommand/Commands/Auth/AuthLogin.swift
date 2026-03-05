@@ -17,7 +17,7 @@ struct AuthLogin: AsyncParsableCommand {
     @Option(name: .long, help: "App Store Connect Issuer ID")
     var issuerId: String
 
-    @Option(name: .long, help: "Account name (defaults to key ID)")
+    @Option(name: .long, help: "Account name (defaults to \"default\"); no spaces allowed")
     var name: String?
 
     @Option(name: .long, help: "Path to .p8 private key file")
@@ -44,7 +44,10 @@ struct AuthLogin: AsyncParsableCommand {
             throw ValidationError("Provide either --private-key-path or --private-key")
         }
 
-        let accountName = name ?? keyId
+        let accountName = name ?? "default"
+        guard !accountName.contains(where: \.isWhitespace) else {
+            throw ValidationError("Account name must not contain spaces. Got: \"\(accountName)\"")
+        }
         let credentials = AuthCredentials(keyID: keyId, issuerID: issuerId, privateKeyPEM: privateKeyPEM)
         try credentials.validate()
         try storage.save(credentials, name: accountName)
