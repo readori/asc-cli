@@ -465,24 +465,37 @@ asc app-shots generate \
 asc auth login \
   --key-id <KEY_ID> \
   --issuer-id <ISSUER_ID> \
-  --private-key-path ~/.asc/AuthKey_KEYID.p8
+  --private-key-path ~/.asc/AuthKey_KEYID.p8 \
+  [--name <alias>]
 ```
-Saves credentials to `~/.asc/credentials.json`. Accepts `--private-key` (raw PEM) instead of `--private-key-path`.
+Saves credentials under a named account (defaults to key ID). The saved account becomes active. Accepts `--private-key` (raw PEM) instead of `--private-key-path`.
 
-Output: JSON `AuthStatus` with `source: "file"` and affordances.
+Output: JSON `AuthStatus` with `name`, `source: "file"` and affordances.
+
+### list
+```bash
+asc auth list [--pretty] [--output table]
+```
+Lists all saved `ConnectAccount` entries. Active account has `"isActive": true`. Each inactive account carries a `"use"` affordance.
+
+### use
+```bash
+asc auth use <name>
+```
+Switches the active account. All subsequent API commands use this account. Throws `accountNotFound` if the name doesn't exist.
 
 ### logout
 ```bash
-asc auth logout
+asc auth logout [--name <alias>]
 ```
-Deletes `~/.asc/credentials.json`. Prints "Logged out successfully".
+Removes the named account (or the active account if `--name` is omitted). Prints "Logged out successfully".
 
 ### check
 ```bash
 asc auth check [--pretty] [--output table]
 ```
-Shows current credentials and their `source` (`"file"` or `"environment"`).
+Shows active credentials with `name` (omitted for environment credentials) and `source` (`"file"` or `"environment"`).
 
-**Credential resolution order:** `~/.asc/credentials.json` → environment variables (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH` / `ASC_PRIVATE_KEY_B64` / `ASC_PRIVATE_KEY`).
+**Credential resolution order:** active account in `~/.asc/credentials.json` → environment variables (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH` / `ASC_PRIVATE_KEY_B64` / `ASC_PRIVATE_KEY`).
 
 Output fields: `keyID`, `issuerID`, `source`, `affordances`.

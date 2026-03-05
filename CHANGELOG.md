@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `asc auth list` — list all saved App Store Connect accounts with active status and per-account affordances (`use`, `logout`)
+- `asc auth use <name>` — switch the active App Store Connect account; all subsequent commands use the newly active account
+- `asc auth login --name <alias>` — optional `--name` flag to save credentials under a human-readable alias (defaults to key ID); first saved account becomes active automatically; subsequent logins with new names are saved alongside existing accounts
+
+### Changed
+- `asc auth logout` — now accepts optional `--name <alias>` flag; removes the named account or the active account if `--name` is omitted
+- `asc auth check` — now shows the account `name` field when credentials come from a saved account (omitted for environment-variable credentials)
+- `~/.asc/credentials.json` — upgraded to multi-account format `{ "active": "name", "accounts": { ... } }`; old single-credential files are auto-migrated to a `"default"` named account on first use
+
 ---
 
 ## [0.1.35] - 2026-03-04
