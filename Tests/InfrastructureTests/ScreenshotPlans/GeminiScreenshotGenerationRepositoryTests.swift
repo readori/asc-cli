@@ -3,20 +3,6 @@ import Testing
 @testable import Infrastructure
 @testable import Domain
 
-// MARK: - Stub HTTP client
-
-final class StubHTTPClient: HTTPPerforming, @unchecked Sendable {
-    var response: (Data, URLResponse)?
-    var error: Error?
-    private(set) var lastRequest: URLRequest?
-
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        lastRequest = request
-        if let error { throw error }
-        return response!
-    }
-}
-
 private func makeHTTPResponse(statusCode: Int = 200, url: String = "https://generativelanguage.googleapis.com") -> HTTPURLResponse {
     HTTPURLResponse(url: URL(string: url)!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
 }
