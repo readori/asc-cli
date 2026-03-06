@@ -1,4 +1,4 @@
-# asc-cli
+# <img src="homepage/static/icon-192.png" width="36" height="36" alt="" style="vertical-align:middle"> asc-cli
 
 [![CI](https://github.com/tddworks/asc-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/tddworks/asc-cli/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/tddworks/asc-cli/graph/badge.svg?token=v0k1Vzubrx)](https://codecov.io/gh/tddworks/asc-cli)
