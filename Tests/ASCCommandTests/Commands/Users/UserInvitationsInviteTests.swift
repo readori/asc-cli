@@ -53,4 +53,59 @@ struct UserInvitationsInviteTests {
             try await cmd.execute(repo: mockRepo)
         }
     }
+
+    @Test func `invite with all-apps-visible passes flag to repository`() async throws {
+        let mockRepo = MockUserRepository()
+        given(mockRepo).inviteUser(
+            email: .any,
+            firstName: .any,
+            lastName: .any,
+            roles: .any,
+            allAppsVisible: .value(true)
+        ).willReturn(
+            UserInvitationRecord(
+                id: "inv-2",
+                email: "admin@example.com",
+                firstName: "Admin",
+                lastName: "User",
+                roles: [.admin],
+                isAllAppsVisible: true,
+                isProvisioningAllowed: false
+            )
+        )
+
+        let cmd = try UserInvitationsInvite.parse([
+            "--email", "admin@example.com",
+            "--first-name", "Admin",
+            "--last-name", "User",
+            "--role", "ADMIN",
+            "--all-apps-visible",
+            "--pretty",
+        ])
+        let output = try await cmd.execute(repo: mockRepo)
+
+        #expect(output.contains("inv-2"))
+        #expect(output.contains("ADMIN"))
+    }
+
+    @Test func `invite role filter applied to invitations list`() async throws {
+        let mockRepo = MockUserRepository()
+        given(mockRepo).listUserInvitations(role: .value(.developer)).willReturn([
+            UserInvitationRecord(
+                id: "inv-3",
+                email: "dev@example.com",
+                firstName: "Dev",
+                lastName: "User",
+                roles: [.developer],
+                isAllAppsVisible: false,
+                isProvisioningAllowed: false
+            ),
+        ])
+
+        let cmd = try UserInvitationsList.parse(["--role", "DEVELOPER", "--pretty"])
+        let output = try await cmd.execute(repo: mockRepo)
+
+        #expect(output.contains("dev@example.com"))
+        #expect(output.contains("DEVELOPER"))
+    }
 }

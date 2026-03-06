@@ -86,4 +86,109 @@ struct SDKUserRepositoryTests {
         #expect(result[0].isAllAppsVisible == true)
         #expect(result[0].expirationDate == nil)
     }
+
+    @Test func `updateUser maps returned team member`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(UserResponse(
+            data: AppStoreConnect_Swift_SDK.User(
+                type: .users,
+                id: "u-1",
+                attributes: .init(
+                    username: "jdoe@example.com",
+                    firstName: "Jane",
+                    lastName: "Doe",
+                    roles: [.admin],
+                    isAllAppsVisible: true,
+                    isProvisioningAllowed: false
+                )
+            ),
+            links: .init(this: "")
+        ))
+
+        let repo = SDKUserRepository(client: stub)
+        let result = try await repo.updateUser(id: "u-1", roles: [.admin])
+
+        #expect(result.id == "u-1")
+        #expect(result.roles == [.admin])
+        #expect(result.isAllAppsVisible == true)
+    }
+
+    @Test func `inviteUser maps returned invitation record`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(UserInvitationResponse(
+            data: AppStoreConnect_Swift_SDK.UserInvitation(
+                type: .userInvitations,
+                id: "inv-2",
+                attributes: .init(
+                    email: "hire@example.com",
+                    firstName: "Alex",
+                    lastName: "Smith",
+                    expirationDate: nil,
+                    roles: [.developer],
+                    isAllAppsVisible: false,
+                    isProvisioningAllowed: false
+                )
+            ),
+            links: .init(this: "")
+        ))
+
+        let repo = SDKUserRepository(client: stub)
+        let result = try await repo.inviteUser(
+            email: "hire@example.com",
+            firstName: "Alex",
+            lastName: "Smith",
+            roles: [.developer],
+            allAppsVisible: false
+        )
+
+        #expect(result.id == "inv-2")
+        #expect(result.email == "hire@example.com")
+        #expect(result.firstName == "Alex")
+        #expect(result.roles == [.developer])
+    }
+
+    @Test func `listUsers with role filter passes filter to request`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(UsersResponse(
+            data: [
+                AppStoreConnect_Swift_SDK.User(
+                    type: .users,
+                    id: "u-2",
+                    attributes: .init(roles: [.admin])
+                ),
+            ],
+            links: .init(this: "")
+        ))
+
+        let repo = SDKUserRepository(client: stub)
+        let result = try await repo.listUsers(role: .admin)
+
+        #expect(result[0].roles == [.admin])
+    }
+
+    @Test func `listUserInvitations with role filter returns filtered results`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(UserInvitationsResponse(
+            data: [
+                AppStoreConnect_Swift_SDK.UserInvitation(
+                    type: .userInvitations,
+                    id: "inv-3",
+                    attributes: .init(
+                        email: "admin@example.com",
+                        firstName: "A",
+                        lastName: "B",
+                        roles: [.admin],
+                        isAllAppsVisible: false,
+                        isProvisioningAllowed: false
+                    )
+                ),
+            ],
+            links: .init(this: "")
+        ))
+
+        let repo = SDKUserRepository(client: stub)
+        let result = try await repo.listUserInvitations(role: .admin)
+
+        #expect(result[0].roles == [.admin])
+    }
 }

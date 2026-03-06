@@ -52,4 +52,25 @@ struct UsersListTests {
         #expect(output.contains("jdoe@example.com"))
         #expect(output.contains("ADMIN"))
     }
+
+    @Test func `role filter is passed to repository`() async throws {
+        let mockRepo = MockUserRepository()
+        given(mockRepo).listUsers(role: .value(.developer)).willReturn([
+            TeamMember(
+                id: "u-2",
+                username: "dev@example.com",
+                firstName: "Dev",
+                lastName: "User",
+                roles: [.developer],
+                isAllAppsVisible: false,
+                isProvisioningAllowed: false
+            ),
+        ])
+
+        let cmd = try UsersList.parse(["--role", "DEVELOPER", "--pretty"])
+        let output = try await cmd.execute(repo: mockRepo)
+
+        #expect(output.contains("DEVELOPER"))
+        #expect(output.contains("dev@example.com"))
+    }
 }
