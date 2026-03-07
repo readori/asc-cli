@@ -150,6 +150,16 @@ asc testflight testers import --beta-group-id <id> --file testers.csv
 asc testflight testers export --beta-group-id <id>
 ```
 
+### Xcode Cloud
+
+```bash
+asc xcode-cloud products list [--app-id <id>]
+asc xcode-cloud workflows list --product-id <id>
+asc xcode-cloud builds list --workflow-id <id>
+asc xcode-cloud builds get --build-run-id <id>
+asc xcode-cloud builds start --workflow-id <id> [--clean]
+```
+
 ### Metadata
 
 ```bash
@@ -331,6 +341,7 @@ Detailed documentation for each feature:
 - [App Previews](docs/features/app-previews.md) — preview sets and video uploads
 - [App Info](docs/features/app-infos.md) — name, subtitle, privacy policy, categories, age rating
 - [TestFlight](docs/features/testflight.md) — beta groups, tester management, CSV import/export
+- [Xcode Cloud](docs/features/xcode-cloud.md) — products, workflows, build runs, start builds
 - [Builds Upload](docs/features/builds-upload.md) — upload IPA/PKG, TestFlight distribution, beta notes
 - [Code Signing](docs/features/code-signing.md) — bundle IDs, certificates, devices, profiles
 - [Version Check-Readiness](docs/features/version-check-readiness.md) — pre-flight submission checks

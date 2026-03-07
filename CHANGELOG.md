@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `asc xcode-cloud products list [--app-id <id>]` — list Xcode Cloud products; `XcodeCloudProduct` carries `appId` (injected from relationship), `name`, `productType`; affordances: `listWorkflows`, `listProducts`
+- `asc xcode-cloud workflows list --product-id <id>` — list CI workflows for a product; `XcodeCloudWorkflow` carries `productId` (injected), `name`, `description`, `isEnabled`, `isLockedForEditing`; affordances: `listBuildRuns`, `listWorkflows` always, `startBuild` only when `isEnabled`
+- `asc xcode-cloud builds list --workflow-id <id>` — list build runs for a workflow; `XcodeCloudBuildRun` carries `workflowId` (injected), `number`, `executionProgress` (PENDING/RUNNING/COMPLETE), `completionStatus` (SUCCEEDED/FAILED/ERRORED/CANCELED/SKIPPED), `startReason`; semantic booleans: `isPending`, `isRunning`, `isComplete`, `isSucceeded`, `hasFailed`
+- `asc xcode-cloud builds get --build-run-id <id>` — get a specific build run by ID
+- `asc xcode-cloud builds start --workflow-id <id> [--clean]` — start a new build run; `--clean` flag performs a clean build removing derived data
+
 ---
 
 ## [0.1.37] - 2026-03-06
