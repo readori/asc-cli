@@ -734,4 +734,31 @@ struct MockRepositoryFactory {
             isArchived: isArchived
         )
     }
+
+    // MARK: - App Clips
+
+    static func makeAppClip(
+        id: String = "clip-1",
+        appId: String = "app-1",
+        bundleId: String? = "com.example.clip"
+    ) -> AppClip {
+        AppClip(id: id, appId: appId, bundleId: bundleId)
+    }
+
+    static func makeAppClipDefaultExperience(
+        id: String = "exp-1",
+        appClipId: String = "clip-1",
+        action: AppClipAction? = .open
+    ) -> AppClipDefaultExperience {
+        AppClipDefaultExperience(id: id, appClipId: appClipId, action: action)
+    }
+
+    static func makeAppClipDefaultExperienceLocalization(
+        id: String = "loc-1",
+        experienceId: String = "exp-1",
+        locale: String = "en-US",
+        subtitle: String? = "Quick access"
+    ) -> AppClipDefaultExperienceLocalization {
+        AppClipDefaultExperienceLocalization(id: id, experienceId: experienceId, locale: locale, subtitle: subtitle)
+    }
 }
