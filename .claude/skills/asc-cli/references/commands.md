@@ -665,9 +665,9 @@ asc sales-reports download \
   --report-type <SALES|PRE_ORDER|NEWSSTAND|SUBSCRIPTION|SUBSCRIPTION_EVENT|SUBSCRIBER|SUBSCRIPTION_OFFER_CODE_REDEMPTION|INSTALLS|FIRST_ANNUAL|WIN_BACK_ELIGIBILITY> \
   --sub-type <SUMMARY|DETAILED|SUMMARY_INSTALL_TYPE|SUMMARY_TERRITORY|SUMMARY_CHANNEL> \
   --frequency <DAILY|WEEKLY|MONTHLY|YEARLY> \
-  [--report-date <date>]
+  [--report-date <date>]   # optional for DAILY only; REQUIRED for WEEKLY/MONTHLY/YEARLY
 ```
-Downloads a gzip-compressed TSV sales report, decompresses and parses it into JSON. Columns vary by report type.
+Downloads a gzip-compressed TSV sales report, decompresses and parses it into JSON. Columns vary by report type. `--report-date` can be omitted only for DAILY frequency (returns latest available). For WEEKLY, MONTHLY, and YEARLY, Apple requires `--report-date` (returns `PARAMETER_ERROR.INVALID` without it). Weekly dates must be a Sunday.
 
 ---
 
