@@ -761,4 +761,43 @@ struct MockRepositoryFactory {
     ) -> AppClipDefaultExperienceLocalization {
         AppClipDefaultExperienceLocalization(id: id, experienceId: experienceId, locale: locale, subtitle: subtitle)
     }
+
+    // MARK: - Analytics Reports
+
+    static func makeAnalyticsReportRequest(
+        id: String = "req-1",
+        appId: String = "app-1",
+        accessType: AnalyticsAccessType = .oneTimeSnapshot,
+        isStoppedDueToInactivity: Bool? = nil
+    ) -> AnalyticsReportRequest {
+        AnalyticsReportRequest(id: id, appId: appId, accessType: accessType, isStoppedDueToInactivity: isStoppedDueToInactivity)
+    }
+
+    static func makeAnalyticsReport(
+        id: String = "rpt-1",
+        requestId: String = "req-1",
+        name: String? = "App Store Downloads",
+        category: AnalyticsCategory? = .appUsage
+    ) -> AnalyticsReport {
+        AnalyticsReport(id: id, requestId: requestId, name: name, category: category)
+    }
+
+    static func makeAnalyticsReportInstance(
+        id: String = "inst-1",
+        reportId: String = "rpt-1",
+        granularity: AnalyticsGranularity? = .daily,
+        processingDate: String? = "2024-01-15"
+    ) -> AnalyticsReportInstance {
+        AnalyticsReportInstance(id: id, reportId: reportId, granularity: granularity, processingDate: processingDate)
+    }
+
+    static func makeAnalyticsReportSegment(
+        id: String = "seg-1",
+        instanceId: String = "inst-1",
+        checksum: String? = "abc123",
+        sizeInBytes: Int? = 1024,
+        url: String? = "https://example.com/data.tsv"
+    ) -> AnalyticsReportSegment {
+        AnalyticsReportSegment(id: id, instanceId: instanceId, checksum: checksum, sizeInBytes: sizeInBytes, url: url)
+    }
 }
