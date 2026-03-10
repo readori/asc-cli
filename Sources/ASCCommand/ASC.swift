@@ -47,6 +47,7 @@ struct ASC: AsyncParsableCommand {
             AppClipExperienceLocalizationsCommand.self,
             SalesReportsCommand.self,
             FinanceReportsCommand.self,
+            AnalyticsReportsCommand.self,
         ]
     )
 }
