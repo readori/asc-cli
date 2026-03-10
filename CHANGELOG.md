@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.41] - 2026-03-10
+
 ### Added
 - Sales reports: `asc sales-reports download` with support for 10 report types, 5 sub-types, and 4 frequencies
 - Finance reports: `asc finance-reports download` with financial and finance detail report types
@@ -367,7 +371,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.40...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.41...HEAD
+[0.1.41]: https://github.com/tddworks/asc-cli/compare/v0.1.40...v0.1.41
 [0.1.40]: https://github.com/tddworks/asc-cli/compare/v0.1.39...v0.1.40
 [0.1.39]: https://github.com/tddworks/asc-cli/compare/v0.1.38...v0.1.39
 [0.1.38]: https://github.com/tddworks/asc-cli/compare/v0.1.37...v0.1.38
