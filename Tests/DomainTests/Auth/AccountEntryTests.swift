@@ -32,4 +32,20 @@ struct ConnectAccountTests {
         #expect(json.contains("\"keyID\":\"KEY1\""))
         #expect(json.contains("\"name\":\"personal\""))
     }
+
+    @Test func `connect account vendor number is omitted from JSON when nil`() throws {
+        let account = ConnectAccount(name: "work", keyID: "KEY1", issuerID: "ISSUER1", isActive: true)
+        let data = try JSONEncoder().encode(account)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(!json.contains("vendorNumber"))
+    }
+
+    @Test func `connect account vendor number is included in JSON when set`() throws {
+        let account = ConnectAccount(name: "work", keyID: "KEY1", issuerID: "ISSUER1", isActive: true, vendorNumber: "88012345")
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let data = try encoder.encode(account)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(json.contains("\"vendorNumber\":\"88012345\""))
+    }
 }

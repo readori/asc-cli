@@ -6,7 +6,7 @@ struct AuthCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "auth",
         abstract: "Manage App Store Connect authentication",
-        subcommands: [AuthCheck.self, AuthLogin.self, AuthLogout.self, AuthList.self, AuthUse.self]
+        subcommands: [AuthCheck.self, AuthLogin.self, AuthLogout.self, AuthList.self, AuthUse.self, AuthUpdate.self]
     )
 }
 
@@ -29,18 +29,21 @@ struct AuthCheck: AsyncParsableCommand {
         let source: CredentialSource
         let accountName: String?
 
+        let storedVendorNumber: String?
         if let active = try? storage.load(name: nil) {
             credentials = active
             source = .file
+            storedVendorNumber = active.vendorNumber
             let accounts = (try? storage.loadAll()) ?? []
             accountName = accounts.first(where: \.isActive)?.name
         } else {
             credentials = try envProvider.resolve()
             source = .environment
             accountName = nil
+            storedVendorNumber = nil
         }
 
-        let status = AuthStatus(name: accountName, keyID: credentials.keyID, issuerID: credentials.issuerID, source: source)
+        let status = AuthStatus(name: accountName, keyID: credentials.keyID, issuerID: credentials.issuerID, source: source, vendorNumber: storedVendorNumber)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
             [status],

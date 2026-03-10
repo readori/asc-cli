@@ -36,7 +36,7 @@ public struct FileAuthStorage: AuthStorage {
     public func loadAll() throws -> [ConnectAccount] {
         let file = loadFileOrEmpty()
         return file.accounts
-            .map { ConnectAccount(name: $0.key, keyID: $0.value.keyID, issuerID: $0.value.issuerID, isActive: $0.key == file.active) }
+            .map { ConnectAccount(name: $0.key, keyID: $0.value.keyID, issuerID: $0.value.issuerID, isActive: $0.key == file.active, vendorNumber: $0.value.vendorNumber) }
             .sorted { $0.name < $1.name }
     }
 

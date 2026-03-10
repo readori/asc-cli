@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Domain
 
@@ -38,4 +39,31 @@ struct AuthCredentialsTests {
         }
     }
 
+    @Test
+    func `credentials with vendor number preserves it`() {
+        let creds = AuthCredentials(keyID: "key", issuerID: "issuer", privateKeyPEM: "pem", vendorNumber: "88012345")
+        #expect(creds.vendorNumber == "88012345")
+    }
+
+    @Test
+    func `credentials without vendor number defaults to nil`() {
+        let creds = AuthCredentials(keyID: "key", issuerID: "issuer", privateKeyPEM: "pem")
+        #expect(creds.vendorNumber == nil)
+    }
+
+    @Test
+    func `credentials vendor number is omitted from JSON when nil`() throws {
+        let creds = AuthCredentials(keyID: "key", issuerID: "issuer", privateKeyPEM: "pem")
+        let data = try JSONEncoder().encode(creds)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(!json.contains("vendorNumber"))
+    }
+
+    @Test
+    func `credentials vendor number is included in JSON when set`() throws {
+        let creds = AuthCredentials(keyID: "key", issuerID: "issuer", privateKeyPEM: "pem", vendorNumber: "88012345")
+        let data = try JSONEncoder().encode(creds)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(json.contains("88012345"))
+    }
 }

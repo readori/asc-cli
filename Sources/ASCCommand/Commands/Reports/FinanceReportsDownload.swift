@@ -1,5 +1,6 @@
 import ArgumentParser
 import Domain
+import Infrastructure
 
 struct FinanceReportsDownload: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
@@ -9,8 +10,8 @@ struct FinanceReportsDownload: AsyncParsableCommand {
 
     @OptionGroup var globals: GlobalOptions
 
-    @Option(name: .long, help: "Vendor number")
-    var vendorNumber: String
+    @Option(name: .long, help: "Vendor number (auto-resolved from active account if saved)")
+    var vendorNumber: String?
 
     @Option(name: .long, help: "Report type: FINANCIAL, FINANCE_DETAIL")
     var reportType: String
@@ -23,16 +24,19 @@ struct FinanceReportsDownload: AsyncParsableCommand {
 
     func run() async throws {
         let repo = try ClientProvider.makeReportRepository()
-        print(try await execute(repo: repo))
+        let storage = FileAuthStorage()
+        print(try await execute(repo: repo, storage: storage))
     }
 
-    func execute(repo: any ReportRepository) async throws -> String {
+    func execute(repo: any ReportRepository, storage: any AuthStorage = FileAuthStorage()) async throws -> String {
+        let resolvedVendorNumber = try VendorNumberResolver.resolve(explicit: vendorNumber, storage: storage)
+
         guard let parsedReportType = FinanceReportType(cliArgument: reportType) else {
             throw ValidationError("Invalid report type: \(reportType)")
         }
 
         let rows = try await repo.downloadFinanceReport(
-            vendorNumber: vendorNumber,
+            vendorNumber: resolvedVendorNumber,
             reportType: parsedReportType,
             regionCode: regionCode,
             reportDate: reportDate

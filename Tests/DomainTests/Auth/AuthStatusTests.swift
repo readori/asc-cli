@@ -47,4 +47,20 @@ struct AuthStatusTests {
         let json = String(decoding: data, as: UTF8.self)
         #expect(json.contains("\"name\":\"work\""))
     }
+
+    @Test func `auth status vendor number is omitted from JSON when nil`() throws {
+        let status = AuthStatus(keyID: "KEY123", issuerID: "ISSUER456", source: .file)
+        let data = try JSONEncoder().encode(status)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(!json.contains("vendorNumber"))
+    }
+
+    @Test func `auth status vendor number is included in JSON when set`() throws {
+        let status = AuthStatus(name: "work", keyID: "KEY123", issuerID: "ISSUER456", source: .file, vendorNumber: "88012345")
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let data = try encoder.encode(status)
+        let json = String(decoding: data, as: UTF8.self)
+        #expect(json.contains("\"vendorNumber\":\"88012345\""))
+    }
 }

@@ -101,6 +101,75 @@ struct SalesReportsDownloadTests {
         #expect(output.contains("10"))
     }
 
+    @Test func `resolves vendor number from storage when not provided`() async throws {
+        let mockRepo = MockReportRepository()
+        let mockStorage = MockAuthStorage()
+        let accounts = [ConnectAccount(name: "work", keyID: "KEY1", issuerID: "ISS1", isActive: true, vendorNumber: "88012345")]
+        given(mockStorage).loadAll().willReturn(accounts)
+        given(mockRepo).downloadSalesReport(
+            vendorNumber: .any,
+            reportType: .any,
+            subType: .any,
+            frequency: .any,
+            reportDate: .any
+        ).willReturn([
+            ["Provider": "APPLE", "Units": "1"]
+        ])
+
+        let cmd = try SalesReportsDownload.parse([
+            "--report-type", "SALES",
+            "--sub-type", "SUMMARY",
+            "--frequency", "DAILY",
+            "--pretty",
+        ])
+        let output = try await cmd.execute(repo: mockRepo, storage: mockStorage)
+
+        #expect(output.contains("\"Provider\" : \"APPLE\""))
+    }
+
+    @Test func `explicit vendor number overrides stored value`() async throws {
+        let mockRepo = MockReportRepository()
+        let mockStorage = MockAuthStorage()
+        let accounts = [ConnectAccount(name: "work", keyID: "KEY1", issuerID: "ISS1", isActive: true, vendorNumber: "stored")]
+        given(mockStorage).loadAll().willReturn(accounts)
+        given(mockRepo).downloadSalesReport(
+            vendorNumber: .value("explicit"),
+            reportType: .any,
+            subType: .any,
+            frequency: .any,
+            reportDate: .any
+        ).willReturn([
+            ["Provider": "APPLE", "Units": "1"]
+        ])
+
+        let cmd = try SalesReportsDownload.parse([
+            "--vendor-number", "explicit",
+            "--report-type", "SALES",
+            "--sub-type", "SUMMARY",
+            "--frequency", "DAILY",
+            "--pretty",
+        ])
+        let output = try await cmd.execute(repo: mockRepo, storage: mockStorage)
+
+        #expect(output.contains("\"Provider\" : \"APPLE\""))
+    }
+
+    @Test func `throws when vendor number missing from both flag and storage`() async throws {
+        let mockRepo = MockReportRepository()
+        let mockStorage = MockAuthStorage()
+        given(mockStorage).loadAll().willReturn([])
+
+        let cmd = try SalesReportsDownload.parse([
+            "--report-type", "SALES",
+            "--sub-type", "SUMMARY",
+            "--frequency", "DAILY",
+        ])
+
+        await #expect(throws: (any Error).self) {
+            try await cmd.execute(repo: mockRepo, storage: mockStorage)
+        }
+    }
+
     @Test func `handles empty report`() async throws {
         let mockRepo = MockReportRepository()
         given(mockRepo).downloadSalesReport(

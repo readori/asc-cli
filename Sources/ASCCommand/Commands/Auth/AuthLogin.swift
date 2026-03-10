@@ -26,6 +26,9 @@ struct AuthLogin: AsyncParsableCommand {
     @Option(name: .long, help: "Private key PEM content (alternative to --private-key-path)")
     var privateKey: String?
 
+    @Option(name: .long, help: "Vendor number for financial/sales reports (found in App Store Connect → Payments and Financial Reports)")
+    var vendorNumber: String?
+
     func run() async throws {
         let storage = FileAuthStorage()
         print(try await execute(storage: storage))
@@ -48,12 +51,12 @@ struct AuthLogin: AsyncParsableCommand {
         guard !accountName.contains(where: \.isWhitespace) else {
             throw ValidationError("Account name must not contain spaces. Got: \"\(accountName)\"")
         }
-        let credentials = AuthCredentials(keyID: keyId, issuerID: issuerId, privateKeyPEM: privateKeyPEM)
+        let credentials = AuthCredentials(keyID: keyId, issuerID: issuerId, privateKeyPEM: privateKeyPEM, vendorNumber: vendorNumber)
         try credentials.validate()
         try storage.save(credentials, name: accountName)
         try storage.setActive(name: accountName)
 
-        let status = AuthStatus(name: accountName, keyID: keyId, issuerID: issuerId, source: .file)
+        let status = AuthStatus(name: accountName, keyID: keyId, issuerID: issuerId, source: .file, vendorNumber: vendorNumber)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
             [status],
