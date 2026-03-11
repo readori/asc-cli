@@ -1,4 +1,4 @@
-# asc Commands for Screenshot Planning and Translation
+# asc Commands for Screenshot Planning, HTML Generation, and Translation
 
 ## List apps (get App ID)
 
@@ -130,6 +130,45 @@ asc app-shots generate --gemini-api-key AIzaSy...
 | `APP_APPLE_TV` | 1920 × 1080 | — |
 | `APP_DESKTOP` | 2560 × 1600 | — |
 | `APP_APPLE_VISION_PRO` | 3840 × 2160 | — |
+
+## Generate HTML page (deterministic, no AI)
+
+```bash
+# Auto-discover screenshots from plan directory
+asc app-shots html --plan composition-plan.json --output-dir output
+
+# Explicit screenshot paths
+asc app-shots html --plan composition-plan.json --output-dir output screenshot-1.png screenshot-2.png
+
+# With legacy ScreenPlan format (auto-detected)
+asc app-shots html --plan app-shots-plan.json --output-dir output
+
+# Disable mockup frame
+asc app-shots html --plan composition-plan.json --output-dir output --mockup none
+
+# Custom mockup
+asc app-shots html --plan composition-plan.json --output-dir output \
+  --mockup /path/to/frame.png --screen-inset-x 80 --screen-inset-y 70
+```
+
+**Flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--plan` | `.asc/app-shots/app-shots-plan.json` | Path to plan JSON (CompositionPlan or ScreenPlan) |
+| `--output-dir` | `.asc/app-shots/output` | Output directory for HTML file |
+| `--output-width` | `1320` | Canvas width (overridden by CompositionPlan's `canvas.width`) |
+| `--output-height` | `2868` | Canvas height (overridden by CompositionPlan's `canvas.height`) |
+| `--device-type` | — | Named device type, overrides width/height |
+| `--mockup` | *(bundled default)* | Device name, file path, or `"none"` to disable |
+| `--screen-inset-x` | — | Override screen inset X from mockups.json |
+| `--screen-inset-y` | — | Override screen inset Y from mockups.json |
+
+**Output:** A single `app-shots.html` file with base64-embedded screenshots, real device mockup frames, and client-side PNG export via html-to-image CDN.
+
+**Plan format auto-detection:** The command tries `CompositionPlan` first, falls back to `ScreenPlan`.
+
+---
 
 ## Translate screenshots to other locales
 
