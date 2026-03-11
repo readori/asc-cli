@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.42] - 2026-03-11
 
+### Added
+- Customer reviews: `asc reviews list --app-id <id>` and `asc reviews get --review-id <id>` — list and view customer reviews with rating, title, body, reviewer nickname, and territory
+- Review responses: `asc review-responses create --review-id <id> --response-body "text"`, `asc review-responses get --review-id <id>`, `asc review-responses delete --response-id <id>` — manage developer responses to customer reviews
+
 ### Changed
 - Bug fixes and improvements.
 
@@ -19,8 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.41] - 2026-03-10
 
 ### Added
-- Customer reviews: `asc reviews list --app-id <id>` and `asc reviews get --review-id <id>` — list and view customer reviews with rating, title, body, reviewer nickname, and territory
-- Review responses: `asc review-responses create --review-id <id> --response-body "text"`, `asc review-responses get --review-id <id>`, `asc review-responses delete --response-id <id>` — manage developer responses to customer reviews
 - Sales reports: `asc sales-reports download` with support for 10 report types, 5 sub-types, and 4 frequencies
 - Finance reports: `asc finance-reports download` with financial and finance detail report types
 - Gzip decompression and TSV parsing infrastructure for App Store Connect report downloads
