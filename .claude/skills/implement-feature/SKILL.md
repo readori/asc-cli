@@ -148,13 +148,14 @@ See [tdd-patterns.md](references/tdd-patterns.md) for complete patterns includin
 }
 ```
 
-### Phase 3: Command wiring
+### Phase 3: Command (tests first, then wiring)
 
-1. Add `makeMyRepository()` to `ClientProvider.swift`
-2. Add factory to `ClientFactory.swift`
-3. Create `Sources/ASCCommand/Commands/MyModels/MyCommand.swift`
-4. Register in `ASC.swift` subcommands array
-5. Run `swift test` — all must pass
+1. **Write command tests first** — test must fail (red) before any command code exists
+2. Add `makeMyRepository()` to `ClientProvider.swift`
+3. Add factory to `ClientFactory.swift`
+4. Create `Sources/ASCCommand/Commands/MyModels/MyCommand.swift` — just enough to make the test pass (green)
+5. Register in `ASC.swift` subcommands array
+6. Run `swift test` — all must pass
 
 **Three mandatory rules for every command test:**
 1. **Behavior-focused name from user's mental model** — describe what the user sees and expects (e.g. `` `listed versions show submit affordance when editable` ``), not how the code works
