@@ -1,0 +1,74 @@
+{
+  "appName": "AppNexus for App Store Connect",
+  "canvas": {
+    "width": 1320,
+    "height": 2868,
+    "displayType": "APP_IPHONE_69"
+  },
+  "defaults": {
+    "background": { "type": "solid", "color": "#0A1628" },
+    "textColor": "#FFFFFF",
+    "subtextColor": "#A8B8D0",
+    "accentColor": "#4A7CFF",
+    "font": "Inter"
+  },
+  "screens": [
+    {
+      "texts": [
+        {
+          "content": "All Your Apps",
+          "x": 0.065,
+          "y": 0.04,
+          "fontSize": 0.1,
+          "fontWeight": 800,
+          "color": "#FFFFFF"
+        },
+        {
+          "content": "Manage every App Store project\nfrom one unified dashboard",
+          "x": 0.065,
+          "y": 0.09,
+          "fontSize": 0.033,
+          "color": "#A8B8D0"
+        }
+      ],
+      "devices": [
+        {
+          "screenshotFile": "screenshot-1.png",
+          "mockup": "iPhone 17 Pro Max",
+          "x": 0.5,
+          "y": 0.62,
+          "scale": 0.82
+        }
+      ]
+    },
+    {
+      "background": { "type": "gradient", "from": "#0A1628", "to": "#1a2744", "angle": 180 },
+      "texts": [
+        {
+          "content": "App Control Hub",
+          "x": 0.065,
+          "y": 0.04,
+          "fontSize": 0.1,
+          "fontWeight": 800,
+          "color": "#FFFFFF"
+        },
+        {
+          "content": "Info, Screenshots, AI tools —\neverything in one tap",
+          "x": 0.065,
+          "y": 0.09,
+          "fontSize": 0.033,
+          "color": "#A8B8D0"
+        }
+      ],
+      "devices": [
+        {
+          "screenshotFile": "screenshot-2.png",
+          "mockup": "iPhone 17 Pro Max",
+          "x": 0.5,
+          "y": 0.62,
+          "scale": 0.82
+        }
+      ]
+    }
+  ]
+}

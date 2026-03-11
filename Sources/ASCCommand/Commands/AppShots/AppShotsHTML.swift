@@ -44,18 +44,81 @@ struct AppShotsHTML: AsyncParsableCommand {
     }
 
     func execute() async throws -> String {
+        // Load plan — auto-detect format
+        let planURL = URL(fileURLWithPath: plan)
+        let planData = try Data(contentsOf: planURL)
+        let planDir = planURL.deletingLastPathComponent()
+
+        // Try CompositionPlan first (has "canvas" key), fallback to ScreenPlan
+        if let compositionPlan = try? JSONDecoder().decode(CompositionPlan.self, from: planData) {
+            return try await executeComposition(compositionPlan, planDir: planDir)
+        }
+
+        let loadedPlan = try JSONDecoder().decode(ScreenPlan.self, from: planData)
+        return try await executeLegacy(loadedPlan, planDir: planDir)
+    }
+
+    /// Execute with the new CompositionPlan format.
+    private func executeComposition(_ plan: CompositionPlan, planDir: URL) async throws -> String {
+        let width = plan.canvas.width
+        let height = plan.canvas.height
+
+        // Collect all screenshot files referenced in the plan
+        let allFiles = Set(plan.screens.flatMap { $0.devices.map(\.screenshotFile) })
+        var screenshotDataURIs: [String: String] = [:]
+
+        // Build from explicit args first, then auto-discover from plan dir
+        let searchPaths: [String] = screenshots.isEmpty
+            ? ((try? FileManager.default.contentsOfDirectory(at: planDir, includingPropertiesForKeys: nil)) ?? [])
+                .filter { ["png", "jpg", "jpeg"].contains($0.pathExtension.lowercased()) }
+                .map { $0.path }
+            : screenshots
+
+        for path in searchPaths {
+            let url = URL(fileURLWithPath: path)
+            guard FileManager.default.fileExists(atPath: url.path) else { continue }
+            let data = try Data(contentsOf: url)
+            let ext = url.pathExtension.lowercased()
+            let mime = ext == "jpg" || ext == "jpeg" ? "image/jpeg" : "image/png"
+            screenshotDataURIs[url.lastPathComponent] = "data:\(mime);base64,\(data.base64EncodedString())"
+        }
+
+        // Resolve mockup for each unique device name
+        var mockupCache: [String: MockupInfo] = [:]
+        let deviceNames = Set(plan.screens.flatMap { $0.devices.map(\.mockup) })
+        for name in deviceNames {
+            if let resolved = try MockupResolver.resolve(argument: name, insetXOverride: nil, insetYOverride: nil) {
+                let data = try Data(contentsOf: resolved.fileURL)
+                mockupCache[name] = MockupInfo(
+                    dataURI: "data:image/png;base64,\(data.base64EncodedString())",
+                    frameWidth: resolved.frameWidth,
+                    frameHeight: resolved.frameHeight,
+                    insetX: resolved.screenInsetX,
+                    insetY: resolved.screenInsetY
+                )
+            }
+        }
+
+        let html = generateCompositionHTML(
+            plan: plan,
+            screenshotDataURIs: screenshotDataURIs,
+            mockupCache: mockupCache
+        )
+
+        let outputDirURL = URL(fileURLWithPath: outputDir)
+        try FileManager.default.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
+        let htmlPath = outputDirURL.appendingPathComponent("app-shots.html")
+        try html.write(to: htmlPath, atomically: true, encoding: .utf8)
+        return formatOutput(path: htmlPath.path)
+    }
+
+    /// Execute with the legacy ScreenPlan format.
+    private func executeLegacy(_ loadedPlan: ScreenPlan, planDir: URL) async throws -> String {
         let effectiveWidth = deviceType.map { $0.dimensions.width } ?? outputWidth
         let effectiveHeight = deviceType.map { $0.dimensions.height } ?? outputHeight
 
-        // Load plan
-        let planURL = URL(fileURLWithPath: plan)
-        let planData = try Data(contentsOf: planURL)
-        let loadedPlan = try JSONDecoder().decode(ScreenPlan.self, from: planData)
-
-        // Resolve screenshots
         let resolvedScreenshots: [String]
         if screenshots.isEmpty {
-            let planDir = planURL.deletingLastPathComponent()
             let contents = (try? FileManager.default.contentsOfDirectory(at: planDir, includingPropertiesForKeys: nil)) ?? []
             resolvedScreenshots = contents
                 .filter { ["png", "jpg", "jpeg"].contains($0.pathExtension.lowercased()) }
@@ -65,7 +128,6 @@ struct AppShotsHTML: AsyncParsableCommand {
             resolvedScreenshots = screenshots
         }
 
-        // Build screenshot data map: filename → base64 data URI
         var screenshotDataURIs: [String: String] = [:]
         for path in resolvedScreenshots {
             let url = URL(fileURLWithPath: path)
@@ -78,10 +140,7 @@ struct AppShotsHTML: AsyncParsableCommand {
             screenshotDataURIs[url.lastPathComponent] = "data:\(mime);base64,\(data.base64EncodedString())"
         }
 
-        // Resolve mockup frame (default: bundled iPhone 17 Pro Max)
         let mockupInfo = try resolveMockupInfo()
-
-        // Generate HTML
         let html = generateHTML(
             plan: loadedPlan,
             screenshotDataURIs: screenshotDataURIs,
@@ -90,12 +149,10 @@ struct AppShotsHTML: AsyncParsableCommand {
             height: effectiveHeight
         )
 
-        // Write output
         let outputDirURL = URL(fileURLWithPath: outputDir)
         try FileManager.default.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
         let htmlPath = outputDirURL.appendingPathComponent("app-shots.html")
         try html.write(to: htmlPath, atomically: true, encoding: .utf8)
-
         return formatOutput(path: htmlPath.path)
     }
 
@@ -663,6 +720,263 @@ struct AppShotsHTML: AsyncParsableCommand {
             return dataURIs[sorted[screen.index]]
         }
         return nil
+    }
+
+    // MARK: - Composition Plan HTML
+
+    private func generateCompositionHTML(
+        plan: CompositionPlan,
+        screenshotDataURIs: [String: String],
+        mockupCache: [String: MockupInfo]
+    ) -> String {
+        let W = plan.canvas.width
+        let H = plan.canvas.height
+        let d = plan.defaults
+
+        func bgCSS(_ bg: SlideBackground) -> String {
+            switch bg {
+            case .solid(let c): return "background:\(c);"
+            case .gradient(let from, let to, let angle): return "background:linear-gradient(\(angle)deg,\(from),\(to));"
+            }
+        }
+
+        func renderSlideContent(screen: SlideComposition, index: Int) -> String {
+            let slideBg = screen.background ?? d.background
+
+            // Text overlays
+            let texts = screen.texts.map { t in
+                let font = t.font ?? d.font
+                let px = Int(t.fontSize * Double(W))
+                let left = Int(t.x * Double(W))
+                let top = Int(t.y * Double(H))
+                return "<div style=\"position:absolute;left:\(left)px;top:\(top)px;font-family:'\(escapeHTML(font))',sans-serif;font-size:\(px)px;font-weight:\(t.fontWeight);color:\(t.color);line-height:1.1;letter-spacing:-0.02em;white-space:pre-line;z-index:3;\">\(escapeHTML(t.content))</div>"
+            }.joined(separator: "\n")
+
+            // Device slots
+            let devices = screen.devices.map { slot in
+                let screenshotURI = screenshotDataURIs[slot.screenshotFile]
+                let mockup = mockupCache[slot.mockup]
+                let deviceW = Int(slot.scale * Double(W))
+                let centerX = Int(slot.x * Double(W))
+                let centerY = Int(slot.y * Double(H))
+                let transform = slot.rotation != 0
+                    ? "transform:translate(-50%,-50%) rotate(\(String(format: "%.1f", slot.rotation))deg);"
+                    : "transform:translate(-50%,-50%);"
+
+                let inner: String
+                if let m = mockup {
+                    let screenW = m.frameWidth - 2 * m.insetX
+                    let screenH = m.frameHeight - 2 * m.insetY
+                    let ixPct = String(format: "%.2f", Double(m.insetX) / Double(m.frameWidth) * 100)
+                    let iyPct = String(format: "%.2f", Double(m.insetY) / Double(m.frameHeight) * 100)
+                    let swPct = String(format: "%.2f", Double(screenW) / Double(m.frameWidth) * 100)
+                    let shPct = String(format: "%.2f", Double(screenH) / Double(m.frameHeight) * 100)
+                    let objFit = slot.contentMode == .fill ? "cover" : "contain"
+                    let screenshotTag = screenshotURI.map { "<img src=\"\($0)\" style=\"width:100%;height:100%;object-fit:\(objFit);display:block;\">" } ?? ""
+                    inner = """
+                    <div style="position:relative;width:100%;">
+                        <div style="position:absolute;left:\(ixPct)%;top:\(iyPct)%;width:\(swPct)%;height:\(shPct)%;overflow:hidden;border-radius:13.8% / 6.8%;z-index:1;">\(screenshotTag)</div>
+                        <img src="\(m.dataURI)" style="width:100%;display:block;position:relative;z-index:2;pointer-events:none;">
+                    </div>
+                    """
+                } else {
+                    let screenshotTag = screenshotURI.map { "<img src=\"\($0)\" style=\"width:100%;display:block;border-radius:\(Int(Double(W) * 0.04))px;\">" } ?? ""
+                    inner = screenshotTag
+                }
+
+                return "<div style=\"position:absolute;left:\(centerX)px;top:\(centerY)px;width:\(deviceW)px;\(transform)z-index:2;\">\(inner)</div>"
+            }.joined(separator: "\n")
+
+            return """
+            <div class="slide" style="\(bgCSS(slideBg))">
+            \(texts)
+            \(devices)
+            </div>
+            """
+        }
+
+        let cards = plan.screens.enumerated().map { (i, screen) in
+            let heading = screen.texts.first?.content ?? "Screen \(i)"
+            return """
+            <div class="card">
+                <div class="preview-wrap" onclick="exportSingle(\(i))">
+                    \(renderSlideContent(screen: screen, index: i))
+                </div>
+                <div class="card-footer">
+                    <span class="card-label">\(escapeHTML(heading))</span>
+                    <span class="card-index">#\(i)</span>
+                </div>
+            </div>
+            """
+        }.joined(separator: "\n")
+
+        let exportSlides = plan.screens.enumerated().map { (i, screen) in
+            let slideBg = screen.background ?? d.background
+            let texts = screen.texts.map { t in
+                let font = t.font ?? d.font
+                let px = Int(t.fontSize * Double(W))
+                let left = Int(t.x * Double(W))
+                let top = Int(t.y * Double(H))
+                return "<div style=\"position:absolute;left:\(left)px;top:\(top)px;font-family:'\(escapeHTML(font))',sans-serif;font-size:\(px)px;font-weight:\(t.fontWeight);color:\(t.color);line-height:1.1;letter-spacing:-0.02em;white-space:pre-line;z-index:3;\">\(escapeHTML(t.content))</div>"
+            }.joined(separator: "\n")
+
+            let devices = screen.devices.map { slot in
+                let screenshotURI = screenshotDataURIs[slot.screenshotFile]
+                let mockup = mockupCache[slot.mockup]
+                let deviceW = Int(slot.scale * Double(W))
+                let centerX = Int(slot.x * Double(W))
+                let centerY = Int(slot.y * Double(H))
+                let transform = slot.rotation != 0
+                    ? "transform:translate(-50%,-50%) rotate(\(String(format: "%.1f", slot.rotation))deg);"
+                    : "transform:translate(-50%,-50%);"
+
+                let inner: String
+                if let m = mockup {
+                    let screenW = m.frameWidth - 2 * m.insetX
+                    let screenH = m.frameHeight - 2 * m.insetY
+                    let ixPct = String(format: "%.2f", Double(m.insetX) / Double(m.frameWidth) * 100)
+                    let iyPct = String(format: "%.2f", Double(m.insetY) / Double(m.frameHeight) * 100)
+                    let swPct = String(format: "%.2f", Double(screenW) / Double(m.frameWidth) * 100)
+                    let shPct = String(format: "%.2f", Double(screenH) / Double(m.frameHeight) * 100)
+                    let objFit = slot.contentMode == .fill ? "cover" : "contain"
+                    let screenshotTag = screenshotURI.map { "<img src=\"\($0)\" style=\"width:100%;height:100%;object-fit:\(objFit);display:block;\">" } ?? ""
+                    inner = """
+                    <div style="position:relative;width:100%;">
+                        <div style="position:absolute;left:\(ixPct)%;top:\(iyPct)%;width:\(swPct)%;height:\(shPct)%;overflow:hidden;border-radius:13.8% / 6.8%;z-index:1;">\(screenshotTag)</div>
+                        <img src="\(m.dataURI)" style="width:100%;display:block;position:relative;z-index:2;pointer-events:none;">
+                    </div>
+                    """
+                } else {
+                    let screenshotTag = screenshotURI.map { "<img src=\"\($0)\" style=\"width:100%;display:block;border-radius:\(Int(Double(W) * 0.04))px;\">" } ?? ""
+                    inner = screenshotTag
+                }
+
+                return "<div style=\"position:absolute;left:\(centerX)px;top:\(centerY)px;width:\(deviceW)px;\(transform)z-index:2;\">\(inner)</div>"
+            }.joined(separator: "\n")
+
+            return """
+            <div id="export-slide-\(i)" class="slide" style="\(bgCSS(slideBg))">
+            \(texts)
+            \(devices)
+            </div>
+            """
+        }.joined(separator: "\n")
+
+        return """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>\(escapeHTML(plan.appName)) — App Store Screenshots</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=\(d.font.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? d.font):wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: '\(d.font)', -apple-system, sans-serif;
+            background: #111;
+            color: #e0e0e0;
+        }
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .header-left h1 { font-size: 18px; font-weight: 700; color: #fff; }
+        .header-left .meta { font-size: 13px; color: #666; margin-top: 2px; }
+        .header-right { display: flex; align-items: center; gap: 6px; }
+        .export-all-btn {
+            background: \(d.accentColor); color: #fff; border: none;
+            padding: 8px 24px; border-radius: 8px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+        }
+        .export-all-btn:hover { opacity: 0.85; }
+        .export-all-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px; padding: 32px 40px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        .card { display: flex; flex-direction: column; }
+        .preview-wrap {
+            width: 100%; aspect-ratio: \(W) / \(H);
+            overflow: hidden; border-radius: \(Int(Double(W) * 0.04))px;
+            position: relative; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .preview-wrap:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+        .preview-wrap .slide { transform-origin: top left; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 0; }
+        .card-footer .card-label { font-size: 13px; color: #666; font-weight: 500; }
+        .card-footer .card-index { font-size: 13px; color: #444; font-weight: 600; }
+        .slide {
+            width: \(W)px; height: \(H)px;
+            position: relative; overflow: hidden;
+            border-radius: \(Int(Double(W) * 0.04))px;
+        }
+        .export-container { position: absolute; left: -99999px; top: 0; }
+        .status-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(17,17,17,0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 12px 40px; text-align: center; font-size: 13px; color: #888;
+            transform: translateY(100%); transition: transform 0.3s; z-index: 100;
+        }
+        .status-bar.visible { transform: translateY(0); }
+        </style>
+        </head>
+        <body>
+        <div class="header">
+            <div class="header-left">
+                <h1>\(escapeHTML(plan.appName))</h1>
+                <div class="meta">\(plan.screens.count) screenshots &middot; \(W)&times;\(H)</div>
+            </div>
+            <div class="header-right">
+                <button class="export-all-btn" onclick="exportAll()">Export All</button>
+            </div>
+        </div>
+        <div class="grid">
+        \(cards)
+        </div>
+        <div class="status-bar" id="statusBar"></div>
+        <div class="export-container" id="exportContainer">
+        \(exportSlides)
+        </div>
+        <script>
+        const W = \(W), H = \(H);
+        function scaleAll() {
+            document.querySelectorAll('.preview-wrap').forEach(w => {
+                const s = w.querySelector('.slide');
+                if (s) s.style.transform = 'scale(' + (w.offsetWidth / W) + ')';
+            });
+        }
+        scaleAll(); window.addEventListener('resize', scaleAll);
+        function showStatus(m) { const b=document.getElementById('statusBar'); b.textContent=m; b.classList.add('visible'); }
+        function hideStatus() { document.getElementById('statusBar').classList.remove('visible'); }
+        async function exportSingle(i) {
+            const el=document.getElementById('export-slide-'+i); if(!el) return;
+            const c=document.getElementById('exportContainer');
+            c.style.left='0px'; c.style.opacity='0'; c.style.zIndex='-1';
+            await htmlToImage.toPng(el,{width:W,height:H,pixelRatio:1,cacheBust:true});
+            const d=await htmlToImage.toPng(el,{width:W,height:H,pixelRatio:1,cacheBust:true});
+            c.style.left='-99999px';
+            const a=document.createElement('a'); a.download='screen-'+i+'-'+W+'x'+H+'.png'; a.href=d; a.click();
+        }
+        async function exportAll() {
+            const btn=document.querySelector('.export-all-btn'); btn.disabled=true;
+            for(let i=0;i<\(plan.screens.count);i++){
+                showStatus('Exporting '+(i+1)+' of \(plan.screens.count)...');
+                await exportSingle(i); await new Promise(r=>setTimeout(r,300));
+            }
+            showStatus('All \(plan.screens.count) exported!'); btn.disabled=false;
+            setTimeout(hideStatus,3000);
+        }
+        </script>
+        </body>
+        </html>
+        """
     }
 
     private func escapeHTML(_ text: String) -> String {
