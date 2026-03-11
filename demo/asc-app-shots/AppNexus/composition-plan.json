@@ -95,16 +95,16 @@
         {
           "screenshotFile": "screenshot-1.png",
           "mockup": "iPhone 17 Pro Max",
-          "x": 0.30,
-          "y": 0.55,
-          "scale": 0.48
+          "x": 0.34,
+          "y": 0.58,
+          "scale": 0.50
         },
         {
           "screenshotFile": "screenshot-2.png",
           "mockup": "iPhone 17 Pro Max",
-          "x": 0.62,
-          "y": 0.60,
-          "scale": 0.58
+          "x": 0.66,
+          "y": 0.64,
+          "scale": 0.50
         }
       ]
     }
