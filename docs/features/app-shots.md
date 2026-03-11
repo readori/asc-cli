@@ -2,10 +2,16 @@
 
 AI-powered App Store screenshot generation and localization. The `asc app-shots` command uses Gemini AI to produce polished marketing PNG images from your raw app screenshots and a `ScreenPlan` JSON file, and can translate them into any locale in one step.
 
-Three-step workflow:
+Two generation workflows — pick one:
+
+**Workflow A — AI-powered (Gemini):**
 1. **`asc-app-shots` skill** — Claude fetches App Store metadata, analyzes screenshots with vision, and writes `.asc/app-shots/app-shots-plan.json`
 2. **`asc app-shots generate`** — reads the plan + screenshots, calls Gemini image generation API in parallel, writes `screen-{index}.png` to `.asc/app-shots/output/`
 3. **`asc app-shots translate`** *(optional)* — reads the English plan + generated screenshots, recreates them with translated text for each `--to` locale
+
+**Workflow B — HTML (no AI needed):**
+1. **`asc-app-shots` skill** — same planning step as above
+2. **`asc app-shots html`** — generates a self-contained HTML page; open in browser to preview and export PNGs at exact App Store dimensions
 
 ---
 
@@ -128,6 +134,47 @@ asc app-shots translate \
 |--------|---------|------------|
 | ja | 2 | .asc/app-shots/output/ja |
 | zh | 2 | .asc/app-shots/output/zh |
+
+---
+
+### `asc app-shots html`
+
+Generate a self-contained HTML page from a ScreenPlan JSON — no AI API key needed. Open the HTML in any browser to preview all screenshots and export them as PNGs at exact App Store dimensions.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--plan` | `.asc/app-shots/app-shots-plan.json` | Path to the ScreenPlan JSON file |
+| `--output-dir` | `.asc/app-shots/output` | Directory to write the HTML file |
+| `--output-width` | `1320` | Output PNG width in pixels |
+| `--output-height` | `2868` | Output PNG height in pixels |
+| `--device-type` | — | Named device type — overrides `--output-width`/`--output-height` |
+| `<screenshots>` | *(auto-discovered)* | Screenshot files; omit to auto-discover `*.png/*.jpg` from plan directory |
+| `--output` | `json` | Output format: `json`, `table`, `markdown` |
+
+```bash
+# Zero-argument happy path
+asc app-shots html
+
+# Explicit plan + device type
+asc app-shots html --plan .asc/app-shots/app-shots-plan.json --device-type APP_IPHONE_67
+
+# Explicit screenshots
+asc app-shots html --plan plan.json screen1.png screen2.png
+```
+
+**Features:**
+- Self-contained single HTML file with base64-embedded screenshots
+- CSS-only phone mockup frames — no external images needed
+- Layout modes: `center`, `left`, `tilted` — applied from plan
+- Plan colors (primary, accent, text, subtext) drive all styling
+- Per-screen "Export" buttons and "Export All PNGs" toolbar button
+- Uses [html-to-image](https://github.com/bubkoo/html-to-image) CDN for pixel-perfect PNG export
+- Double-render pattern ensures fonts load correctly before export
+
+**JSON output:**
+```json
+{"file":".asc/app-shots/output/app-shots.html"}
+```
 
 ---
 

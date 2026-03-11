@@ -63,7 +63,8 @@ extension ScreenPlan: Codable {
 extension ScreenPlan: AffordanceProviding {
     public var affordances: [String: String] {
         [
-            "generate": "asc app-shots generate --plan app-shots-plan.json --gemini-api-key $GEMINI_API_KEY"
+            "generate": "asc app-shots generate --plan app-shots-plan.json --gemini-api-key $GEMINI_API_KEY",
+            "generateHTML": "asc app-shots html --plan app-shots-plan.json"
         ]
     }
 }
