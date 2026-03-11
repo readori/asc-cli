@@ -148,23 +148,38 @@ See [tdd-patterns.md](references/tdd-patterns.md) for complete patterns includin
 }
 ```
 
-### Phase 3: Command (tests first, then wiring)
+### Phase 3: Command
 
-1. **Write command tests first** — test must fail (red) before any command code exists
-2. Add `makeMyRepository()` to `ClientProvider.swift`
-3. Add factory to `ClientFactory.swift`
-4. Create `Sources/ASCCommand/Commands/MyModels/MyCommand.swift` — just enough to make the test pass (green)
-5. Register in `ASC.swift` subcommands array
-6. Run `swift test` — all must pass
+Start by thinking like the user: **"When I run `asc my-models list --parent-id p-1`, what should I see?"**
 
-**Three mandatory rules for every command test:**
-1. **Behavior-focused name from user's mental model** — describe what the user sees and expects (e.g. `` `listed versions show submit affordance when editable` ``), not how the code works
-2. **Always `#expect()`** — every test must have an assertion; `_ = try await cmd.execute(...)` with no `#expect` is not a test
-3. **Exact JSON assertion** — assert the complete output string, never `output.contains(...)`
+#### Step 1: Define what the user expects
+
+Before writing any code, write down the exact JSON the user should see. This is your specification:
+
+```json
+{
+  "data" : [
+    {
+      "id" : "m-1",
+      "parentId" : "p-1",
+      "affordances" : {
+        "listChildren" : "asc children list --parent-id m-1",
+        "listSiblings" : "asc my-models list --grandparent-id p-1"
+      }
+    }
+  ]
+}
+```
+
+Also think about affordances from the user's perspective: **"What can I do next?"** — these are the commands the user would naturally want to run after seeing this output.
+
+#### Step 2: Write the test (red)
+
+Create a minimal command skeleton (struct + `@Option` fields + `execute()` returning `""`) — just enough to compile, NOT enough to pass. Then write the test:
 
 ```swift
-// ✅ CORRECT — behavior name, exact JSON assertion
-@Test func `listed my models include parent id and affordances`() async throws {
+// Test name = what the user expects to happen
+@Test func `listed my models show id, parent, and next actions`() async throws {
     let mockRepo = MockMyRepository()
     given(mockRepo).listMyModels(parentId: .any).willReturn([
         MockRepositoryFactory.makeMyModel(id: "m-1", parentId: "p-1")
@@ -186,12 +201,23 @@ See [tdd-patterns.md](references/tdd-patterns.md) for complete patterns includin
     }
     """)
 }
-
-// ❌ AVOID — too loose, misses missing/extra fields and affordance regressions
-#expect(output.contains("\"id\" : \"m-1\""))
 ```
 
-The exact JSON assertion verifies: field names, field order, affordance content, nil-field omission — all at once.
+Run it — **must fail** because `execute()` returns `""`.
+
+#### Step 3: Implement and wire (green)
+
+1. Add `makeMyRepository()` to `ClientProvider.swift` + factory to `ClientFactory.swift`
+2. Implement `execute()` — just enough to make the test pass
+3. Register in `ASC.swift` subcommands array
+4. Run `swift test` — all must pass
+
+#### Test rules
+
+- **Name = user expectation** — `` `listed versions show submit affordance when editable` ``, not `` `execute returns correct JSON` ``
+- **Always `#expect()`** — `_ = try await cmd.execute(...)` with no assertion is not a test
+- **Exact JSON assertion** — assert the complete output string, never `output.contains(...)`. This verifies field names, field order, affordance content, and nil-field omission all at once
+- **Think about edge cases from user's perspective** — "What if there are no results?", "What if the version is not editable — should submit still appear?"
 
 ### Phase 4: Feature doc
 
