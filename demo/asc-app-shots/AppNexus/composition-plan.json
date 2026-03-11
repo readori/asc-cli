@@ -6,7 +6,7 @@
     "displayType": "APP_IPHONE_69"
   },
   "defaults": {
-    "background": { "type": "solid", "color": "#0A1628" },
+    "background": { "type": "solid", "color": "#000000" },
     "textColor": "#FFFFFF",
     "subtextColor": "#A8B8D0",
     "accentColor": "#4A7CFF",
@@ -14,22 +14,23 @@
   },
   "screens": [
     {
-      "background": { "type": "gradient", "from": "#0B0F1A", "to": "#1B2A4A", "angle": 160 },
+      "background": { "type": "gradient", "from": "#2A1B5E", "to": "#000000", "angle": 180 },
       "texts": [
         {
-          "content": "All Your Apps",
+          "content": "APP MANAGEMENT",
           "x": 0.065,
-          "y": 0.04,
-          "fontSize": 0.1,
-          "fontWeight": 800,
-          "color": "#FFFFFF"
+          "y": 0.028,
+          "fontSize": 0.028,
+          "fontWeight": 700,
+          "color": "#B8A0FF"
         },
         {
-          "content": "Manage every App Store project\nfrom one unified dashboard",
+          "content": "All your apps,\none dashboard.",
           "x": 0.065,
-          "y": 0.09,
-          "fontSize": 0.033,
-          "color": "#7B9FCC"
+          "y": 0.055,
+          "fontSize": 0.075,
+          "fontWeight": 800,
+          "color": "#FFFFFF"
         }
       ],
       "devices": [
@@ -37,28 +38,29 @@
           "screenshotFile": "screenshot-1.png",
           "mockup": "iPhone 17 Pro Max",
           "x": 0.5,
-          "y": 0.62,
-          "scale": 0.82
+          "y": 0.65,
+          "scale": 0.88
         }
       ]
     },
     {
-      "background": { "type": "gradient", "from": "#0D1B2A", "to": "#1A3352", "angle": 180 },
+      "background": { "type": "gradient", "from": "#1B3A5E", "to": "#000000", "angle": 180 },
       "texts": [
         {
-          "content": "App Control Hub",
+          "content": "CONTROL HUB",
           "x": 0.065,
-          "y": 0.04,
-          "fontSize": 0.1,
-          "fontWeight": 800,
-          "color": "#FFFFFF"
+          "y": 0.028,
+          "fontSize": 0.028,
+          "fontWeight": 700,
+          "color": "#7BC4FF"
         },
         {
-          "content": "Info, Screenshots, AI tools —\neverything in one tap",
+          "content": "Info, screenshots,\nAI — one tap.",
           "x": 0.065,
-          "y": 0.09,
-          "fontSize": 0.033,
-          "color": "#6BA3D6"
+          "y": 0.055,
+          "fontSize": 0.075,
+          "fontWeight": 800,
+          "color": "#FFFFFF"
         }
       ],
       "devices": [
@@ -66,29 +68,30 @@
           "screenshotFile": "screenshot-2.png",
           "mockup": "iPhone 17 Pro Max",
           "x": 0.5,
-          "y": 0.62,
-          "scale": 0.82
+          "y": 0.65,
+          "scale": 0.88
         }
       ]
     },
     {
-      "background": { "type": "gradient", "from": "#0A1225", "to": "#1E3A5F", "angle": 135 },
+      "background": { "type": "gradient", "from": "#1A4A3E", "to": "#000000", "angle": 180 },
       "texts": [
         {
-          "content": "One App.\nTwo Views.",
+          "content": "DUAL VIEW",
           "x": 0.5,
-          "y": 0.04,
-          "fontSize": 0.085,
-          "fontWeight": 800,
-          "color": "#FFFFFF",
+          "y": 0.028,
+          "fontSize": 0.028,
+          "fontWeight": 700,
+          "color": "#7BFFC4",
           "textAlign": "center"
         },
         {
-          "content": "Browse your apps and dive into\ndetailed controls — seamlessly",
+          "content": "Two screens.\nOne powerful app.",
           "x": 0.5,
-          "y": 0.12,
-          "fontSize": 0.03,
-          "color": "#6BA3D6",
+          "y": 0.055,
+          "fontSize": 0.075,
+          "fontWeight": 800,
+          "color": "#FFFFFF",
           "textAlign": "center"
         }
       ],
