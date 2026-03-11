@@ -14,9 +14,6 @@ swift test                               # All tests
 swift test --filter 'AppTests'           # Tests matching a pattern
 swift test --enable-code-coverage        # With coverage
 
-# Format
-swift format --in-place --recursive Sources Tests
-
 # Run
 swift run asc <args>
 make run ARGS="apps list"
@@ -76,6 +73,7 @@ App → AppStoreVersion → AppStoreVersionLocalization → AppScreenshotSet →
 App → AppInfo → AppInfoLocalization
 App → AppInfo → AgeRatingDeclaration
 AppCategory (top-level, not nested under App)
+App → CustomerReview → CustomerReviewResponse
 App → Build → BetaBuildLocalization
 App → BuildUpload
 App → TestFlight (BetaGroup → BetaTester)
@@ -98,6 +96,8 @@ Domain/
 │   ├── AppInfos/                  → AppInfo, AppInfoLocalization, AppInfoRepository,
 │   │                                AppCategory, AppCategoryRepository,
 │   │                                AgeRatingDeclaration, AgeRatingDeclarationRepository
+│   ├── Reviews/                   → CustomerReview, CustomerReviewResponse, ReviewResponseState,
+│   │                                CustomerReviewRepository
 │   ├── Builds/                    → Build, BuildUpload, BetaBuildLocalization,
 │   │                                BuildRepository, BuildUploadRepository, BetaBuildLocalizationRepository
 │   ├── Pricing/                   → PricingRepository

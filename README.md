@@ -40,6 +40,7 @@ asc init --app-id <id> # pin it — skip --app-id on every future command
 | **Code Signing** | Bundle IDs, certificates, devices, provisioning profiles |
 | **Authentication** | Multi-account credential management; named accounts, active-account switching |
 | **Project Init** | `asc init` pins app context to `.asc/project.json`; auto-detects from `.xcodeproj` |
+| **Customer Reviews** | Read customer reviews, respond to feedback, and manage review responses |
 | **App Clips** | Manage App Clips, default experiences, and locale-specific card content |
 | **Game Center** | Manage achievements and leaderboards for your game |
 | **Plugins** | Install executable plugins in `~/.asc/plugins/` for custom event handlers |
@@ -163,6 +164,25 @@ asc xcode-cloud workflows list --product-id <id>
 asc xcode-cloud builds list --workflow-id <id>
 asc xcode-cloud builds get --build-run-id <id>
 asc xcode-cloud builds start --workflow-id <id> [--clean]
+```
+
+### Customer Reviews
+
+```bash
+# List all reviews for an app
+asc reviews list --app-id <id>
+
+# Get a specific review
+asc reviews get --review-id <id>
+
+# Respond to a review
+asc review-responses create --review-id <id> --response-body "Thank you for your feedback!"
+
+# Get the response to a review
+asc review-responses get --review-id <id>
+
+# Delete a response
+asc review-responses delete --response-id <id>
 ```
 
 ### Game Center
@@ -398,6 +418,7 @@ Detailed documentation for each feature:
 - [Plugins](docs/features/plugins.md) — custom event handlers (Slack, Telegram, webhooks)
 - [App Wall](docs/features/app-wall.md) — community showcase; `apps.json` format and architecture
 - [Users & Roles](docs/features/users.md) — team member management, role assignment, invitation lifecycle; directory integration for automated access control
+- [Customer Reviews](docs/features/customer-reviews.md) — list reviews, respond to feedback, manage review responses
 - [Game Center](docs/features/game-center.md) — achievements (list, create, delete) and leaderboards (list, create, delete)
 - [Reports](docs/features/reports.md) — sales, finance, and analytics reports; TSV parsing, multi-step analytics workflow
 
