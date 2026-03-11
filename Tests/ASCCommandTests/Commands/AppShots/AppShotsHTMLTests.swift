@@ -368,4 +368,373 @@ struct AppShotsHTMLTests {
         #expect(resolved?.screenInsetX == 100)
         #expect(resolved?.screenInsetY == 200)
     }
+
+    // MARK: - CompositionPlan HTML generation
+
+    private func writeCompositionPlanAndScreenshots(
+        plan: CompositionPlan,
+        screenshotFiles: [String] = []
+    ) throws -> (planPath: String, screenshotPaths: [String]) {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("app-shots-comp-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+
+        let planURL = dir.appendingPathComponent("composition-plan.json")
+        try JSONEncoder().encode(plan).write(to: planURL)
+
+        var paths: [String] = []
+        for file in screenshotFiles {
+            let path = dir.appendingPathComponent(file)
+            try Self.fakePNG.write(to: path)
+            paths.append(path.path)
+        }
+        return (planURL.path, paths)
+    }
+
+    private func makeCompositionPlan(
+        appName: String = "TestApp",
+        screens: [SlideComposition] = []
+    ) -> CompositionPlan {
+        CompositionPlan(
+            appName: appName,
+            canvas: CanvasSize(width: 1320, height: 2868),
+            defaults: SlideDefaults(
+                background: .solid("#000000"),
+                textColor: "#FFFFFF",
+                subtextColor: "#A8B8D0",
+                accentColor: "#4A7CFF",
+                font: "Inter"
+            ),
+            screens: screens
+        )
+    }
+
+    @Test func `composition plan generates HTML with text overlays`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [
+                    TextOverlay(content: "Hero Title", x: 0.065, y: 0.04, fontSize: 0.1, color: "#FFFFFF"),
+                    TextOverlay(content: "Subtitle text", x: 0.065, y: 0.09, fontSize: 0.03, color: "#A8B8D0")
+                ],
+                devices: [
+                    DeviceSlot(screenshotFile: "s1.png", mockup: "iPhone 17 Pro Max", x: 0.5, y: 0.6, scale: 0.85)
+                ]
+            )
+        ])
+        let (planPath, screenshots) = try writeCompositionPlanAndScreenshots(plan: plan, screenshotFiles: ["s1.png"])
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"] + screenshots)
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("Hero Title"))
+        #expect(html.contains("Subtitle text"))
+    }
+
+    @Test func `composition plan renders gradient background`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                background: .gradient(from: "#2A1B5E", to: "#000000", angle: 180),
+                texts: [TextOverlay(content: "Test", x: 0.065, y: 0.04, fontSize: 0.1, color: "#FFF")],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("#2A1B5E"))
+        #expect(html.contains("linear-gradient"))
+    }
+
+    @Test func `composition plan renders solid background from defaults`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Test", x: 0.065, y: 0.04, fontSize: 0.1, color: "#FFF")],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("#000000"))
+    }
+
+    @Test func `composition plan supports multiple devices per slide`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Dual View", x: 0.5, y: 0.04, fontSize: 0.08, color: "#FFF", textAlign: .center)],
+                devices: [
+                    DeviceSlot(screenshotFile: "s1.png", mockup: "iPhone 17 Pro Max", x: 0.34, y: 0.58, scale: 0.50),
+                    DeviceSlot(screenshotFile: "s2.png", mockup: "iPhone 17 Pro Max", x: 0.66, y: 0.64, scale: 0.50)
+                ]
+            )
+        ])
+        let (planPath, screenshots) = try writeCompositionPlanAndScreenshots(plan: plan, screenshotFiles: ["s1.png", "s2.png"])
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"] + screenshots)
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("Dual View"))
+        // Two base64 images embedded
+        let dataURICount = html.components(separatedBy: "data:image/png;base64,").count - 1
+        #expect(dataURICount >= 2)
+    }
+
+    @Test func `composition plan applies center text alignment`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Centered", x: 0.5, y: 0.04, fontSize: 0.08, color: "#FFF", textAlign: .center)],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("text-align:center"))
+        #expect(html.contains("translateX(-50%)"))
+    }
+
+    @Test func `composition plan applies right text alignment`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Right", x: 0.9, y: 0.04, fontSize: 0.08, color: "#FFF", textAlign: .right)],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("text-align:right"))
+        #expect(html.contains("translateX(-100%)"))
+    }
+
+    @Test func `composition plan renders device with rotation`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [],
+                devices: [
+                    DeviceSlot(screenshotFile: "s1.png", mockup: "iPhone 17 Pro Max", x: 0.5, y: 0.6, scale: 0.5, rotation: 8.0)
+                ]
+            )
+        ])
+        let (planPath, screenshots) = try writeCompositionPlanAndScreenshots(plan: plan, screenshotFiles: ["s1.png"])
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"] + screenshots)
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("rotate(8.0deg)"))
+    }
+
+    @Test func `composition plan uses canvas dimensions from plan`() async throws {
+        let plan = CompositionPlan(
+            appName: "Custom",
+            canvas: CanvasSize(width: 1290, height: 2796, displayType: "APP_IPHONE_67"),
+            defaults: SlideDefaults(
+                background: .solid("#111"),
+                textColor: "#FFF", subtextColor: "#888",
+                accentColor: "#F00", font: "Helvetica"
+            ),
+            screens: [
+                SlideComposition(
+                    texts: [TextOverlay(content: "Custom Size", x: 0.065, y: 0.04, fontSize: 0.1, color: "#FFF")],
+                    devices: []
+                )
+            ]
+        )
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("1290"))
+        #expect(html.contains("2796"))
+        #expect(html.contains("Helvetica"))
+    }
+
+    @Test func `composition plan renders multiple screens`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Screen One", x: 0.065, y: 0.04, fontSize: 0.08, color: "#FFF")],
+                devices: []
+            ),
+            SlideComposition(
+                background: .gradient(from: "#1B3A5E", to: "#000", angle: 180),
+                texts: [TextOverlay(content: "Screen Two", x: 0.065, y: 0.04, fontSize: 0.08, color: "#FFF")],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("Screen One"))
+        #expect(html.contains("Screen Two"))
+        #expect(html.contains("#1B3A5E"))
+    }
+
+    @Test func `composition plan app name in page title`() async throws {
+        let plan = makeCompositionPlan(appName: "NexusApp", screens: [
+            SlideComposition(texts: [TextOverlay(content: "Hi", x: 0.1, y: 0.1, fontSize: 0.05, color: "#FFF")], devices: [])
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("<title>NexusApp"))
+    }
+
+    @Test func `composition plan includes export functionality`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(texts: [TextOverlay(content: "Test", x: 0.1, y: 0.1, fontSize: 0.05, color: "#FFF")], devices: [])
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("html-to-image"))
+        #expect(html.contains("Export"))
+        #expect(html.contains("export-slide-"))
+    }
+
+    @Test func `composition plan auto-detects format over screen plan`() async throws {
+        let plan = makeCompositionPlan(appName: "AutoDetect", screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Detected", x: 0.065, y: 0.04, fontSize: 0.08, color: "#FFF")],
+                devices: [DeviceSlot(screenshotFile: "s1.png", mockup: "iPhone 17 Pro Max", x: 0.5, y: 0.6, scale: 0.8)]
+            )
+        ])
+        let (planPath, screenshots) = try writeCompositionPlanAndScreenshots(plan: plan, screenshotFiles: ["s1.png"])
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"] + screenshots)
+        let output = try await cmd.execute()
+
+        #expect(output.contains("app-shots.html"))
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("Detected"))
+        #expect(html.contains("<title>AutoDetect"))
+    }
+
+    @Test func `composition plan with default mockup renders mockup frame`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [],
+                devices: [DeviceSlot(screenshotFile: "s1.png", mockup: "iPhone 17 Pro Max", x: 0.5, y: 0.6, scale: 0.8)]
+            )
+        ])
+        let (planPath, screenshots) = try writeCompositionPlanAndScreenshots(plan: plan, screenshotFiles: ["s1.png"])
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        // No --mockup flag — uses bundled default for composition plan too
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir] + screenshots)
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("data:image/png;base64,"))
+    }
+
+    @Test func `composition plan text overlay uses custom font`() async throws {
+        let plan = makeCompositionPlan(screens: [
+            SlideComposition(
+                texts: [TextOverlay(content: "Custom Font", x: 0.1, y: 0.1, fontSize: 0.08, color: "#FFF", font: "Georgia")],
+                devices: []
+            )
+        ])
+        let (planPath, _) = try writeCompositionPlanAndScreenshots(plan: plan)
+        let outputDir = makeTempOutputDir()
+        defer {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: planPath).deletingLastPathComponent())
+            try? FileManager.default.removeItem(atPath: outputDir)
+        }
+
+        let cmd = try AppShotsHTML.parse(["--plan", planPath, "--output-dir", outputDir, "--mockup", "none"])
+        _ = try await cmd.execute()
+
+        let html = try String(contentsOfFile: "\(outputDir)/app-shots.html", encoding: .utf8)
+        #expect(html.contains("Georgia"))
+    }
 }
