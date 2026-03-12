@@ -775,3 +775,49 @@ asc review-responses create \
   --review-id rev-001 \
   --response-body "Updated response with more detail."
 ```
+
+---
+
+## perf-metrics
+
+### list
+```bash
+asc perf-metrics list --app-id <id> [--metric-type HANG|LAUNCH|MEMORY|DISK|BATTERY|TERMINATION|ANIMATION] [--pretty] [--output table]
+asc perf-metrics list --build-id <id> [--metric-type <TYPE>] [--pretty] [--output table]
+```
+Either `--app-id` or `--build-id` required (mutually exclusive). Returns flattened `PerformanceMetric` rows with `category`, `metricIdentifier`, `latestValue`, `unit`, `goalValue`.
+
+---
+
+## diagnostics
+
+### list
+```bash
+asc diagnostics list --build-id <id> [--diagnostic-type DISK_WRITES|HANGS|LAUNCHES] [--pretty] [--output table]
+```
+Returns `DiagnosticSignatureInfo` with `diagnosticType`, `signature`, `weight` (% of occurrences), `insightDirection` (UP/DOWN/UNDEFINED). Affordance `listLogs` navigates to call stacks.
+
+---
+
+## diagnostic-logs
+
+### list
+```bash
+asc diagnostic-logs list --signature-id <id> [--pretty] [--output table]
+```
+Returns `DiagnosticLogEntry` with device metadata (`bundleId`, `appVersion`, `osVersion`, `deviceType`) and `callStackSummary` (top 5 frames).
+
+### Typical performance investigation
+```bash
+# 1. Check app-level metrics
+asc perf-metrics list --app-id 6450000000 --metric-type HANG --pretty
+
+# 2. Find builds to investigate
+asc builds list --app-id 6450000000 --output table
+
+# 3. List diagnostic signatures for a build
+asc diagnostics list --build-id build-abc --diagnostic-type HANGS --pretty
+
+# 4. Drill into a signature's call stacks
+asc diagnostic-logs list --signature-id sig-1 --pretty
+```
