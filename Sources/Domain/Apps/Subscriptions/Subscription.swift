@@ -107,6 +107,7 @@ extension Subscription: AffordanceProviding {
             "createLocalization": "asc subscription-localizations create --subscription-id \(id) --locale en-US --name <name>",
             "listIntroductoryOffers": "asc subscription-offers list --subscription-id \(id)",
             "listLocalizations": "asc subscription-localizations list --subscription-id \(id)",
+            "listOfferCodes": "asc subscription-offer-codes list --subscription-id \(id)",
         ]
         if state == .readyToSubmit {
             result["submit"] = "asc subscriptions submit --subscription-id \(id)"

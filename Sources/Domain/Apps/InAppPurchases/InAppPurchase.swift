@@ -75,6 +75,7 @@ extension InAppPurchase: AffordanceProviding {
         var cmds: [String: String] = [
             "createLocalization": "asc iap-localizations create --iap-id \(id) --locale en-US --name <name>",
             "listLocalizations": "asc iap-localizations list --iap-id \(id)",
+            "listOfferCodes": "asc iap-offer-codes list --iap-id \(id)",
             "listPricePoints": "asc iap price-points list --iap-id \(id)",
         ]
         if state == .readyToSubmit {

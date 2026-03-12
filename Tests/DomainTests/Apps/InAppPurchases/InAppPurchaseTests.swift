@@ -56,4 +56,9 @@ struct InAppPurchaseTests {
         let loc = MockRepositoryFactory.makeInAppPurchaseLocalization(id: "loc-1", iapId: "iap-1")
         #expect(loc.affordances["listSiblings"] == "asc iap-localizations list --iap-id iap-1")
     }
+
+    @Test func `iap affordances include listOfferCodes`() {
+        let iap = MockRepositoryFactory.makeInAppPurchase(id: "iap-1")
+        #expect(iap.affordances["listOfferCodes"] == "asc iap-offer-codes list --iap-id iap-1")
+    }
 }

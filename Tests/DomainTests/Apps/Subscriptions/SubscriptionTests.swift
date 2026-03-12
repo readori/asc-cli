@@ -68,4 +68,9 @@ struct SubscriptionTests {
         let sub = MockRepositoryFactory.makeSubscription(groupLevel: 1)
         #expect(sub.groupLevel == 1)
     }
+
+    @Test func `subscription affordances include listOfferCodes`() {
+        let sub = MockRepositoryFactory.makeSubscription(id: "sub-1")
+        #expect(sub.affordances["listOfferCodes"] == "asc subscription-offer-codes list --subscription-id sub-1")
+    }
 }
