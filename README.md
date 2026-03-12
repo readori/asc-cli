@@ -36,7 +36,7 @@ asc init --app-id <id> # pin it — skip --app-id on every future command
 | **App Previews** | Upload video previews (`.mp4`, `.mov`, `.m4v`) per locale and device size |
 | **App Shots** | AI-powered screenshot generation via Gemini; translate to any locale in one command |
 | **TestFlight** | Manage beta groups; add/remove/import/export testers |
-| **Monetization** | IAPs (consumable, non-consumable, non-renewing); subscriptions, offers, pricing |
+| **Monetization** | IAPs (consumable, non-consumable, non-renewing); subscriptions, offers, pricing, offer codes |
 | **Code Signing** | Bundle IDs, certificates, devices, provisioning profiles |
 | **Authentication** | Multi-account credential management; named accounts, active-account switching |
 | **Project Init** | `asc init` pins app context to `.asc/project.json`; auto-detects from `.xcodeproj` |
@@ -296,6 +296,24 @@ asc subscription-localizations create --subscription-id <id> --locale en-US --na
 asc subscription-offers list --subscription-id <id>
 asc subscription-offers create --subscription-id <id> --duration ONE_MONTH --mode FREE_TRIAL --periods 1
 asc subscription-offers create --subscription-id <id> --duration THREE_MONTHS --mode PAY_AS_YOU_GO --periods 3 --price-point-id <id>
+
+# Subscription Offer Codes
+asc subscription-offer-codes list --subscription-id <id>
+asc subscription-offer-codes create --subscription-id <id> --name "SUMMER2026" --duration ONE_MONTH --mode FREE_TRIAL --periods 1 --eligibility NEW --offer-eligibility STACKABLE
+asc subscription-offer-codes update --offer-code-id <id> --active false
+asc subscription-offer-code-custom-codes list --offer-code-id <id>
+asc subscription-offer-code-custom-codes create --offer-code-id <id> --custom-code "SUMMER2026" --number-of-codes 1000
+asc subscription-offer-code-one-time-codes list --offer-code-id <id>
+asc subscription-offer-code-one-time-codes create --offer-code-id <id> --number-of-codes 5000 --expiration-date 2026-12-31
+
+# IAP Offer Codes
+asc iap-offer-codes list --iap-id <id>
+asc iap-offer-codes create --iap-id <id> --name "FREEGEMS" --eligibility NON_SPENDER
+asc iap-offer-codes update --offer-code-id <id> --active false
+asc iap-offer-code-custom-codes list --offer-code-id <id>
+asc iap-offer-code-custom-codes create --offer-code-id <id> --custom-code "FREEGEMS100" --number-of-codes 500
+asc iap-offer-code-one-time-codes list --offer-code-id <id>
+asc iap-offer-code-one-time-codes create --offer-code-id <id> --number-of-codes 3000 --expiration-date 2026-06-30
 ```
 
 ### Code Signing
