@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.44] - 2026-03-12
+
 ### Added
 - Power & performance metrics: `asc perf-metrics list --app-id <id>` and `asc perf-metrics list --build-id <id>` — download launch time, hang rate, memory, disk, battery, termination, and animation metrics with `--metric-type` filter
 - Diagnostic signatures: `asc diagnostics list --build-id <id>` — list hang, disk write, and launch diagnostic hotspots with `--diagnostic-type` filter
@@ -398,7 +402,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.43...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.44...HEAD
+[0.1.44]: https://github.com/tddworks/asc-cli/compare/v0.1.43...v0.1.44
 [0.1.43]: https://github.com/tddworks/asc-cli/compare/v0.1.42...v0.1.43
 [0.1.42]: https://github.com/tddworks/asc-cli/compare/v0.1.41...v0.1.42
 [0.1.41]: https://github.com/tddworks/asc-cli/compare/v0.1.40...v0.1.41
