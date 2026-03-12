@@ -8,8 +8,11 @@ description: |
   (3) Listing or creating subscription localizations: "asc subscription-localizations list|create"
   (4) Submitting a subscription for review: "asc subscriptions submit --subscription-id ID"
   (5) Listing introductory offers: "asc subscription-offers list --subscription-id ID"
-  (6) Creating introductory offers (FREE_TRIAL, PAY_AS_YOU_GO, PAY_UP_FRONT): "asc subscription-offers create --subscription-id ID --duration ONE_MONTH --mode FREE_TRIAL --periods 1"
-  (7) User says "add subscription tier", "create subscription group", "manage subscriptions", "localize subscription", "subscription plans", "introductory offer", "free trial offer", "submit subscription"
+  (6) Creating introductory offers (FREE_TRIAL, PAY_AS_YOU_GO, PAY_UP_FRONT): "asc subscription-offers create"
+  (7) Managing subscription offer codes: "asc subscription-offer-codes list/create/update"
+  (8) Managing subscription offer code custom codes: "asc subscription-offer-code-custom-codes list/create/update"
+  (9) Managing subscription offer code one-time use codes: "asc subscription-offer-code-one-time-codes list/create/update"
+  (10) User says "add subscription tier", "create subscription group", "manage subscriptions", "localize subscription", "subscription plans", "introductory offer", "free trial offer", "submit subscription", "subscription offer code", "custom code for subscription", "one-time codes for subscription", "promo code subscription"
 ---
 
 # asc Subscriptions
@@ -87,6 +90,78 @@ asc subscription-offers create \
 
 **`--mode`** values: `FREE_TRIAL`, `PAY_AS_YOU_GO`, `PAY_UP_FRONT` — paid modes require `--price-point-id`
 
+## Subscription Offer Codes
+
+Manage offer codes for subscriptions. Offer codes let you distribute promotional codes with specific eligibility rules and offer terms.
+
+### List Offer Codes
+
+```bash
+asc subscription-offer-codes list --subscription-id <SUBSCRIPTION_ID> [--pretty]
+```
+
+### Create Offer Code
+
+```bash
+asc subscription-offer-codes create \
+  --subscription-id <SUBSCRIPTION_ID> \
+  --name "SUMMER2026" \
+  --duration ONE_MONTH \
+  --mode FREE_TRIAL \
+  --periods 1 \
+  --eligibility NEW \
+  --eligibility LAPSED \
+  --offer-eligibility STACKABLE
+```
+
+**`--eligibility`** (repeatable): `NEW`, `LAPSED`, `WIN_BACK`, `PAID_SUBSCRIBER`
+**`--offer-eligibility`**: `STACKABLE`, `INTRODUCTORY`, `SUBSCRIPTION_OFFER`
+**`--duration`**: same values as introductory offers
+**`--mode`**: `FREE_TRIAL`, `PAY_AS_YOU_GO`, `PAY_UP_FRONT`
+
+### Update Offer Code (activate/deactivate)
+
+```bash
+asc subscription-offer-codes update --offer-code-id <ID> --active false
+```
+
+### Custom Codes
+
+Custom codes are specific redeemable strings (e.g. "SUMMER2026") tied to an offer code.
+
+```bash
+# List
+asc subscription-offer-code-custom-codes list --offer-code-id <ID>
+
+# Create
+asc subscription-offer-code-custom-codes create \
+  --offer-code-id <ID> \
+  --custom-code "SUMMER2026" \
+  --number-of-codes 1000 \
+  [--expiration-date 2026-12-31]
+
+# Deactivate
+asc subscription-offer-code-custom-codes update --custom-code-id <ID> --active false
+```
+
+### One-Time Use Codes
+
+Generated code batches — Apple creates unique codes for distribution.
+
+```bash
+# List
+asc subscription-offer-code-one-time-codes list --offer-code-id <ID>
+
+# Create
+asc subscription-offer-code-one-time-codes create \
+  --offer-code-id <ID> \
+  --number-of-codes 5000 \
+  --expiration-date 2026-12-31
+
+# Deactivate
+asc subscription-offer-code-one-time-codes update --one-time-code-id <ID> --active false
+```
+
 ## CAEOAS Affordances
 
 Every subscription group response embeds ready-to-run follow-up commands:
@@ -113,14 +188,19 @@ Every subscription group response embeds ready-to-run follow-up commands:
 }
 ```
 
-**SubscriptionIntroductoryOffer:**
+**SubscriptionOfferCode:**
 ```json
 {
   "affordances": {
-    "listOffers": "asc subscription-offers list --subscription-id <SUBSCRIPTION_ID>"
+    "listOfferCodes":   "asc subscription-offer-codes list --subscription-id <SUBSCRIPTION_ID>",
+    "listCustomCodes":  "asc subscription-offer-code-custom-codes list --offer-code-id <ID>",
+    "listOneTimeCodes": "asc subscription-offer-code-one-time-codes list --offer-code-id <ID>",
+    "deactivate":       "asc subscription-offer-codes update --offer-code-id <ID> --active false"
   }
 }
 ```
+
+`deactivate` only appears when `isActive == true`.
 
 ## Resolve App ID
 
@@ -159,6 +239,30 @@ ANNUAL_ID=$(asc subscriptions create \
 # 3. Add localizations
 asc subscription-localizations create --subscription-id "$MONTHLY_ID" --locale en-US --name "Monthly Premium" --description "Full access, billed monthly"
 asc subscription-localizations create --subscription-id "$ANNUAL_ID" --locale en-US --name "Annual Premium" --description "Full access, billed annually — save 30%"
+
+# 4. Create an offer code with custom codes
+OC_ID=$(asc subscription-offer-codes create \
+  --subscription-id "$MONTHLY_ID" \
+  --name "SUMMER2026" \
+  --duration ONE_MONTH \
+  --mode FREE_TRIAL \
+  --periods 1 \
+  --eligibility NEW \
+  --eligibility LAPSED \
+  --offer-eligibility STACKABLE \
+  | jq -r '.data[0].id')
+
+asc subscription-offer-code-custom-codes create \
+  --offer-code-id "$OC_ID" \
+  --custom-code "SUMMER2026" \
+  --number-of-codes 1000 \
+  --expiration-date 2026-12-31
+
+# 5. Or generate one-time use codes
+asc subscription-offer-code-one-time-codes create \
+  --offer-code-id "$OC_ID" \
+  --number-of-codes 5000 \
+  --expiration-date 2026-12-31
 ```
 
 ## State Semantics
@@ -171,4 +275,7 @@ asc subscription-localizations create --subscription-id "$ANNUAL_ID" --locale en
 | `isPendingReview` | `WAITING_FOR_REVIEW`, `IN_REVIEW` |
 | `isApproved` / `isLive` | `APPROVED` |
 
-Nil optional fields (`description`, `state`, `groupLevel`) are omitted from JSON output.
+`SubscriptionCustomerEligibility` values: `NEW`, `LAPSED`, `WIN_BACK`, `PAID_SUBSCRIBER`
+`SubscriptionOfferEligibility` values: `STACKABLE`, `INTRODUCTORY`, `SUBSCRIPTION_OFFER`
+
+Nil optional fields (`description`, `state`, `groupLevel`, `totalNumberOfCodes`) are omitted from JSON output.

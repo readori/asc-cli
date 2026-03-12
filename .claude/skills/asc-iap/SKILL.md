@@ -9,7 +9,10 @@ description: |
   (4) Submitting an IAP for review: "asc iap submit --iap-id ID"
   (5) Listing IAP price points: "asc iap price-points list --iap-id ID [--territory USA]"
   (6) Setting IAP pricing: "asc iap prices set --iap-id ID --base-territory USA --price-point-id ID"
-  (7) User says "create in-app purchase", "list IAPs", "localize IAP", "submit IAP", "set IAP price"
+  (7) Managing IAP offer codes: "asc iap-offer-codes list/create/update"
+  (8) Managing IAP offer code custom codes: "asc iap-offer-code-custom-codes list/create/update"
+  (9) Managing IAP offer code one-time use codes: "asc iap-offer-code-one-time-codes list/create/update"
+  (10) User says "create in-app purchase", "list IAPs", "localize IAP", "submit IAP", "set IAP price", "offer codes for IAP", "IAP offer code", "create IAP custom code", "one-time codes for IAP"
 ---
 
 # asc In-App Purchases
@@ -71,6 +74,71 @@ asc iap-localizations create \
   [--description "In-game currency"]
 ```
 
+## IAP Offer Codes
+
+Manage offer codes for in-app purchases. Offer codes let you distribute promotional codes to customers.
+
+### List Offer Codes
+
+```bash
+asc iap-offer-codes list --iap-id <IAP_ID> [--pretty]
+```
+
+### Create Offer Code
+
+```bash
+asc iap-offer-codes create \
+  --iap-id <IAP_ID> \
+  --name "FREEGEMS" \
+  --eligibility NON_SPENDER \
+  --eligibility CHURNED_SPENDER
+```
+
+**`--eligibility`** (repeatable): `NON_SPENDER`, `ACTIVE_SPENDER`, `CHURNED_SPENDER`
+
+### Update Offer Code (activate/deactivate)
+
+```bash
+asc iap-offer-codes update --offer-code-id <ID> --active false
+```
+
+### Custom Codes
+
+Custom codes are specific redeemable strings (e.g. "FREEGEMS100") tied to an offer code.
+
+```bash
+# List
+asc iap-offer-code-custom-codes list --offer-code-id <ID>
+
+# Create
+asc iap-offer-code-custom-codes create \
+  --offer-code-id <ID> \
+  --custom-code "FREEGEMS100" \
+  --number-of-codes 500 \
+  [--expiration-date 2026-12-31]
+
+# Deactivate
+asc iap-offer-code-custom-codes update --custom-code-id <ID> --active false
+```
+
+### One-Time Use Codes
+
+Generated code batches — Apple creates unique codes for distribution.
+
+```bash
+# List
+asc iap-offer-code-one-time-codes list --offer-code-id <ID>
+
+# Create
+asc iap-offer-code-one-time-codes create \
+  --offer-code-id <ID> \
+  --number-of-codes 3000 \
+  --expiration-date 2026-06-30
+
+# Deactivate
+asc iap-offer-code-one-time-codes update --one-time-code-id <ID> --active false
+```
+
 ## CAEOAS Affordances
 
 Every IAP response embeds ready-to-run follow-up commands:
@@ -87,6 +155,20 @@ Every IAP response embeds ready-to-run follow-up commands:
 ```
 
 `submit` only appears when `state == READY_TO_SUBMIT`. Each price point includes `setPrice` only when territory is known.
+
+**IAP Offer Code affordances:**
+```json
+{
+  "affordances": {
+    "listOfferCodes":  "asc iap-offer-codes list --iap-id <ID>",
+    "listCustomCodes": "asc iap-offer-code-custom-codes list --offer-code-id <ID>",
+    "listOneTimeCodes":"asc iap-offer-code-one-time-codes list --offer-code-id <ID>",
+    "deactivate":      "asc iap-offer-codes update --offer-code-id <ID> --active false"
+  }
+}
+```
+
+`deactivate` only appears when `isActive == true`.
 
 ## Resolve App ID
 
@@ -115,6 +197,26 @@ PRICE_ID=$(asc iap price-points list --iap-id "$IAP_ID" --territory USA \
   | jq -r '.data[] | select(.customerPrice == "0.99") | .id')
 asc iap prices set --iap-id "$IAP_ID" --base-territory USA --price-point-id "$PRICE_ID"
 asc iap submit --iap-id "$IAP_ID"
+
+# 4. Create an offer code with custom codes
+OC_ID=$(asc iap-offer-codes create \
+  --iap-id "$IAP_ID" \
+  --name "LAUNCH_PROMO" \
+  --eligibility NON_SPENDER \
+  --eligibility CHURNED_SPENDER \
+  | jq -r '.data[0].id')
+
+asc iap-offer-code-custom-codes create \
+  --offer-code-id "$OC_ID" \
+  --custom-code "LAUNCH2026" \
+  --number-of-codes 1000 \
+  --expiration-date 2026-12-31
+
+# 5. Or generate one-time use codes
+asc iap-offer-code-one-time-codes create \
+  --offer-code-id "$OC_ID" \
+  --number-of-codes 5000 \
+  --expiration-date 2026-12-31
 ```
 
 ## State Semantics
@@ -127,4 +229,6 @@ asc iap submit --iap-id "$IAP_ID"
 | `isPendingReview` | `WAITING_FOR_REVIEW`, `IN_REVIEW` |
 | `isApproved` / `isLive` | `APPROVED` |
 
-Nil optional fields (`description`, `state`) are omitted from JSON output.
+`IAPCustomerEligibility` values: `NON_SPENDER`, `ACTIVE_SPENDER`, `CHURNED_SPENDER`
+
+Nil optional fields (`description`, `state`, `totalNumberOfCodes`) are omitted from JSON output.
