@@ -164,6 +164,18 @@ struct ClientProvider {
         return try factory.makeSubscriptionIntroductoryOfferRepository(authProvider: authProvider)
     }
 
+    static func makeSubscriptionOfferCodeRepository() throws -> any SubscriptionOfferCodeRepository {
+        let authProvider = CompositeAuthProvider()
+        let factory = ClientFactory()
+        return try factory.makeSubscriptionOfferCodeRepository(authProvider: authProvider)
+    }
+
+    static func makeInAppPurchaseOfferCodeRepository() throws -> any InAppPurchaseOfferCodeRepository {
+        let authProvider = CompositeAuthProvider()
+        let factory = ClientFactory()
+        return try factory.makeInAppPurchaseOfferCodeRepository(authProvider: authProvider)
+    }
+
     static func makeAgeRatingDeclarationRepository() throws -> any AgeRatingDeclarationRepository {
         let authProvider = CompositeAuthProvider()
         let factory = ClientFactory()

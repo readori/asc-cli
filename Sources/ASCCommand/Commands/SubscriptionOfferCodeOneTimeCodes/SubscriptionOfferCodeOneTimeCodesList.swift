@@ -1,0 +1,29 @@
+import ArgumentParser
+import Domain
+
+struct SubscriptionOfferCodeOneTimeCodesList: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "list",
+        abstract: "List one-time use codes for a subscription offer code"
+    )
+
+    @OptionGroup var globals: GlobalOptions
+
+    @Option(name: .long, help: "Offer code ID")
+    var offerCodeId: String
+
+    func run() async throws {
+        let repo = try ClientProvider.makeSubscriptionOfferCodeRepository()
+        print(try await execute(repo: repo))
+    }
+
+    func execute(repo: any SubscriptionOfferCodeRepository) async throws -> String {
+        let items = try await repo.listOneTimeUseCodes(offerCodeId: offerCodeId)
+        let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
+        return try formatter.formatAgentItems(
+            items,
+            headers: ["ID", "Codes", "Expiration", "Active"],
+            rowMapper: { [$0.id, String($0.numberOfCodes), $0.expirationDate ?? "", String($0.isActive)] }
+        )
+    }
+}
