@@ -50,6 +50,9 @@ struct ASC: AsyncParsableCommand {
             AnalyticsReportsCommand.self,
             ReviewsCommand.self,
             ReviewResponsesCommand.self,
+            PerfMetricsCommand.self,
+            DiagnosticsCommand.self,
+            DiagnosticLogsCommand.self,
         ]
     )
 }

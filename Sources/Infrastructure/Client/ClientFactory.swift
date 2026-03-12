@@ -191,6 +191,16 @@ public struct ClientFactory: Sendable {
         return SDKCustomerReviewRepository(client: provider)
     }
 
+    public func makePerfMetricsRepository(authProvider: any AuthProvider) throws -> any PerfMetricsRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKPerfMetricsRepository(client: provider)
+    }
+
+    public func makeDiagnosticsRepository(authProvider: any AuthProvider) throws -> any DiagnosticsRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKDiagnosticsRepository(client: provider)
+    }
+
     // MARK: - Plugins (no ASC auth needed — local filesystem + subprocess)
 
     public func makePluginRepository() -> any PluginRepository {

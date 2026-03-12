@@ -831,6 +831,76 @@ struct MockRepositoryFactory {
         AnalyticsReportInstance(id: id, reportId: reportId, granularity: granularity, processingDate: processingDate)
     }
 
+    // MARK: - Performance
+
+    static func makePerfPowerMetric(
+        id: String = "m-1",
+        parentId: String = "app-1",
+        parentType: PerfMetricParentType = .app,
+        platform: String? = "IOS",
+        category: PerformanceMetricCategory = .launch,
+        metricIdentifier: String = "launchTime",
+        unit: String? = "s",
+        latestValue: Double? = 1.5,
+        latestVersion: String? = "2.0",
+        goalValue: Double? = 1.0
+    ) -> PerformanceMetric {
+        PerformanceMetric(
+            id: id,
+            parentId: parentId,
+            parentType: parentType,
+            platform: platform,
+            category: category,
+            metricIdentifier: metricIdentifier,
+            unit: unit,
+            latestValue: latestValue,
+            latestVersion: latestVersion,
+            goalValue: goalValue
+        )
+    }
+
+    static func makeDiagnosticSignatureInfo(
+        id: String = "sig-1",
+        buildId: String = "build-1",
+        diagnosticType: DiagnosticType = .hangs,
+        signature: String = "main thread hang",
+        weight: Double = 45.2,
+        insightDirection: String? = nil
+    ) -> DiagnosticSignatureInfo {
+        DiagnosticSignatureInfo(
+            id: id,
+            buildId: buildId,
+            diagnosticType: diagnosticType,
+            signature: signature,
+            weight: weight,
+            insightDirection: insightDirection
+        )
+    }
+
+    static func makeDiagnosticLogEntry(
+        id: String = "log-1",
+        signatureId: String = "sig-1",
+        bundleId: String? = "com.example.app",
+        appVersion: String? = "2.0",
+        buildVersion: String? = "100",
+        osVersion: String? = "iOS 17.0",
+        deviceType: String? = "iPhone15,2",
+        event: String? = "hang",
+        callStackSummary: String? = "main > UIKit > layoutSubviews"
+    ) -> DiagnosticLogEntry {
+        DiagnosticLogEntry(
+            id: id,
+            signatureId: signatureId,
+            bundleId: bundleId,
+            appVersion: appVersion,
+            buildVersion: buildVersion,
+            osVersion: osVersion,
+            deviceType: deviceType,
+            event: event,
+            callStackSummary: callStackSummary
+        )
+    }
+
     static func makeAnalyticsReportSegment(
         id: String = "seg-1",
         instanceId: String = "inst-1",
