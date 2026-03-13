@@ -35,7 +35,7 @@ asc init --app-id <id> # pin it — skip --app-id on every future command
 | **Screenshots** | Create screenshot sets and upload images |
 | **App Previews** | Upload video previews (`.mp4`, `.mov`, `.m4v`) per locale and device size |
 | **App Shots** | AI-powered screenshot generation via Gemini; translate to any locale in one command |
-| **TestFlight** | Manage beta groups; add/remove/import/export testers |
+| **TestFlight** | Manage beta groups; add/remove/import/export testers; submit builds for beta review |
 | **Monetization** | IAPs (consumable, non-consumable, non-renewing); subscriptions, offers, pricing, offer codes |
 | **Code Signing** | Bundle IDs, certificates, devices, provisioning profiles |
 | **Authentication** | Multi-account credential management; named accounts, active-account switching |
@@ -155,6 +155,12 @@ asc testflight testers add --beta-group-id <id> --email user@example.com
 asc testflight testers remove --beta-group-id <id> --tester-id <id>
 asc testflight testers import --beta-group-id <id> --file testers.csv
 asc testflight testers export --beta-group-id <id>
+
+asc beta-review submissions list --build-id <id>
+asc beta-review submissions create --build-id <id>
+asc beta-review submissions get --submission-id <id>
+asc beta-review detail get --app-id <id>
+asc beta-review detail update --detail-id <id> [--contact-first-name <name>] [--notes <text>]
 ```
 
 ### Xcode Cloud
@@ -447,6 +453,7 @@ Detailed documentation for each feature:
 - [App Previews](docs/features/app-previews.md) — preview sets and video uploads
 - [App Info](docs/features/app-infos.md) — name, subtitle, privacy policy, categories, age rating
 - [TestFlight](docs/features/testflight.md) — beta groups, tester management, CSV import/export
+- [Beta Review](docs/features/beta-review.md) — submit builds for beta app review, manage review contact details
 - [Xcode Cloud](docs/features/xcode-cloud.md) — products, workflows, build runs, start builds
 - [Builds Archive](docs/features/builds-archive.md) — archive Xcode projects, export IPA/PKG, optional upload chaining
 - [Builds Upload](docs/features/builds-upload.md) — upload IPA/PKG, TestFlight distribution, beta notes

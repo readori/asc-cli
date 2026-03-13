@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `asc beta-review submissions list --build-id <id>` — list beta app review submissions for a build
+- `asc beta-review submissions create --build-id <id>` — submit a build for beta (TestFlight external) review
+- `asc beta-review submissions get --submission-id <id>` — get a specific beta review submission
+- `asc beta-review detail get --app-id <id>` — get beta review contact info and demo account details
+- `asc beta-review detail update --detail-id <id>` — update beta review contact info, demo account, and notes
+
 ---
 
 ## [0.1.46] - 2026-03-13
