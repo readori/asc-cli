@@ -196,14 +196,12 @@ After every code change — new feature, improvement, or bug fix — update all 
 
 **`README.md`** — update the feature/command table and any usage examples that changed.
 
-**`.claude/skills/<feature>`** — always use the `/skill-creator` skill to create or update feature skills:
-- If the skill **does not exist**: use `/skill-creator` to create it from scratch.
-- If the skill **exists**: use `/skill-creator` to update it (handles editing + re-packaging).
+**`.claude/skills/<feature>`** — always use the `/skill-creator` skill to create or update feature skills
 
 Key skills to keep in sync:
 - `implement-feature/SKILL.md` — workflow + checklist
 - `asc-cli/references/commands.md` — command reference
-- Feature-specific skills (`asc-testflight`, `asc-builds-upload`, `asc-code-signing`, `asc-check-readiness`, `asc-app-previews`, `asc-app-shots`, `asc-review-detail`, `asc-plugins`, etc.)
+- Feature-specific skills (`asc-testflight`, `asc-beta-review`, `asc-builds-upload`, `asc-code-signing`, `asc-check-readiness`, `asc-app-previews`, `asc-app-shots`, `asc-review-detail`, `asc-plugins`, etc.)
 
 **`CLAUDE.md`** — update when architecture patterns, file locations, or design rules change.
 
