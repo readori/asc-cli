@@ -19,11 +19,11 @@ public struct ProcessSkillRepository: SkillRepository {
     }
 
     public func install(name: String) async throws -> String {
-        try await runSkillsCommand(["add", Self.repoSlug, "--name", name])
+        try await runSkillsCommand(["add", Self.repoSlug, "--yes", "--name", name])
     }
 
     public func installAll() async throws -> String {
-        try await runSkillsCommand(["add", Self.repoSlug])
+        try await runSkillsCommand(["add", Self.repoSlug, "--yes"])
     }
 
     public func check() async throws -> SkillCheckResult {
