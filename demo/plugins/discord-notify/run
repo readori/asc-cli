@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""
+discord-notify — ASC plugin
+Sends a Discord embed when App Store Connect events fire.
+
+Required env var:
+  DISCORD_WEBHOOK_URL   Discord Incoming Webhook URL
+
+Optional env vars:
+  DISCORD_USERNAME      Bot display name  (default: ASC Bot)
+  DISCORD_AVATAR_URL    Bot avatar URL
+"""
+
+import json
+import os
+import sys
+import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+
+
+# ── Event config ────────────────────────────────────────────────────────────
+
+EVENT_CONFIG = {
+    "build.uploaded": {
+        "color": 0x57F287,   # green
+        "emoji": "🚀",
+        "title": "Build Uploaded",
+        "description": "A new build has been uploaded to App Store Connect.",
+        "id_field": ("Build ID", "buildId"),
+    },
+    "version.submitted": {
+        "color": 0x5865F2,   # blurple
+        "emoji": "📬",
+        "title": "Version Submitted for Review",
+        "description": "A version has been submitted to App Store Review.",
+        "id_field": ("Version ID", "versionId"),
+    },
+    "version.approved": {
+        "color": 0x00B0F4,   # sky blue
+        "emoji": "✅",
+        "title": "Version Approved",
+        "description": "Your app version has been approved by App Store Review.",
+        "id_field": ("Version ID", "versionId"),
+    },
+    "version.rejected": {
+        "color": 0xED4245,   # red
+        "emoji": "❌",
+        "title": "Version Rejected",
+        "description": "Your app version was rejected by App Store Review.",
+        "id_field": ("Version ID", "versionId"),
+    },
+}
+
+FALLBACK_CONFIG = {
+    "color": 0x99AAB5,
+    "emoji": "🔔",
+    "title": "ASC Event",
+    "description": "An App Store Connect event occurred.",
+    "id_field": None,
+}
+
+
+def fail(message: str) -> None:
+    print(json.dumps({"success": False, "message": message}))
+    sys.exit(0)  # exit 0 so ASC continues running other plugins
+
+
+def success(message: str) -> None:
+    print(json.dumps({"success": True, "message": message}))
+
+
+def format_timestamp(ts: str) -> str:
+    """Return a human-readable UTC string, or the raw value if parsing fails."""
+    try:
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        return dt.strftime("%Y-%m-%d %H:%M UTC")
+    except Exception:
+        return ts
+
+
+def build_embed(event: str, payload: dict) -> dict:
+    cfg = EVENT_CONFIG.get(event, FALLBACK_CONFIG)
+
+    fields = []
+
+    app_id = payload.get("appId", "")
+    if app_id:
+        fields.append({"name": "App ID", "value": f"`{app_id}`", "inline": True})
+
+    id_field = cfg.get("id_field")
+    if id_field:
+        label, key = id_field
+        value = payload.get(key, "")
+        if value:
+            fields.append({"name": label, "value": f"`{value}`", "inline": True})
+
+    ts = payload.get("timestamp", "")
+    if ts:
+        fields.append({
+            "name": "Timestamp",
+            "value": format_timestamp(ts),
+            "inline": False,
+        })
+
+    meta = payload.get("metadata", {})
+    if isinstance(meta, dict):
+        for k, v in meta.items():
+            fields.append({"name": k, "value": str(v), "inline": True})
+
+    return {
+        "color": cfg["color"],
+        "title": f"{cfg['emoji']}  {cfg['title']}",
+        "description": cfg["description"],
+        "fields": fields,
+        "footer": {"text": "asc · App Store Connect CLI"},
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def send_to_discord(webhook_url: str, embed: dict) -> None:
+    username = os.environ.get("DISCORD_USERNAME", "ASC Bot")
+    payload: dict = {"username": username, "embeds": [embed]}
+
+    avatar = os.environ.get("DISCORD_AVATAR_URL", "")
+    if avatar:
+        payload["avatar_url"] = avatar
+
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        webhook_url,
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            status = resp.status
+    except urllib.error.HTTPError as exc:
+        error_body = exc.read().decode("utf-8", errors="replace")
+        fail(f"Discord webhook returned HTTP {exc.code}: {error_body}")
+        return
+    except urllib.error.URLError as exc:
+        fail(f"Discord webhook request failed: {exc.reason}")
+        return
+
+    if status not in (200, 204):
+        fail(f"Discord webhook returned unexpected status {status}")
+        return
+
+
+def main() -> None:
+    webhook_url = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
+    if not webhook_url:
+        fail("DISCORD_WEBHOOK_URL environment variable is not set")
+        return
+
+    try:
+        raw = sys.stdin.read()
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        fail(f"Failed to parse stdin JSON: {exc}")
+        return
+
+    event = data.get("event", "unknown")
+    payload = data.get("payload", {})
+
+    embed = build_embed(event, payload)
+    send_to_discord(webhook_url, embed)
+
+    cfg = EVENT_CONFIG.get(event, FALLBACK_CONFIG)
+    success(f"Discord notification sent: {cfg['emoji']} {cfg['title']}")
+
+
+if __name__ == "__main__":
+    main()
