@@ -8,11 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `asc iap-availability get --iap-id <id>` — get territory availability for an in-app purchase
+- `asc territories list` — list all available App Store territories with currency codes
+- `asc iap-availability get --iap-id <id>` — get territory availability for an in-app purchase (includes currency per territory)
 - `asc iap-availability create --iap-id <id> --available-in-new-territories --territory USA --territory CHN` — create territory availability for an IAP
-- `asc subscription-availability get --subscription-id <id>` — get territory availability for a subscription
+- `asc subscription-availability get --subscription-id <id>` — get territory availability for a subscription (includes currency per territory)
 - `asc subscription-availability create --subscription-id <id> --available-in-new-territories --territory USA` — create territory availability for a subscription
+- `Territory` domain model with id and currency, shared across availability responses
 - `getAvailability` affordance on `InAppPurchase` and `Subscription` models for CAEOAS navigation
+- `listTerritories` affordance on availability models for territory discovery
 
 ---
 
