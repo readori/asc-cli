@@ -10,10 +10,11 @@ public struct SDKInAppPurchaseAvailabilityRepository: InAppPurchaseAvailabilityR
 
     public func getAvailability(iapId: String) async throws -> Domain.InAppPurchaseAvailability {
         let request = APIEndpoint.v2.inAppPurchases.id(iapId).inAppPurchaseAvailability.get(parameters: .init(
+            fieldsTerritories: [.currency],
             include: [.availableTerritories]
         ))
         let response = try await client.request(request)
-        return mapAvailability(response.data, iapId: iapId)
+        return mapAvailability(response.data, included: response.included, iapId: iapId)
     }
 
     public func createAvailability(
@@ -30,14 +31,21 @@ public struct SDKInAppPurchaseAvailabilityRepository: InAppPurchaseAvailabilityR
             )
         ))
         let response = try await client.request(APIEndpoint.v1.inAppPurchaseAvailabilities.post(body))
-        return mapAvailability(response.data, iapId: iapId)
+        return mapAvailability(response.data, included: response.included, iapId: iapId)
     }
 
     private func mapAvailability(
         _ sdk: AppStoreConnect_Swift_SDK.InAppPurchaseAvailability,
+        included: [AppStoreConnect_Swift_SDK.Territory]?,
         iapId: String
     ) -> Domain.InAppPurchaseAvailability {
-        let territories = sdk.relationships?.availableTerritories?.data?.map(\.id) ?? []
+        let territoryIds = sdk.relationships?.availableTerritories?.data?.map(\.id) ?? []
+        let includedMap = Dictionary(
+            uniqueKeysWithValues: (included ?? []).map { ($0.id, $0) }
+        )
+        let territories = territoryIds.map { id in
+            Domain.Territory(id: id, currency: includedMap[id]?.attributes?.currency)
+        }
         return Domain.InAppPurchaseAvailability(
             id: sdk.id,
             iapId: iapId,

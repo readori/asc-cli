@@ -23,7 +23,7 @@ struct IAPAvailabilityGet: AsyncParsableCommand {
         return try formatter.formatAgentItems(
             [availability],
             headers: ["ID", "IAP ID", "Available in New Territories", "Territories"],
-            rowMapper: { [$0.id, $0.iapId, String($0.isAvailableInNewTerritories), $0.territories.joined(separator: ", ")] }
+            rowMapper: { [$0.id, $0.iapId, String($0.isAvailableInNewTerritories), $0.territories.map(\.id).joined(separator: ", ")] }
         )
     }
 }

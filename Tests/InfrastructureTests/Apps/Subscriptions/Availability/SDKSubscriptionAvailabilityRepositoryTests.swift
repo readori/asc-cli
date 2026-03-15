@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct SDKSubscriptionAvailabilityRepositoryTests {
 
-    @Test func `getAvailability injects subscriptionId into response`() async throws {
+    @Test func `getAvailability injects subscriptionId and maps territories with currency`() async throws {
         let stub = StubAPIClient()
         stub.willReturn(SubscriptionAvailabilityResponse(
             data: SubscriptionAvailability(
@@ -18,6 +18,10 @@ struct SDKSubscriptionAvailabilityRepositoryTests {
                     .init(type: .territories, id: "GBR"),
                 ]))
             ),
+            included: [
+                Territory(type: .territories, id: "USA", attributes: .init(currency: "USD")),
+                Territory(type: .territories, id: "GBR", attributes: .init(currency: "GBP")),
+            ],
             links: .init(this: "")
         ))
 
@@ -26,8 +30,11 @@ struct SDKSubscriptionAvailabilityRepositoryTests {
 
         #expect(result.id == "avail-1")
         #expect(result.subscriptionId == "sub-99")
-        #expect(result.isAvailableInNewTerritories == true)
-        #expect(result.territories == ["USA", "GBR"])
+        #expect(result.territories.count == 2)
+        #expect(result.territories[0].id == "USA")
+        #expect(result.territories[0].currency == "USD")
+        #expect(result.territories[1].id == "GBR")
+        #expect(result.territories[1].currency == "GBP")
     }
 
     @Test func `getAvailability maps empty territories when relationship data is nil`() async throws {
@@ -44,11 +51,10 @@ struct SDKSubscriptionAvailabilityRepositoryTests {
         let repo = SDKSubscriptionAvailabilityRepository(client: stub)
         let result = try await repo.getAvailability(subscriptionId: "sub-1")
 
-        #expect(result.territories == [])
-        #expect(result.isAvailableInNewTerritories == false)
+        #expect(result.territories.isEmpty)
     }
 
-    @Test func `createAvailability injects subscriptionId into response`() async throws {
+    @Test func `createAvailability injects subscriptionId and maps included territories`() async throws {
         let stub = StubAPIClient()
         stub.willReturn(SubscriptionAvailabilityResponse(
             data: SubscriptionAvailability(
@@ -59,6 +65,9 @@ struct SDKSubscriptionAvailabilityRepositoryTests {
                     .init(type: .territories, id: "JPN"),
                 ]))
             ),
+            included: [
+                Territory(type: .territories, id: "JPN", attributes: .init(currency: "JPY")),
+            ],
             links: .init(this: "")
         ))
 
@@ -71,6 +80,7 @@ struct SDKSubscriptionAvailabilityRepositoryTests {
 
         #expect(result.id == "avail-new")
         #expect(result.subscriptionId == "sub-42")
-        #expect(result.territories == ["JPN"])
+        #expect(result.territories[0].id == "JPN")
+        #expect(result.territories[0].currency == "JPY")
     }
 }

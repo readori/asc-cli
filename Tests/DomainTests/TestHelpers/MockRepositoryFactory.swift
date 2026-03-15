@@ -420,13 +420,22 @@ struct MockRepositoryFactory {
         )
     }
 
+    // MARK: - Territories
+
+    static func makeTerritory(
+        id: String = "USA",
+        currency: String? = "USD"
+    ) -> Territory {
+        Territory(id: id, currency: currency)
+    }
+
     // MARK: - IAP Availability
 
     static func makeInAppPurchaseAvailability(
         id: String = "avail-1",
         iapId: String = "iap-1",
         isAvailableInNewTerritories: Bool = true,
-        territories: [String] = ["USA"]
+        territories: [Territory] = [Territory(id: "USA", currency: "USD")]
     ) -> InAppPurchaseAvailability {
         InAppPurchaseAvailability(
             id: id,
@@ -521,7 +530,7 @@ struct MockRepositoryFactory {
         id: String = "avail-1",
         subscriptionId: String = "sub-1",
         isAvailableInNewTerritories: Bool = true,
-        territories: [String] = ["USA"]
+        territories: [Territory] = [Territory(id: "USA", currency: "USD")]
     ) -> SubscriptionAvailability {
         SubscriptionAvailability(
             id: id,

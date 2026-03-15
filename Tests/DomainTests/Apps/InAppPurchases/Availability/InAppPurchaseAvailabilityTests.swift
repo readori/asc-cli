@@ -20,11 +20,18 @@ struct InAppPurchaseAvailabilityTests {
         #expect(notAvailable.isAvailableInNewTerritories == false)
     }
 
-    @Test func `availability includes list of territory ids`() {
+    @Test func `availability includes territories with currency`() {
         let availability = MockRepositoryFactory.makeInAppPurchaseAvailability(
-            territories: ["USA", "CHN", "JPN"]
+            territories: [
+                Territory(id: "USA", currency: "USD"),
+                Territory(id: "CHN", currency: "CNY"),
+            ]
         )
-        #expect(availability.territories == ["USA", "CHN", "JPN"])
+        #expect(availability.territories.count == 2)
+        #expect(availability.territories[0].id == "USA")
+        #expect(availability.territories[0].currency == "USD")
+        #expect(availability.territories[1].id == "CHN")
+        #expect(availability.territories[1].currency == "CNY")
     }
 
     @Test func `affordances include get availability command`() {
@@ -43,18 +50,8 @@ struct InAppPurchaseAvailabilityTests {
         #expect(availability.affordances["createAvailability"] == "asc iap-availability create --iap-id iap-42 --available-in-new-territories --territory USA --territory CHN")
     }
 
-    @Test func `nil territories omitted from json`() throws {
-        let availability = InAppPurchaseAvailability(
-            id: "avail-1",
-            iapId: "iap-1",
-            isAvailableInNewTerritories: true,
-            territories: []
-        )
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        let data = try encoder.encode(availability)
-        let json = String(data: data, encoding: .utf8)!
-        #expect(json.contains("\"iapId\""))
-        #expect(json.contains("\"isAvailableInNewTerritories\""))
+    @Test func `affordances include list territories command`() {
+        let availability = MockRepositoryFactory.makeInAppPurchaseAvailability()
+        #expect(availability.affordances["listTerritories"] == "asc territories list")
     }
 }

@@ -6,14 +6,16 @@ import Testing
 @Suite
 struct SubscriptionAvailabilityCreateTests {
 
-    @Test func `create availability shows created record with territories`() async throws {
+    @Test func `create availability shows created record with territories and currency`() async throws {
         let mockRepo = MockSubscriptionAvailabilityRepository()
         given(mockRepo).createAvailability(subscriptionId: .any, isAvailableInNewTerritories: .any, territoryIds: .any)
             .willReturn(SubscriptionAvailability(
                 id: "avail-new",
                 subscriptionId: "sub-42",
                 isAvailableInNewTerritories: true,
-                territories: ["JPN"]
+                territories: [
+                    Territory(id: "JPN", currency: "JPY"),
+                ]
             ))
 
         let cmd = try SubscriptionAvailabilityCreate.parse([
@@ -30,13 +32,17 @@ struct SubscriptionAvailabilityCreateTests {
             {
               "affordances" : {
                 "createAvailability" : "asc subscription-availability create --subscription-id sub-42 --available-in-new-territories --territory USA --territory CHN",
-                "getAvailability" : "asc subscription-availability get --subscription-id sub-42"
+                "getAvailability" : "asc subscription-availability get --subscription-id sub-42",
+                "listTerritories" : "asc territories list"
               },
               "id" : "avail-new",
               "isAvailableInNewTerritories" : true,
               "subscriptionId" : "sub-42",
               "territories" : [
-                "JPN"
+                {
+                  "currency" : "JPY",
+                  "id" : "JPN"
+                }
               ]
             }
           ]

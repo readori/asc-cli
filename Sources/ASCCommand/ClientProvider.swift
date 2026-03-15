@@ -200,6 +200,12 @@ struct ClientProvider {
         return try factory.makeSubscriptionAvailabilityRepository(authProvider: authProvider)
     }
 
+    static func makeTerritoryRepository() throws -> any TerritoryRepository {
+        let authProvider = CompositeAuthProvider()
+        let factory = ClientFactory()
+        return try factory.makeTerritoryRepository(authProvider: authProvider)
+    }
+
     // MARK: - Skills
 
     static func makeSkillRepository() -> any SkillRepository {

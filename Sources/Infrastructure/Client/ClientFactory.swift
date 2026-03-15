@@ -226,6 +226,11 @@ public struct ClientFactory: Sendable {
         return SDKSubscriptionAvailabilityRepository(client: provider)
     }
 
+    public func makeTerritoryRepository(authProvider: any AuthProvider) throws -> any TerritoryRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKTerritoryRepository(client: provider)
+    }
+
     // MARK: - Skills (no ASC auth needed — subprocess + local filesystem)
 
     public func makeSkillRepository() -> any SkillRepository {

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct SDKInAppPurchaseAvailabilityRepositoryTests {
 
-    @Test func `getAvailability injects iapId into response`() async throws {
+    @Test func `getAvailability injects iapId and maps territories with currency`() async throws {
         let stub = StubAPIClient()
         stub.willReturn(InAppPurchaseAvailabilityResponse(
             data: InAppPurchaseAvailability(
@@ -18,6 +18,10 @@ struct SDKInAppPurchaseAvailabilityRepositoryTests {
                     .init(type: .territories, id: "CHN"),
                 ]))
             ),
+            included: [
+                Territory(type: .territories, id: "USA", attributes: .init(currency: "USD")),
+                Territory(type: .territories, id: "CHN", attributes: .init(currency: "CNY")),
+            ],
             links: .init(this: "")
         ))
 
@@ -27,7 +31,11 @@ struct SDKInAppPurchaseAvailabilityRepositoryTests {
         #expect(result.id == "avail-1")
         #expect(result.iapId == "iap-99")
         #expect(result.isAvailableInNewTerritories == true)
-        #expect(result.territories == ["USA", "CHN"])
+        #expect(result.territories.count == 2)
+        #expect(result.territories[0].id == "USA")
+        #expect(result.territories[0].currency == "USD")
+        #expect(result.territories[1].id == "CHN")
+        #expect(result.territories[1].currency == "CNY")
     }
 
     @Test func `getAvailability maps empty territories when relationship data is nil`() async throws {
@@ -44,7 +52,7 @@ struct SDKInAppPurchaseAvailabilityRepositoryTests {
         let repo = SDKInAppPurchaseAvailabilityRepository(client: stub)
         let result = try await repo.getAvailability(iapId: "iap-1")
 
-        #expect(result.territories == [])
+        #expect(result.territories.isEmpty)
         #expect(result.isAvailableInNewTerritories == false)
     }
 
@@ -59,6 +67,9 @@ struct SDKInAppPurchaseAvailabilityRepositoryTests {
                     .init(type: .territories, id: "USA"),
                 ]))
             ),
+            included: [
+                Territory(type: .territories, id: "USA", attributes: .init(currency: "USD")),
+            ],
             links: .init(this: "")
         ))
 
@@ -71,6 +82,7 @@ struct SDKInAppPurchaseAvailabilityRepositoryTests {
 
         #expect(result.id == "avail-new")
         #expect(result.iapId == "iap-42")
-        #expect(result.territories == ["USA"])
+        #expect(result.territories[0].id == "USA")
+        #expect(result.territories[0].currency == "USD")
     }
 }

@@ -19,11 +19,16 @@ struct SubscriptionAvailabilityTests {
         #expect(notAvailable.isAvailableInNewTerritories == false)
     }
 
-    @Test func `availability includes list of territory ids`() {
+    @Test func `availability includes territories with currency`() {
         let availability = MockRepositoryFactory.makeSubscriptionAvailability(
-            territories: ["USA", "GBR", "DEU"]
+            territories: [
+                Territory(id: "USA", currency: "USD"),
+                Territory(id: "GBR", currency: "GBP"),
+            ]
         )
-        #expect(availability.territories == ["USA", "GBR", "DEU"])
+        #expect(availability.territories.count == 2)
+        #expect(availability.territories[0].id == "USA")
+        #expect(availability.territories[1].currency == "GBP")
     }
 
     @Test func `affordances include get availability command`() {
@@ -34,11 +39,8 @@ struct SubscriptionAvailabilityTests {
         #expect(availability.affordances["getAvailability"] == "asc subscription-availability get --subscription-id sub-42")
     }
 
-    @Test func `affordances include create availability command`() {
-        let availability = MockRepositoryFactory.makeSubscriptionAvailability(
-            id: "avail-1",
-            subscriptionId: "sub-42"
-        )
-        #expect(availability.affordances["createAvailability"] == "asc subscription-availability create --subscription-id sub-42 --available-in-new-territories --territory USA --territory CHN")
+    @Test func `affordances include list territories command`() {
+        let availability = MockRepositoryFactory.makeSubscriptionAvailability()
+        #expect(availability.affordances["listTerritories"] == "asc territories list")
     }
 }

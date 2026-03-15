@@ -10,10 +10,11 @@ public struct SDKSubscriptionAvailabilityRepository: SubscriptionAvailabilityRep
 
     public func getAvailability(subscriptionId: String) async throws -> Domain.SubscriptionAvailability {
         let request = APIEndpoint.v1.subscriptions.id(subscriptionId).subscriptionAvailability.get(parameters: .init(
+            fieldsTerritories: [.currency],
             include: [.availableTerritories]
         ))
         let response = try await client.request(request)
-        return mapAvailability(response.data, subscriptionId: subscriptionId)
+        return mapAvailability(response.data, included: response.included, subscriptionId: subscriptionId)
     }
 
     public func createAvailability(
@@ -30,14 +31,21 @@ public struct SDKSubscriptionAvailabilityRepository: SubscriptionAvailabilityRep
             )
         ))
         let response = try await client.request(APIEndpoint.v1.subscriptionAvailabilities.post(body))
-        return mapAvailability(response.data, subscriptionId: subscriptionId)
+        return mapAvailability(response.data, included: response.included, subscriptionId: subscriptionId)
     }
 
     private func mapAvailability(
         _ sdk: AppStoreConnect_Swift_SDK.SubscriptionAvailability,
+        included: [AppStoreConnect_Swift_SDK.Territory]?,
         subscriptionId: String
     ) -> Domain.SubscriptionAvailability {
-        let territories = sdk.relationships?.availableTerritories?.data?.map(\.id) ?? []
+        let territoryIds = sdk.relationships?.availableTerritories?.data?.map(\.id) ?? []
+        let includedMap = Dictionary(
+            uniqueKeysWithValues: (included ?? []).map { ($0.id, $0) }
+        )
+        let territories = territoryIds.map { id in
+            Domain.Territory(id: id, currency: includedMap[id]?.attributes?.currency)
+        }
         return Domain.SubscriptionAvailability(
             id: sdk.id,
             subscriptionId: subscriptionId,

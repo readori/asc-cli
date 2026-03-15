@@ -33,7 +33,7 @@ struct SubscriptionAvailabilityCreate: AsyncParsableCommand {
         return try formatter.formatAgentItems(
             [availability],
             headers: ["ID", "Subscription ID", "Available in New Territories", "Territories"],
-            rowMapper: { [$0.id, $0.subscriptionId, String($0.isAvailableInNewTerritories), $0.territories.joined(separator: ", ")] }
+            rowMapper: { [$0.id, $0.subscriptionId, String($0.isAvailableInNewTerritories), $0.territories.map(\.id).joined(separator: ", ")] }
         )
     }
 }

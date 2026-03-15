@@ -6,14 +6,16 @@ import Testing
 @Suite
 struct IAPAvailabilityCreateTests {
 
-    @Test func `create availability shows created record with territories`() async throws {
+    @Test func `create availability shows created record with territories and currency`() async throws {
         let mockRepo = MockInAppPurchaseAvailabilityRepository()
         given(mockRepo).createAvailability(iapId: .any, isAvailableInNewTerritories: .any, territoryIds: .any)
             .willReturn(InAppPurchaseAvailability(
                 id: "avail-new",
                 iapId: "iap-42",
                 isAvailableInNewTerritories: true,
-                territories: ["USA"]
+                territories: [
+                    Territory(id: "USA", currency: "USD"),
+                ]
             ))
 
         let cmd = try IAPAvailabilityCreate.parse([
@@ -30,13 +32,17 @@ struct IAPAvailabilityCreateTests {
             {
               "affordances" : {
                 "createAvailability" : "asc iap-availability create --iap-id iap-42 --available-in-new-territories --territory USA --territory CHN",
-                "getAvailability" : "asc iap-availability get --iap-id iap-42"
+                "getAvailability" : "asc iap-availability get --iap-id iap-42",
+                "listTerritories" : "asc territories list"
               },
               "iapId" : "iap-42",
               "id" : "avail-new",
               "isAvailableInNewTerritories" : true,
               "territories" : [
-                "USA"
+                {
+                  "currency" : "USD",
+                  "id" : "USA"
+                }
               ]
             }
           ]
