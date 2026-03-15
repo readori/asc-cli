@@ -420,6 +420,40 @@ struct MockRepositoryFactory {
         )
     }
 
+    // MARK: - App Availability
+
+    static func makeAppTerritoryAvailability(
+        id: String = "ta-1",
+        territoryId: String = "USA",
+        isAvailable: Bool = true,
+        releaseDate: String? = nil,
+        isPreOrderEnabled: Bool = false,
+        contentStatuses: [ContentStatus] = [.available]
+    ) -> AppTerritoryAvailability {
+        AppTerritoryAvailability(
+            id: id,
+            territoryId: territoryId,
+            isAvailable: isAvailable,
+            releaseDate: releaseDate,
+            isPreOrderEnabled: isPreOrderEnabled,
+            contentStatuses: contentStatuses
+        )
+    }
+
+    static func makeAppAvailability(
+        id: String = "avail-1",
+        appId: String = "app-1",
+        isAvailableInNewTerritories: Bool = true,
+        territories: [AppTerritoryAvailability] = [AppTerritoryAvailability(id: "ta-1", territoryId: "USA", isAvailable: true, releaseDate: nil, isPreOrderEnabled: false, contentStatuses: [.available])]
+    ) -> AppAvailability {
+        AppAvailability(
+            id: id,
+            appId: appId,
+            isAvailableInNewTerritories: isAvailableInNewTerritories,
+            territories: territories
+        )
+    }
+
     // MARK: - Territories
 
     static func makeTerritory(

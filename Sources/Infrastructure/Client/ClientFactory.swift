@@ -226,6 +226,11 @@ public struct ClientFactory: Sendable {
         return SDKSubscriptionAvailabilityRepository(client: provider)
     }
 
+    public func makeAppAvailabilityRepository(authProvider: any AuthProvider) throws -> any AppAvailabilityRepository {
+        let provider = try makeProvider(authProvider: authProvider)
+        return SDKAppAvailabilityRepository(client: provider)
+    }
+
     public func makeTerritoryRepository(authProvider: any AuthProvider) throws -> any TerritoryRepository {
         let provider = try makeProvider(authProvider: authProvider)
         return SDKTerritoryRepository(client: provider)
