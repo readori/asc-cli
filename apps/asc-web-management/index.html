@@ -56,6 +56,63 @@
   --header-h: 64px;
 }
 
+[data-theme="dark"] {
+  --bg: #0B0F19;
+  --bg-card: #111827;
+  --bg-sidebar: #0F1629;
+  --bg-hover: #1E293B;
+  --bg-active: #172554;
+  --bg-badge: #172554;
+  --border: #1E293B;
+  --border-light: #1E293B;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --accent: #3B82F6;
+  --accent-hover: #2563EB;
+  --accent-light: #1E3A5F;
+  --accent-text: #93C5FD;
+  --success: #34D399;
+  --success-bg: #064E3B;
+  --success-text: #6EE7B7;
+  --warning: #FBBF24;
+  --warning-bg: #451A03;
+  --warning-text: #FCD34D;
+  --danger: #F87171;
+  --danger-bg: #450A0A;
+  --danger-text: #FCA5A5;
+  --info: #A78BFA;
+  --info-bg: #2E1065;
+  --info-text: #C4B5FD;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.3);
+}
+[data-theme="dark"] .cmd-log { background: #020617; }
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.6); }
+[data-theme="dark"] .search-box kbd { background: #1E293B; border-color: #334155; }
+[data-theme="dark"] .platform-badge { background: #1E293B; border-color: #334155; color: #CBD5E1; }
+[data-theme="dark"] .filter-btn { background: #111827; color: #94A3B8; border-color: #1E293B; }
+[data-theme="dark"] .filter-btn:hover { background: #1E293B; }
+[data-theme="dark"] .select-styled { background: #111827; color: #CBD5E1; border-color: #1E293B; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.theme-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+.theme-toggle svg { width: 18px; height: 18px; }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
 html { font-size: 14px; }
 body {
   font-family: var(--font);
@@ -831,6 +888,10 @@ textarea.form-input { min-height: 80px; resize: vertical; line-height: 1.5; }
         </div>
         <button class="header-btn" onclick="openCommandLog()" title="Command Log">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        </button>
+        <button class="theme-toggle" title="Toggle dark mode" onclick="toggleTheme()">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         <button class="header-btn" title="Refresh" onclick="refreshCurrentPage()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -1960,7 +2021,25 @@ async function checkAuth() {
   }
 }
 
+// ========== THEME ==========
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('asc-theme', next);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('asc-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+}
+
 // ========== INIT ==========
+initTheme();
 checkAuth();
 renderPage('dashboard');
 </script>
