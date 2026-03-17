@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `asc web` management dashboard — complete redesign with professional light/dark theme, Plus Jakarta Sans typography, and self-contained CSS (no Tailwind CDN dependency)
+- App context selector in sidebar — select an app from the Apps page and all other sections (Versions, Builds, TestFlight, Reviews, IAP, Subscriptions) use that app context automatically
+- Rich domain models in web UI — every entity carries parent IDs, semantic booleans (`isLive`, `isEditable`, `isPending`, `isUsable`), and state-aware CAEOAS affordances matching the Swift Domain layer exactly
+- Mock/CLI dual data mode — web UI auto-detects the `asc web` backend; falls back to built-in mock data for offline development and demos; toggle via header button
+- Dark mode with system preference detection and localStorage persistence
+- 15 management pages: Dashboard, Apps, Versions, Builds, TestFlight, Submissions, App Info, Screenshots, Reviews, In-App Purchases, Subscriptions, Reports, Code Signing, Xcode Cloud, Users & Roles
+- Dashboard with release pipeline timeline, quick actions, and stats overview
+- Command log modal showing every CLI command executed by the UI
+- Standalone development server (`apps/asc-web-management/server.js`) for working on the web UI outside of `asc web`
+
 ---
 
 ## [0.1.50] - 2026-03-15
