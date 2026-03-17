@@ -1442,22 +1442,22 @@ const DataProvider = {
 
   async init() {
     // Auto-detect: if served from server.js, switch to CLI mode
+    // Uses a lightweight ping — no logging, no command execution
     try {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 2000);
       const resp = await fetch('/api/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: 'auth check' }),
-        signal: AbortSignal.timeout(2000),
+        body: JSON.stringify({ command: 'version' }),
+        signal: controller.signal,
       });
       if (resp.ok) {
         this._mode = 'cli';
-        this._serverUrl = '';
-        console.log('[DataProvider] CLI mode — connected to asc backend');
         return;
       }
     } catch {}
     this._mode = 'mock';
-    console.log('[DataProvider] Mock mode — open via server.js for live CLI data');
   },
 
   setMode(mode) {
@@ -1594,7 +1594,7 @@ const DataProvider = {
       result = raw ? { data: raw.data } : { data: [] };
     }
     else if (args[0] === 'auth' && args[1] === 'check') {
-      result = { ...MockDataProvider.authStatus, affordances: authStatusAffordances() };
+      result = { data: [{ ...MockDataProvider.authStatus, affordances: authStatusAffordances() }] };
     }
     else {
       result = { data: [] };
@@ -2647,9 +2647,11 @@ async function checkAuth() {
   const result = await DataProvider.fetch('auth check');
   const dot = document.getElementById('authDot');
   const info = document.getElementById('authInfo');
-  if (result && result.keyID) {
+  // Normalize: real CLI returns {data:[{keyID:...}]}, mock returns {keyID:...}
+  const auth = result?.data?.[0] || (result?.keyID ? result : null);
+  if (auth?.keyID) {
     dot.classList.remove('disconnected');
-    info.innerHTML = `<span>${escapeHTML(result.name || 'default')}</span>Key: ${result.keyID.substring(0, 6)}... (${result.source})`;
+    info.innerHTML = `<span>${escapeHTML(auth.name || 'default')}</span>Key: ${auth.keyID.substring(0, 6)}... (${auth.source})`;
     document.querySelector('.auth-status').style.background = 'var(--success-bg)';
     info.style.color = 'var(--success-text)';
   } else {
@@ -2691,7 +2693,7 @@ initTheme();
 (async () => {
   await DataProvider.init();
   updateModeIndicator();
-  checkAuth();
+  await checkAuth();
   renderPage('dashboard');
 })();
 </script>

@@ -102,26 +102,15 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static file serving
+  // Static file serving — all assets are local
   const urlPath = decodeURIComponent(req.url.split('?')[0]);
-  let fullPath;
+  const fullPath = path.join(__dirname, urlPath === '/' ? 'index.html' : urlPath);
 
-  if (urlPath === '/') {
-    fullPath = path.join(__dirname, 'index.html');
-  } else if (urlPath.includes('..')) {
-    // Resolve relative paths (e.g. ../../homepage/static/icon-192.png)
-    // Project root is two levels up from apps/asc-web-management/
-    const projectRoot = path.resolve(__dirname, '..', '..');
-    const resolved = path.resolve(__dirname, urlPath.replace(/^\//, ''));
-    // Security: ensure resolved path stays within project root
-    if (!resolved.startsWith(projectRoot)) {
-      res.writeHead(403);
-      res.end('Forbidden');
-      return;
-    }
-    fullPath = resolved;
-  } else {
-    fullPath = path.join(__dirname, urlPath);
+  // Security: block path traversal
+  if (!fullPath.startsWith(__dirname)) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
   }
 
   serveStatic(fullPath, res);
