@@ -1,6 +1,6 @@
 # Web Apps
 
-Two browser-based interfaces for ASC CLI — a **Dashboard** for visual management and a **Console** for terminal-style command execution. Both work on GitHub Pages (mock/offline mode) and connect to a local API proxy for live CLI access.
+Two browser-based interfaces for ASC CLI — a **Command Center** for visual management and a **Console** for terminal-style command execution. Both work on GitHub Pages (mock/offline mode) and connect to a local API proxy for live CLI access.
 
 ## Quick Start
 
@@ -13,7 +13,7 @@ asc web-server --port 9000
 ```
 
 Then open either web app:
-- **Dashboard:** https://asccli.app/asc-web-command-center/
+- **Command Center:** https://asccli.app/asc-web-command-center/
 - **Console:** https://asccli.app/asc-web-console/
 
 **Prerequisites:** Node.js (for the API proxy) and `asc` in your PATH.
@@ -28,7 +28,7 @@ Then open either web app:
 │                                                      │
 │  ┌─────────────────────┐  ┌────────────────────────┐ │
 │  │  asc-web-command-center │  │  asc-web-console       │ │
-│  │  (Dashboard)        │  │  (Terminal)             │ │
+│  │  (Command Center)        │  │  (Terminal)             │ │
 │  └────────┬────────────┘  └────────┬───────────────┘ │
 │           │ POST /api/run          │                  │
 │           └──────────┬─────────────┘                  │
@@ -57,7 +57,7 @@ Both web apps auto-detect the API proxy:
 
 ## Web Apps
 
-### Dashboard (`apps/asc-web-command-center/`)
+### Command Center (`apps/asc-web-command-center/`)
 
 A full visual management interface with:
 
@@ -139,10 +139,10 @@ For local development with static file serving (both apps):
 node apps/server.js
 
 # Routes:
-#   /management/  → Dashboard
+#   /management/  → Command Center
 #   /console/     → Console
 #   /api/run      → CLI bridge
-#   /             → Dashboard (default)
+#   /             → Command Center (default)
 ```
 
 Or open `apps/asc-web-command-center/index.html` directly in a browser — it falls back to mock mode automatically.
@@ -195,7 +195,7 @@ Or open `apps/asc-web-command-center/index.html` directly in a browser — it fa
 ```
 apps/
 ├── server.js                        Unified Node.js server (local dev + embedded in binary)
-├── asc-web-command-center/              Dashboard web app
+├── asc-web-command-center/              Command Center web app
 │   ├── index.html
 │   ├── css/                         Stylesheet modules
 │   └── js/                          Three-layer JS (infrastructure/domain/presentation)
@@ -215,7 +215,7 @@ Plugins/EmbedServerJS/
 
 ## Extending
 
-### Adding commands to the Dashboard
+### Adding commands to the Command Center
 
 Add entries to the navigation data in `apps/asc-web-command-center/js/presentation/navigation.js`.
 
