@@ -12,7 +12,6 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.6.0"),
         .package(url: "https://github.com/steipete/TauTUI.git", from: "0.1.5"),
-        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.21.0"),
     ],
     targets: [
         .target(
@@ -29,6 +28,10 @@ let package = Package(
                 .product(name: "AppStoreConnect-Swift-SDK", package: "appstoreconnect-swift-sdk"),
             ]
         ),
+        .plugin(
+            name: "EmbedServerJS",
+            capability: .buildTool()
+        ),
         .executableTarget(
             name: "ASCCommand",
             dependencies: [
@@ -36,9 +39,9 @@ let package = Package(
                 "Infrastructure",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "TauTUI", package: "TauTUI"),
-                .product(name: "Hummingbird", package: "hummingbird"),
             ],
-            resources: [.copy("Resources/mockups"), .copy("Resources/web")]
+            resources: [.copy("Resources/mockups")],
+            plugins: ["EmbedServerJS"]
         ),
         .testTarget(
             name: "DomainTests",

@@ -1,35 +1,44 @@
 import ArgumentParser
 import Foundation
 
-struct WebCommand: AsyncParsableCommand {
+struct WebServerCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
-        commandName: "web",
-        abstract: "Start the ASC web management console"
+        commandName: "web-server",
+        abstract: "Start the local API proxy for ASC web apps"
     )
 
     @Option(name: .long, help: "Port to listen on (default: 8420)")
     var port: Int = 8420
 
-    @Flag(name: .long, help: "Don't open the browser automatically")
-    var noBrowser: Bool = false
-
     func run() async throws {
-        let url = "http://127.0.0.1:\(port)"
-        print("")
-        print("  ASC Web Console")
-        print("  \(String(repeating: "─", count: 32))")
-        print("  Local:  \(url)")
-        print("  \(String(repeating: "─", count: 32))")
-        print("  Press Ctrl+C to stop")
-        print("")
+        // Write embedded server.js to temp file
+        let tmpDir = FileManager.default.temporaryDirectory.appendingPathComponent("asc-web-server")
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        let serverFile = tmpDir.appendingPathComponent("server.js")
+        try EmbeddedServerJS.content.write(to: serverFile, atomically: true, encoding: .utf8)
 
-        if !noBrowser {
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-            process.arguments = [url]
-            try? process.run()
+        let ascBin = ProcessInfo.processInfo.arguments[0]
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["node", serverFile.path, "--port", "\(port)", "--asc-bin", ascBin]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = FileHandle.standardError
+
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            let data = handle.availableData
+            if !data.isEmpty {
+                FileHandle.standardOutput.write(data)
+            }
         }
 
-        try await WebServer.start(port: port)
+        try process.run()
+        process.waitUntilExit()
+
+        if process.terminationStatus != 0 {
+            throw ValidationError("Server exited with code \(process.terminationStatus)")
+        }
     }
 }
