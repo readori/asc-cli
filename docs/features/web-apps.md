@@ -13,7 +13,7 @@ asc web-server --port 9000
 ```
 
 Then open either web app:
-- **Dashboard:** https://asccli.app/asc-web-management/
+- **Dashboard:** https://asccli.app/asc-web-command-center/
 - **Console:** https://asccli.app/asc-web-console/
 
 **Prerequisites:** Node.js (for the API proxy) and `asc` in your PATH.
@@ -27,7 +27,7 @@ Then open either web app:
 │  GitHub Pages / Browser (file://)                    │
 │                                                      │
 │  ┌─────────────────────┐  ┌────────────────────────┐ │
-│  │  asc-web-management │  │  asc-web-console       │ │
+│  │  asc-web-command-center │  │  asc-web-console       │ │
 │  │  (Dashboard)        │  │  (Terminal)             │ │
 │  └────────┬────────────┘  └────────┬───────────────┘ │
 │           │ POST /api/run          │                  │
@@ -57,7 +57,7 @@ Both web apps auto-detect the API proxy:
 
 ## Web Apps
 
-### Dashboard (`apps/asc-web-management/`)
+### Dashboard (`apps/asc-web-command-center/`)
 
 A full visual management interface with:
 
@@ -145,7 +145,7 @@ node apps/server.js
 #   /             → Dashboard (default)
 ```
 
-Or open `apps/asc-web-management/index.html` directly in a browser — it falls back to mock mode automatically.
+Or open `apps/asc-web-command-center/index.html` directly in a browser — it falls back to mock mode automatically.
 
 ---
 
@@ -195,7 +195,7 @@ Or open `apps/asc-web-management/index.html` directly in a browser — it falls 
 ```
 apps/
 ├── server.js                        Unified Node.js server (local dev + embedded in binary)
-├── asc-web-management/              Dashboard web app
+├── asc-web-command-center/              Dashboard web app
 │   ├── index.html
 │   ├── css/                         Stylesheet modules
 │   └── js/                          Three-layer JS (infrastructure/domain/presentation)
@@ -217,7 +217,7 @@ Plugins/EmbedServerJS/
 
 ### Adding commands to the Dashboard
 
-Add entries to the navigation data in `apps/asc-web-management/js/presentation/navigation.js`.
+Add entries to the navigation data in `apps/asc-web-command-center/js/presentation/navigation.js`.
 
 ### Adding commands to the Console
 
