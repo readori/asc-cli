@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **SPM build plugin (`Plugins/EmbedServerJS/`)** — auto-generates Swift source from `apps/server.js` at build time, embedding the API proxy in the binary with `apps/server.js` as single source of truth
-- **Dashboard nav link on homepage** — added "Dashboard" navigation to homepage template with translations in all 12 languages
+- **Command Center nav link on homepage** — added "Command Center" navigation to homepage template with translations in all 12 languages
 - **GitHub Pages deployment for web apps** — deploy workflow now copies `apps/asc-web-*` to homepage for static hosting
 
 ### Removed
@@ -40,8 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich domain models in web UI — every entity carries parent IDs, semantic booleans (`isLive`, `isEditable`, `isPending`, `isUsable`), and state-aware CAEOAS affordances matching the Swift Domain layer exactly
 - Mock/CLI dual data mode — web UI auto-detects the `asc web` backend; falls back to built-in mock data for offline development and demos; toggle via header button
 - Dark mode with system preference detection and localStorage persistence
-- 15 management pages: Dashboard, Apps, Versions, Builds, TestFlight, Submissions, App Info, Screenshots, Reviews, In-App Purchases, Subscriptions, Reports, Code Signing, Xcode Cloud, Users & Roles
-- Dashboard with release pipeline timeline, quick actions, and stats overview
+- 15 management pages: Command Center, Apps, Versions, Builds, TestFlight, Submissions, App Info, Screenshots, Reviews, In-App Purchases, Subscriptions, Reports, Code Signing, Xcode Cloud, Users & Roles
+- Command Center with release pipeline timeline, quick actions, and stats overview
 - Command log modal showing every CLI command executed by the UI
 - Standalone development server (`apps/asc-web-command-center/server.js`) for working on the web UI outside of `asc web`
 

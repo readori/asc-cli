@@ -7,9 +7,9 @@
 //   node server.js --port 3000  # custom port
 //
 // Routes:
-//   /management/  → asc-web-management (dashboard)
+//   /command-center/  → asc-web-command-center (dashboard)
 //   /console/     → asc-web-console (terminal)
-//   /             → asc-web-management (default)
+//   /             → asc-web-command-center (default)
 //   /api/run      → execute asc CLI commands
 //
 // Prerequisites:
@@ -130,21 +130,21 @@ const server = http.createServer(async (req, res) => {
   // Static file serving with app routing
   const urlPath = decodeURIComponent(req.url.split('?')[0]);
 
-  // Route: /management/* → asc-web-management/
+  // Route: /command-center/* → asc-web-command-center/
   // Route: /console/*    → asc-web-console/
-  // Route: /             → asc-web-management/index.html
+  // Route: /             → asc-web-command-center/index.html
   let filePath;
-  if (urlPath.startsWith('/management')) {
-    const subPath = urlPath.slice('/management'.length) || '/';
-    filePath = path.join(APPS_DIR, 'asc-web-management', subPath === '/' ? 'index.html' : subPath);
+  if (urlPath.startsWith('/command-center')) {
+    const subPath = urlPath.slice('/command-center'.length) || '/';
+    filePath = path.join(APPS_DIR, 'asc-web-command-center', subPath === '/' ? 'index.html' : subPath);
   } else if (urlPath.startsWith('/console')) {
     const subPath = urlPath.slice('/console'.length) || '/';
     filePath = path.join(APPS_DIR, 'asc-web-console', subPath === '/' ? 'index.html' : subPath);
   } else if (urlPath === '/' || urlPath === '/index.html') {
-    filePath = path.join(APPS_DIR, 'asc-web-management', 'index.html');
+    filePath = path.join(APPS_DIR, 'asc-web-command-center', 'index.html');
   } else {
-    // Try serving from asc-web-management as default
-    filePath = path.join(APPS_DIR, 'asc-web-management', urlPath);
+    // Try serving from asc-web-command-center as default
+    filePath = path.join(APPS_DIR, 'asc-web-command-center', urlPath);
   }
 
   // Security: block path traversal
@@ -163,7 +163,7 @@ server.listen(PORT, () => {
   │  ASC Web Server                               │
   │  http://localhost:${String(PORT).padEnd(29)}│
   │                                               │
-  │  /management/  Dashboard                      │
+  │  /command-center/  Command Center                  │
   │  /console/     Terminal                       │
   │  /api/run      CLI bridge                     │
   │                                               │
