@@ -7,10 +7,11 @@
 //   node server.js --port 3000  # custom port
 //
 // Routes:
-//   /command-center/  → asc-web-command-center (dashboard)
-//   /console/     → asc-web-console (terminal)
-//   /             → asc-web-command-center (default)
-//   /api/run      → execute asc CLI commands
+//   /command-center/  → command-center (dashboard)
+//   /console/         → console (terminal)
+//   /shared/          → shared (domain, infrastructure, static)
+//   /                 → appstore-command-center (default)
+//   /api/run          → execute asc CLI commands
 //
 // Prerequisites:
 //   - `asc` CLI installed and on PATH (or built: swift run asc)
@@ -39,7 +40,6 @@ const MIME_TYPES = {
 function runASC(command) {
   return new Promise((resolve) => {
     const parts = command.split(/\s+/);
-    // Strip leading "asc" if present
     const args = parts[0] === 'asc' ? parts.slice(1) : parts;
 
     execFile(ASC_BIN, args, {
@@ -66,7 +66,6 @@ function serveStatic(filePath, res) {
       res.end('Not found');
       return;
     }
-    // If directory, serve index.html inside it
     if (stats.isDirectory()) {
       serveStatic(path.join(filePath, 'index.html'), res);
       return;
@@ -84,7 +83,6 @@ function serveStatic(filePath, res) {
 }
 
 const server = http.createServer(async (req, res) => {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -108,7 +106,6 @@ const server = http.createServer(async (req, res) => {
           return;
         }
 
-        // Security: block dangerous shell characters
         if (/[;&|`$\\(){}\[\]!><]/.test(command)) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Command contains disallowed characters' }));
@@ -130,21 +127,19 @@ const server = http.createServer(async (req, res) => {
   // Static file serving with app routing
   const urlPath = decodeURIComponent(req.url.split('?')[0]);
 
-  // Route: /command-center/* → asc-web-command-center/
-  // Route: /console/*    → asc-web-console/
-  // Route: /             → asc-web-command-center/index.html
   let filePath;
   if (urlPath.startsWith('/command-center')) {
     const subPath = urlPath.slice('/command-center'.length) || '/';
-    filePath = path.join(APPS_DIR, 'asc-web-command-center', subPath === '/' ? 'index.html' : subPath);
+    filePath = path.join(APPS_DIR, 'command-center', subPath === '/' ? 'index.html' : subPath);
   } else if (urlPath.startsWith('/console')) {
     const subPath = urlPath.slice('/console'.length) || '/';
-    filePath = path.join(APPS_DIR, 'asc-web-console', subPath === '/' ? 'index.html' : subPath);
+    filePath = path.join(APPS_DIR, 'console', subPath === '/' ? 'index.html' : subPath);
+  } else if (urlPath.startsWith('/shared')) {
+    filePath = path.join(APPS_DIR, urlPath);
   } else if (urlPath === '/' || urlPath === '/index.html') {
-    filePath = path.join(APPS_DIR, 'asc-web-command-center', 'index.html');
+    filePath = path.join(APPS_DIR, 'command-center', 'index.html');
   } else {
-    // Try serving from asc-web-command-center as default
-    filePath = path.join(APPS_DIR, 'asc-web-command-center', urlPath);
+    filePath = path.join(APPS_DIR, 'command-center', urlPath);
   }
 
   // Security: block path traversal
@@ -159,16 +154,16 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`
-  ┌───────────────────────────────────────────────┐
-  │  ASC Web Server                               │
-  │  http://localhost:${String(PORT).padEnd(29)}│
-  │                                               │
-  │  /command-center/  Command Center                  │
-  │  /console/     Terminal                       │
-  │  /api/run      CLI bridge                     │
-  │                                               │
-  │  Binary: ${ASC_BIN.padEnd(37)}│
-  │  Press Ctrl+C to stop                         │
-  └───────────────────────────────────────────────┘
+  ┌─────────────────────────────────────────┐
+  │  ASC Web Server                         │
+  │  http://localhost:${String(PORT).padEnd(21)}│
+  │                                         │
+  │  /command-center/  Dashboard            │
+  │  /console/         Terminal             │
+  │  /api/run          CLI bridge           │
+  │                                         │
+  │  Binary: ${ASC_BIN.padEnd(31)}│
+  │  Press Ctrl+C to stop                   │
+  └─────────────────────────────────────────┘
   `);
 });
