@@ -106,17 +106,17 @@
     <div class="cmd-palette-backdrop" id="cmd-backdrop"></div>
     <div class="cmd-palette">
       <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)">
-        <svg style="width:16px;height:16px;color:var(--text-dim);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <svg style="width:16px;height:16px;color:var(--text-secondary);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         <input type="text" id="palette-input" placeholder="Search features and commands..." style="flex:1;background:transparent;border:none;font-size:14px;color:var(--text-primary);outline:none" autocomplete="off" spellcheck="false" />
-        <kbd style="font-size:10px;color:var(--text-dim);background:rgba(51,65,85,1);padding:2px 6px;border-radius:4px">ESC</kbd>
+        <kbd style="font-size:10px;color:var(--text-secondary);background:rgba(51,65,85,0.6);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">ESC</kbd>
       </div>
       <div id="palette-results" style="max-height:320px;overflow-y:auto">
         <!-- Populated by JS -->
       </div>
-      <div style="display:flex;align-items:center;gap:16px;padding:8px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim)">
-        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,1);padding:1px 5px;border-radius:3px;font-size:9px">↑↓</kbd> navigate</span>
-        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,1);padding:1px 5px;border-radius:3px;font-size:9px">↵</kbd> select</span>
-        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,1);padding:1px 5px;border-radius:3px;font-size:9px">esc</kbd> close</span>
+      <div style="display:flex;align-items:center;gap:16px;padding:8px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted)">
+        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,0.6);color:var(--text-secondary);padding:1px 5px;border-radius:3px;font-size:9px;border:1px solid var(--border)">↑↓</kbd> navigate</span>
+        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,0.6);color:var(--text-secondary);padding:1px 5px;border-radius:3px;font-size:9px;border:1px solid var(--border)">↵</kbd> select</span>
+        <span style="display:flex;align-items:center;gap:4px"><kbd style="background:rgba(51,65,85,0.6);color:var(--text-secondary);padding:1px 5px;border-radius:3px;font-size:9px;border:1px solid var(--border)">esc</kbd> close</span>
       </div>
     </div>
   </div>
