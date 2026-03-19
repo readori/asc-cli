@@ -28,7 +28,7 @@ export function actionColor(action) {
 // CSS class mapping for action tags
 const actionCSSMap = {
   'color-emerald': 'background: var(--success-dim); color: var(--success); border-color: var(--success-border);',
-  'color-brand': 'background: var(--accent-dim); color: #60a5fa; border-color: var(--accent-border);',
+  'color-brand': 'background: var(--accent-dim); color: var(--active-item-text); border-color: var(--accent-border);',
   'color-amber': 'background: var(--warning-dim); color: var(--warning); border-color: var(--warning-border);',
   'color-danger': 'background: var(--danger-dim); color: var(--danger); border-color: var(--danger-border);',
   'color-violet': 'background: var(--violet-dim); color: var(--violet); border-color: var(--violet-border);',

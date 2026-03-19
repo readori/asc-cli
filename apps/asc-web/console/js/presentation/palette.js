@@ -112,7 +112,7 @@ function highlightMatch(text, query) {
   if (!query) return escapeHtml(text);
   const escaped = escapeHtml(text);
   const qEsc = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return escaped.replace(new RegExp(`(${qEsc})`, 'gi'), '<span style="color:#60a5fa;font-weight:600">$1</span>');
+  return escaped.replace(new RegExp(`(${qEsc})`, 'gi'), '<span style="color:var(--active-item-text);font-weight:600">$1</span>');
 }
 
 function renderResults(rawQuery) {

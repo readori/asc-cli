@@ -35,11 +35,11 @@ function renderFlow(steps, activeStep) {
           const rest = parts.slice(1).join(' ');
           const isEntry = step === activeStep;
           const borderColor = isEntry ? 'var(--success-border)' : 'var(--border)';
-          const bgColor = isEntry ? 'rgba(5,150,105,0.08)' : 'rgba(15,23,42,0.8)';
+          const bgColor = isEntry ? 'var(--success-dim)' : 'var(--bg-hover)';
           return `
             ${i > 0 ? '<svg style="width:16px;height:16px;color:var(--text-dim);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>' : ''}
             <code style="font-size:11px;font-family:var(--font-mono);padding:4px 8px;border-radius:6px;background:${bgColor};border:1px solid ${borderColor};color:var(--text-secondary);white-space:nowrap">
-              <span style="color:#60a5fa">asc</span> ${escapeHtml(cmd)} <span style="color:var(--text-dim)">${escapeHtml(rest)}</span>
+              <span style="color:var(--active-item-text)">asc</span> ${escapeHtml(cmd)} <span style="color:var(--text-dim)">${escapeHtml(rest)}</span>
             </code>
           `;
         }).join('')}

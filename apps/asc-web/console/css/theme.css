@@ -1,8 +1,72 @@
-/* Console theme — CSS custom properties for dark terminal aesthetic */
+/* Console theme — light (default) + dark mode via data-theme */
 :root {
+  /* Layout */
+  --sidebar-w: 240px;
+  --header-h: 48px;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --transition: 150ms ease;
+
+  /* Light theme */
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-hover: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-dim: #cbd5e1;
+  --accent: #2563eb;
+  --accent-light: #60a5fa;
+  --accent-dim: rgba(37,99,235,0.08);
+  --accent-border: rgba(37,99,235,0.2);
+  --success: #059669;
+  --success-dim: rgba(5,150,105,0.08);
+  --success-border: rgba(5,150,105,0.2);
+  --warning: #d97706;
+  --warning-dim: rgba(217,119,6,0.08);
+  --warning-border: rgba(217,119,6,0.2);
+  --danger: #dc2626;
+  --danger-dim: rgba(220,38,38,0.08);
+  --danger-border: rgba(220,38,38,0.2);
+  --violet: #7c3aed;
+  --violet-dim: rgba(124,58,237,0.08);
+  --violet-border: rgba(124,58,237,0.2);
+  --cyan: #0891b2;
+  --cyan-dim: rgba(8,145,178,0.08);
+  --cyan-border: rgba(8,145,178,0.2);
+
+  /* Surfaces */
+  --header-bg: rgba(248,250,252,0.85);
+  --header-border: #e2e8f0;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #f1f5f9;
+  --input-border: #e2e8f0;
+  --terminal-bg: #f8fafc;
+  --terminal-border: #e2e8f0;
+  --terminal-text: #334155;
+  --terminal-text-muted: #94a3b8;
+  --terminal-prompt: #2563eb;
+  --overlay-bg: rgba(0,0,0,0.3);
+  --palette-bg: #ffffff;
+  --palette-border: #e2e8f0;
+  --palette-shadow: 0 16px 64px rgba(0,0,0,0.12);
+  --kbd-bg: #f1f5f9;
+  --kbd-border: #e2e8f0;
+  --scrollbar-thumb: #cbd5e1;
+  --active-item-text: #2563eb;
+}
+
+[data-theme="dark"] {
   --bg: #070d1a;
   --bg-card: #0c1222;
   --bg-hover: rgba(148,163,184,0.04);
+  --bg-elevated: #0f1629;
   --border: rgba(51,65,85,0.6);
   --border-light: rgba(51,65,85,0.3);
   --text-primary: #e2e8f0;
@@ -10,6 +74,7 @@
   --text-muted: #64748b;
   --text-dim: #475569;
   --accent: #3b82f6;
+  --accent-light: #60a5fa;
   --accent-dim: rgba(59,130,246,0.12);
   --accent-border: rgba(59,130,246,0.2);
   --success: #34d399;
@@ -27,11 +92,25 @@
   --cyan: #22d3ee;
   --cyan-dim: rgba(6,182,212,0.08);
   --cyan-border: rgba(6,182,212,0.2);
-  --sidebar-w: 240px;
-  --header-h: 48px;
-  --font: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --transition: 150ms ease;
+
+  /* Surfaces */
+  --header-bg: rgba(7,13,26,0.8);
+  --header-border: rgba(51,65,85,0.4);
+  --card-bg: rgba(15,23,42,0.6);
+  --card-border: rgba(51,65,85,0.6);
+  --input-bg: rgba(15,23,42,1);
+  --input-border: rgba(51,65,85,1);
+  --terminal-bg: #0c1222;
+  --terminal-border: rgba(51,65,85,0.6);
+  --terminal-text: #e2e8f0;
+  --terminal-text-muted: #64748b;
+  --terminal-prompt: #60a5fa;
+  --overlay-bg: rgba(0,0,0,0.6);
+  --palette-bg: rgba(15,23,42,1);
+  --palette-border: rgba(51,65,85,0.6);
+  --palette-shadow: 0 16px 64px rgba(0,0,0,0.5);
+  --kbd-bg: rgba(51,65,85,0.6);
+  --kbd-border: rgba(51,65,85,0.8);
+  --scrollbar-thumb: #334155;
+  --active-item-text: #60a5fa;
 }

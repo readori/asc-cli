@@ -65,7 +65,7 @@ export async function executeCommand(cmd) {
   historyIndex = -1;
 
   const cmdLine = document.createElement('div');
-  cmdLine.innerHTML = `<span style="color: #60a5fa; user-select: none;">$ </span><span style="color: var(--text-primary)">${escapeHtml(cmd)}</span>`;
+  cmdLine.innerHTML = `<span style="color: var(--terminal-prompt); user-select: none;">$ </span><span style="color: var(--terminal-text)">${escapeHtml(cmd)}</span>`;
   els.output.appendChild(cmdLine);
 
   const loader = document.createElement('div');

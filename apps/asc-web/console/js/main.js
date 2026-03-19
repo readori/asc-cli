@@ -4,6 +4,7 @@ import { renderNav, navigate, renderPage } from './presentation/navigation.js';
 import { initTerminal, detectServer, getServerUrl, toggleTerminal, executeCommand, isTerminalOpen } from './presentation/terminal.js';
 import { initPalette, toggle as togglePalette, isPaletteOpen } from './presentation/palette.js';
 import { logCommand, logOutput, logError } from './presentation/state.js';
+import { initTheme, toggleTheme } from './presentation/theme.js';
 
 // Wire DataProvider callbacks (shared infra → console presentation)
 DataProvider._onCommand = logCommand;
@@ -11,10 +12,14 @@ DataProvider._onOutput = logOutput;
 DataProvider._onError = logError;
 
 // Init synchronous setup
+initTheme();
 renderNav();
 renderPage();
 initTerminal();
 initPalette();
+
+// Theme toggle
+document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
 // Search input in header → opens the search overlay
 document.getElementById('search-input').addEventListener('focus', (e) => {

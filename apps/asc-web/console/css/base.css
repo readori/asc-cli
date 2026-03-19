@@ -1,8 +1,8 @@
 /* Console base — reset + global styles */
-* { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: #334155 transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 
 body {
   font-family: var(--font);
@@ -12,6 +12,13 @@ body {
   min-height: 100vh;
   display: flex;
 }
+
+/* Theme toggle */
+.theme-toggle { display: flex; align-items: center; justify-content: center; }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
 .fade-in { animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
