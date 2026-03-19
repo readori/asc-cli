@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'homepage/**'
-      - 'apps/asc-web-*/**'
+      - 'apps/asc-web/**'
   workflow_dispatch:
 
 permissions:
@@ -32,8 +32,9 @@ jobs:
 
       - name: Copy web apps to homepage
         run: |
-          cp -r apps/asc-web-console homepage/asc-web-console
-          cp -r apps/asc-web-command-center homepage/asc-web-command-center
+          cp -r apps/asc-web/console homepage/console
+          cp -r apps/asc-web/command-center homepage/command-center
+          cp -r apps/asc-web/shared homepage/shared
 
       - uses: actions/upload-pages-artifact@v3
         with:
