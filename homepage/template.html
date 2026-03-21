@@ -78,7 +78,8 @@
       "Code Signing Management",
       "Version Localization",
       "Multiple Output Formats (JSON, Table, Markdown)",
-      "Interactive TUI Mode"
+      "Interactive TUI Mode",
+      "Iris Private API (App Creation via Cookie Auth)"
     ]
   }
   </script>
@@ -296,6 +297,28 @@
             <div class="feature-card-content">
               <h3 class="feature-card-title">{{features.feature6.title}}</h3>
               <p class="feature-card-description">{{features.feature6.description}}</p>
+            </div>
+          </div>
+
+          <!-- Feature 18: Iris (Private API) -->
+          <div class="feature-card">
+            <div class="feature-card-preview">
+              <div class="feature-icon">{{features.feature18.icon}}</div>
+              <div class="code-snippet">
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc iris status</span></div>
+                <div class="t-line"><span class="t-dim">source: browser · cookies: 5</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc iris apps create \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--name "My App" \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--bundle-id com.example.app \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--sku MYSKU</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-success">✓</span> <span class="t-dim">id: 1234567890</span></div>
+              </div>
+            </div>
+            <div class="feature-card-content">
+              <h3 class="feature-card-title">{{features.feature18.title}}</h3>
+              <p class="feature-card-description">{{features.feature18.description}}</p>
             </div>
           </div>
         </div>
