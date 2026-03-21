@@ -4,7 +4,7 @@ import Testing
 @testable import Domain
 
 @Suite
-struct AppsCreateTests {
+struct IrisAppsCreateTests {
 
     @Test func `created app shows id name bundleId and affordances`() async throws {
         let mockCookieProvider = MockIrisCookieProvider()
@@ -32,7 +32,7 @@ struct AppsCreateTests {
             )
         )
 
-        let cmd = try AppsCreate.parse([
+        let cmd = try IrisAppsCreate.parse([
             "--name", "My New App",
             "--bundle-id", "com.example.newapp",
             "--sku", "NEWSKU",

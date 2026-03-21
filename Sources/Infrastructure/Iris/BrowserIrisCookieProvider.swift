@@ -11,16 +11,27 @@ public struct BrowserIrisCookieProvider: IrisCookieProvider {
     public init() {}
 
     public func resolveSession() throws -> IrisSession {
+        let (cookies, _) = try resolve()
+        return IrisSession(cookies: cookies)
+    }
+
+    public func resolveStatus() throws -> IrisStatus {
+        let (cookies, source) = try resolve()
+        let count = cookies.components(separatedBy: "; ").count
+        return IrisStatus(source: source, cookieCount: count)
+    }
+
+    private func resolve() throws -> (String, IrisCookieSource) {
         // 1. Check environment variable
         if let envCookies = ProcessInfo.processInfo.environment["ASC_IRIS_COOKIES"],
            !envCookies.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         {
-            return IrisSession(cookies: envCookies)
+            return (envCookies, .environment)
         }
 
         // 2. Try extracting from browser cookies
         if let browserCookies = fetchFromBrowser() {
-            return IrisSession(cookies: browserCookies)
+            return (browserCookies, .browser)
         }
 
         throw IrisCookieError.noCookiesFound
@@ -67,7 +78,7 @@ public struct BrowserIrisCookieProvider: IrisCookieProvider {
             }
 
             // myacinfo is the essential auth cookie
-            if let _ = cookieMap["myacinfo"] {
+            if cookieMap["myacinfo"] != nil {
                 let cookieString = cookieMap.map { "\($0.key)=\($0.value)" }.joined(separator: "; ")
                 return cookieString
             }

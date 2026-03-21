@@ -1,10 +1,10 @@
 import ArgumentParser
 import Domain
 
-struct AppsIrisList: AsyncParsableCommand {
+struct IrisAppsList: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
-        commandName: "iris-list",
-        abstract: "List all apps via iris private API (cookie-based auth)"
+        commandName: "list",
+        abstract: "List all apps"
     )
 
     @OptionGroup var globals: GlobalOptions

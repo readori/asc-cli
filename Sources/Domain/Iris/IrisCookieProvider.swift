@@ -4,4 +4,5 @@ import Mockable
 @Mockable
 public protocol IrisCookieProvider: Sendable {
     func resolveSession() throws -> IrisSession
+    func resolveStatus() throws -> IrisStatus
 }

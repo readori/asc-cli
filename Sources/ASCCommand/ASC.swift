@@ -66,6 +66,7 @@ struct ASC: AsyncParsableCommand {
             SubscriptionAvailabilityCommand.self,
             TerritoriesCommand.self,
             WebServerCommand.self,
+            IrisCommand.self,
         ]
     )
 }

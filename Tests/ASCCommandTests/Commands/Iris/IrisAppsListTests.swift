@@ -4,9 +4,9 @@ import Testing
 @testable import Domain
 
 @Suite
-struct AppsIrisListTests {
+struct IrisAppsListTests {
 
-    @Test func `listed iris apps show id name bundleId and affordances`() async throws {
+    @Test func `listed apps show id name bundleId and affordances`() async throws {
         let mockCookieProvider = MockIrisCookieProvider()
         given(mockCookieProvider).resolveSession().willReturn(
             IrisSession(cookies: "myacinfo=test")
@@ -24,7 +24,7 @@ struct AppsIrisListTests {
             ),
         ])
 
-        let cmd = try AppsIrisList.parse(["--pretty"])
+        let cmd = try IrisAppsList.parse(["--pretty"])
         let output = try await cmd.execute(cookieProvider: mockCookieProvider, repo: mockRepo)
 
         #expect(output == """

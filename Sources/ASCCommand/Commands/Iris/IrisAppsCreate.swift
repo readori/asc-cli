@@ -1,10 +1,10 @@
 import ArgumentParser
 import Domain
 
-struct AppsCreate: AsyncParsableCommand {
+struct IrisAppsCreate: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "create",
-        abstract: "Create a new app (via iris private API)"
+        abstract: "Create a new app"
     )
 
     @OptionGroup var globals: GlobalOptions
