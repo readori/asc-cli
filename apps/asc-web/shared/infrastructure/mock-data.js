@@ -242,6 +242,21 @@ export const MockDataProvider = {
     },
   },
 
+  // ===== Iris Status =====
+  irisStatus: {
+    data: [
+      { source: 'browser', cookieCount: 7 },
+    ],
+  },
+
+  // ===== Iris App Bundles =====
+  irisApps: {
+    data: [
+      { id: '6449071230', name: 'PhotoSync Pro', bundleId: 'com.example.photosync', sku: 'PHOTOSYNC2024', primaryLocale: 'en-US', platforms: ['IOS'] },
+      { id: '6449071231', name: 'TaskFlow', bundleId: 'com.example.taskflow', sku: 'TASKFLOW2024', primaryLocale: 'en-US', platforms: ['IOS', 'MAC_OS'] },
+    ],
+  },
+
   // ===== Auth Status =====
   authStatus: {
     name: 'default',

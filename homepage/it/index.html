@@ -90,7 +90,8 @@
       "Code Signing Management",
       "Version Localization",
       "Multiple Output Formats (JSON, Table, Markdown)",
-      "Interactive TUI Mode"
+      "Interactive TUI Mode",
+      "Iris Private API (App Creation via Cookie Auth)"
     ]
   }
   </script>
@@ -319,6 +320,28 @@
             <div class="feature-card-content">
               <h3 class="feature-card-title">Controllo pre-invio</h3>
               <p class="feature-card-description">Esegui tutti i controlli prima dell'invio con un solo comando. Rileva build mancanti, prezzi non configurati e localizzazioni incomplete — con gravità MUST FIX vs SHOULD FIX. L'azione di invio appare solo quando tutto è in verde.</p>
+            </div>
+          </div>
+
+          <!-- Feature 18: Iris (Private API) -->
+          <div class="feature-card">
+            <div class="feature-card-preview">
+              <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+              <div class="code-snippet">
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc iris status</span></div>
+                <div class="t-line"><span class="t-dim">source: browser · cookies: 5</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">asc iris apps create \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--name "My App" \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--bundle-id com.example.app \</span></div>
+                <div class="t-line"><span class="t-dim">&nbsp;&nbsp;--sku MYSKU</span></div>
+                <div class="t-blank"></div>
+                <div class="t-line"><span class="t-success">✓</span> <span class="t-dim">id: 1234567890</span></div>
+              </div>
+            </div>
+            <div class="feature-card-content">
+              <h3 class="feature-card-title">Iris (API Privata)</h3>
+              <p class="feature-card-description">Accedi all'API privata che alimenta l'interfaccia web di App Store Connect. Crea nuove app, elenca tutte le app — funzionalità non disponibili tramite l'API REST pubblica. Autenticazione basata sui cookie del browser, nessuna configurazione aggiuntiva.</p>
             </div>
           </div>
         </div>

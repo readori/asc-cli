@@ -108,6 +108,13 @@ export const NAV = [
       flow: ['apps list', 'builds list --app-id', 'diagnostics list --build-id', 'diagnostic-logs list --signature-id'],
     },
   ]},
+  { group: 'Private API', items: [
+    { id: 'iris', label: 'Iris', icon: 'zap',
+      entry: ['iris status', 'iris apps list'],
+      workflow: ['iris apps create'],
+      flow: ['iris status', 'iris apps list', 'iris apps create --name --bundle-id --sku'],
+    },
+  ]},
   { group: 'Tools', items: [
     { id: 'appshots', label: 'App Shots', icon: 'camera',
       entry: ['app-shots config'],

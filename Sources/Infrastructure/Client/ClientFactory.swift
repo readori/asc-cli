@@ -262,6 +262,16 @@ public struct ClientFactory: Sendable {
         return LocalPluginEventBus(pluginRepository: repo, pluginRunner: runner)
     }
 
+    // MARK: - Iris (private API, cookie-based auth)
+
+    public func makeIrisAppBundleRepository() -> any IrisAppBundleRepository {
+        IrisSDKAppBundleRepository()
+    }
+
+    public func makeIrisCookieProvider() -> any IrisCookieProvider {
+        BrowserIrisCookieProvider()
+    }
+
     private func makeProvider(authProvider: any AuthProvider) throws -> APIProvider {
         let credentials = try authProvider.resolve()
         let strippedKey = credentials.privateKeyPEM

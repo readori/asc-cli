@@ -1,5 +1,5 @@
 {
-  "originHash" : "afddaa7dbfb445577287923326f8578f39f3c4b1476bedb9d7024e86936feec4",
+  "originHash" : "6477fafa0c4482f4ff4daeed9fe985212a2a3d6858ef467a9017eccdc679c55b",
   "pins" : [
     {
       "identity" : "appstoreconnect-swift-sdk",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "e969f8469667382af3cbf6e457b2e771e70745f3",
         "version" : "0.6.0"
+      }
+    },
+    {
+      "identity" : "sweetcookiekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/steipete/SweetCookieKit.git",
+      "state" : {
+        "revision" : "4d5b71ffbb296937dc5ee8472f64721bca771cf0",
+        "version" : "0.4.0"
       }
     },
     {

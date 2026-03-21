@@ -1,0 +1,47 @@
+name: Bug Report
+description: Something isn't working as expected
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you try to do, and what went wrong?
+      placeholder: |
+        I ran `asc versions list --app-id 123` and got...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Commands to trigger the bug.
+      placeholder: |
+        ```bash
+        asc auth check
+        asc versions list --app-id 123
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Version, OS, how you installed.
+      placeholder: |
+        - asc version: `asc --version`
+        - macOS version: 15.x
+        - Install method: brew / source
+    validations:
+      required: false

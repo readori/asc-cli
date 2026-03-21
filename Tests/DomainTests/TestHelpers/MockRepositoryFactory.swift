@@ -1189,6 +1189,26 @@ struct MockRepositoryFactory {
         ExportResult(ipaPath: ipaPath, exportPath: exportPath)
     }
 
+    // MARK: - Iris
+
+    static func makeAppBundle(
+        id: String = "bundle-1",
+        name: String = "Test App",
+        bundleId: String = "com.test.app",
+        sku: String = "TESTSKU",
+        primaryLocale: String = "en-US",
+        platforms: [String] = ["IOS"]
+    ) -> AppBundle {
+        AppBundle(
+            id: id,
+            name: name,
+            bundleId: bundleId,
+            sku: sku,
+            primaryLocale: primaryLocale,
+            platforms: platforms
+        )
+    }
+
     static func makeAnalyticsReportSegment(
         id: String = "seg-1",
         instanceId: String = "inst-1",

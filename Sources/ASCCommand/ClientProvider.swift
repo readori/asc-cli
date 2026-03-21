@@ -313,4 +313,14 @@ struct ClientProvider {
         let factory = ClientFactory()
         return try factory.makeDiagnosticsRepository(authProvider: authProvider)
     }
+
+    // MARK: - Iris (private API, cookie-based auth)
+
+    static func makeIrisAppBundleRepository() -> any IrisAppBundleRepository {
+        ClientFactory().makeIrisAppBundleRepository()
+    }
+
+    static func makeIrisCookieProvider() -> any IrisCookieProvider {
+        ClientFactory().makeIrisCookieProvider()
+    }
 }

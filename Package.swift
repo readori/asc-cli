@@ -12,6 +12,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.6.0"),
         .package(url: "https://github.com/steipete/TauTUI.git", from: "0.1.5"),
+        .package(url: "https://github.com/steipete/SweetCookieKit.git", from: "0.3.0"),
     ],
     targets: [
         .target(
@@ -26,6 +27,7 @@ let package = Package(
             dependencies: [
                 "Domain",
                 .product(name: "AppStoreConnect-Swift-SDK", package: "appstoreconnect-swift-sdk"),
+                .product(name: "SweetCookieKit", package: "sweetcookiekit"),
             ]
         ),
         .plugin(

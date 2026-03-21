@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Iris private API support** — new `asc iris` command namespace for cookie-based App Store Connect private API access
+- **`asc iris status`** — check iris cookie session availability (browser or environment source)
+- **`asc iris apps list`** — list apps via iris `/v1/appBundles` endpoint
+- **`asc iris apps create`** — create a new app with initial version, supports multi-platform (`--platforms IOS MAC_OS`)
+- **Cookie-based authentication** — auto-extracts `myacinfo` and session cookies from Chrome/Safari/Firefox via SweetCookieKit, with `ASC_IRIS_COOKIES` env var fallback for CI/CD
+- **SweetCookieKit dependency** — browser cookie extraction for iris authentication
+
 ---
 
 ## [0.1.53] - 2026-03-18
