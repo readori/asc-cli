@@ -31,63 +31,16 @@ public struct IrisSDKAppBundleRepository: IrisAppBundleRepository, @unchecked Se
         platforms: [String],
         versionString: String
     ) async throws -> AppBundle {
-        // Build the JSON:API compound document matching the real iris API.
-        // Uses placeholder IDs for related resources (iris resolves them server-side).
-        let versionIds = platforms.map { "store-version-\($0.lowercased())" }
-        let appInfoId = "new-appInfo-id"
-        let appInfoLocId = "new-appInfoLocalization-id"
-
-        // Build appStoreVersions relationship data
-        let versionRelData = platforms.enumerated().map { i, _ in
-            RelationshipData(type: "appStoreVersions", id: versionIds[i])
-        }
-
-        // Build included resources
-        var included: [IrisIncludedResource] = []
-
-        // Add appStoreVersion + localization for each platform
-        for (i, platform) in platforms.enumerated() {
-            let versionLocId = "new-\(platform.lowercased())VersionLocalization-id"
-
-            included.append(.appStoreVersion(
-                id: versionIds[i],
-                platform: platform,
-                versionString: versionString,
-                localizationId: versionLocId
-            ))
-            included.append(.appStoreVersionLocalization(
-                id: versionLocId,
-                locale: primaryLocale
-            ))
-        }
-
-        // Add appInfo + localization
-        included.append(.appInfo(id: appInfoId, localizationId: appInfoLocId))
-        included.append(.appInfoLocalization(
-            id: appInfoLocId,
-            locale: primaryLocale,
-            name: name
-        ))
-
-        let requestBody = IrisCreateAppRequest(
-            data: IrisCreateAppData(
-                type: "apps",
-                attributes: IrisCreateAppAttributes(
-                    sku: sku,
-                    primaryLocale: primaryLocale,
-                    bundleId: bundleId
-                ),
-                relationships: IrisCreateAppRelationships(
-                    appStoreVersions: RelationshipWrapper(data: versionRelData),
-                    appInfos: RelationshipWrapper(data: [
-                        RelationshipData(type: "appInfos", id: appInfoId),
-                    ])
-                )
-            ),
-            included: included.map { $0.toEncodable() }
+        let request = AppCreateRequest.make(
+            name: name,
+            bundleId: bundleId,
+            sku: sku,
+            primaryLocale: primaryLocale,
+            platforms: platforms,
+            versionString: versionString
         )
 
-        let body = try JSONEncoder().encode(requestBody)
+        let body = try JSONEncoder().encode(request)
         let (data, _) = try await client.post(
             path: "apps",
             body: body,
@@ -131,102 +84,4 @@ struct IrisAppBundleAttributes: Decodable {
     let sku: String?
     let primaryLocale: String?
     let platformNames: [String]?
-}
-
-// MARK: - Create App Request (JSON:API compound document)
-
-struct IrisCreateAppRequest: Encodable {
-    let data: IrisCreateAppData
-    let included: [IrisIncludedEncodable]
-}
-
-struct IrisCreateAppData: Encodable {
-    let type: String
-    let attributes: IrisCreateAppAttributes
-    let relationships: IrisCreateAppRelationships
-}
-
-struct IrisCreateAppAttributes: Encodable {
-    let sku: String
-    let primaryLocale: String
-    let bundleId: String
-}
-
-struct IrisCreateAppRelationships: Encodable {
-    let appStoreVersions: RelationshipWrapper
-    let appInfos: RelationshipWrapper
-}
-
-struct RelationshipWrapper: Encodable {
-    let data: [RelationshipData]
-}
-
-struct RelationshipData: Encodable {
-    let type: String
-    let id: String
-}
-
-// MARK: - Included resources
-
-/// Type-safe enum for building the `included` array.
-enum IrisIncludedResource {
-    case appStoreVersion(id: String, platform: String, versionString: String, localizationId: String)
-    case appStoreVersionLocalization(id: String, locale: String)
-    case appInfo(id: String, localizationId: String)
-    case appInfoLocalization(id: String, locale: String, name: String)
-
-    func toEncodable() -> IrisIncludedEncodable {
-        switch self {
-        case .appStoreVersion(let id, let platform, let versionString, let localizationId):
-            IrisIncludedEncodable(
-                type: "appStoreVersions",
-                id: id,
-                attributes: [
-                    "platform": platform,
-                    "versionString": versionString,
-                ],
-                relationships: [
-                    "appStoreVersionLocalizations": RelationshipWrapper(data: [
-                        RelationshipData(type: "appStoreVersionLocalizations", id: localizationId),
-                    ]),
-                ]
-            )
-        case .appStoreVersionLocalization(let id, let locale):
-            IrisIncludedEncodable(
-                type: "appStoreVersionLocalizations",
-                id: id,
-                attributes: ["locale": locale],
-                relationships: nil
-            )
-        case .appInfo(let id, let localizationId):
-            IrisIncludedEncodable(
-                type: "appInfos",
-                id: id,
-                attributes: nil,
-                relationships: [
-                    "appInfoLocalizations": RelationshipWrapper(data: [
-                        RelationshipData(type: "appInfoLocalizations", id: localizationId),
-                    ]),
-                ]
-            )
-        case .appInfoLocalization(let id, let locale, let name):
-            IrisIncludedEncodable(
-                type: "appInfoLocalizations",
-                id: id,
-                attributes: [
-                    "locale": locale,
-                    "name": name,
-                ],
-                relationships: nil
-            )
-        }
-    }
-}
-
-/// Generic encodable for the `included` array items.
-struct IrisIncludedEncodable: Encodable {
-    let type: String
-    let id: String
-    let attributes: [String: String]?
-    let relationships: [String: RelationshipWrapper]?
 }
