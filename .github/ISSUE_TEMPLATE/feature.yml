@@ -1,0 +1,73 @@
+name: Feature Request
+description: Propose a new capability for asc-cli
+title: "[feat]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Think from the user's perspective — what can they do now that they couldn't before?
+
+  - type: textarea
+    id: pain
+    attributes:
+      label: The Pain
+      description: What's frustrating today? Why does this matter?
+      placeholder: |
+        Today I have to open the browser and click through 5 screens just to...
+        This breaks my terminal workflow because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: fix
+    attributes:
+      label: The Fix
+      description: What can the user do now? Show the command(s).
+      placeholder: |
+        ```bash
+        asc <new-command> --flag value
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: before-after
+    attributes:
+      label: Before & After
+      description: Concrete comparison — old way vs new way.
+      placeholder: |
+        **Before:** Open browser → log in → click through forms → copy ID
+        **After:** `asc <command> --pretty` → done in seconds
+    validations:
+      required: false
+
+  - type: textarea
+    id: try-it
+    attributes:
+      label: Try It
+      description: Step-by-step commands to experience the feature.
+      placeholder: |
+        ```bash
+        # 1. Setup
+        asc auth check
+
+        # 2. Use the feature
+        asc <new-command> --pretty
+
+        # 3. What comes next
+        asc <next-step> --id <from-step-2>
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: future
+    attributes:
+      label: Future Possibilities
+      description: What could this unlock next?
+      placeholder: |
+        - [ ] `asc <related-command>` — extend to cover...
+        - [ ] Integration with existing workflow...
+    validations:
+      required: false
