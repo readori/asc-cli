@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.55] - 2026-03-21
+
 ### Added
 - **Iris private API support** — new `asc iris` command namespace for cookie-based App Store Connect private API access
 - **`asc iris status`** — check iris cookie session availability (browser or environment source)
@@ -517,7 +521,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.53...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.55...HEAD
+[0.1.55]: https://github.com/tddworks/asc-cli/compare/v0.1.53...v0.1.55
 [0.1.53]: https://github.com/tddworks/asc-cli/compare/v0.1.52...v0.1.53
 [0.1.52]: https://github.com/tddworks/asc-cli/compare/v0.1.51...v0.1.52
 [0.1.51]: https://github.com/tddworks/asc-cli/compare/v0.1.50...v0.1.51
