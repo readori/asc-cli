@@ -73,16 +73,16 @@ extension AppCreateRequest {
         versionString: String,
         companyName: String? = nil
     ) -> AppCreateRequest {
-        let appInfoId = "new-appInfo-id"
-        let appInfoLocId = "new-appInfoLocalization-id"
+        let appInfoId = "${new-appInfo-id}"
+        let appInfoLocId = "${new-appInfoLocalization-id}"
 
         // One appStoreVersion per platform
         var versionRefs: [RelationshipData] = []
         var included: [IncludedResource] = []
 
         for platform in platforms {
-            let versionId = "store-version-\(platform.lowercased())"
-            let versionLocId = "new-\(platform.lowercased())VersionLocalization-id"
+            let versionId = "${store-version-\(platform.lowercased())}"
+            let versionLocId = "${new-\(platform.lowercased())VersionLocalization-id}"
 
             versionRefs.append(RelationshipData(type: "appStoreVersions", id: versionId))
 
