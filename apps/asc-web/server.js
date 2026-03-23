@@ -181,5 +181,9 @@ server.listen(PORT, () => {
       '  └─────────────────────────────────────────┘',
     );
     console.log('\n' + lines.join('\n') + '\n');
+
+    // Open browser to hosted web app
+    const opener = process.platform === 'darwin' ? 'open' : 'xdg-open';
+    execFile(opener, ['https://asccli.app/command-center'], { stdio: 'ignore' }, () => {});
   }, 100);
 });
