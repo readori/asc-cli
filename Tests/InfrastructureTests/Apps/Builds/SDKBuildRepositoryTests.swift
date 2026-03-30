@@ -20,11 +20,61 @@ struct SDKBuildRepositoryTests {
         ))
 
         let repo = SDKBuildRepository(client: stub)
-        let result = try await repo.listBuilds(appId: nil, limit: nil)
+        let result = try await repo.listBuilds(appId: nil, platform: nil, version: nil, limit: nil)
 
         #expect(result.data[0].id == "build-1")
-        #expect(result.data[0].version == "42")
+        #expect(result.data[0].buildNumber == "42")
         #expect(result.data[0].processingState == .valid)
+    }
+
+    @Test func `listBuilds maps preReleaseVersion to version and platform`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(BuildsResponse(
+            data: [
+                AppStoreConnect_Swift_SDK.Build(
+                    type: .builds,
+                    id: "build-1",
+                    attributes: .init(version: "42", processingState: .valid),
+                    relationships: .init(preReleaseVersion: .init(data: .init(type: .preReleaseVersions, id: "prv-1")))
+                ),
+            ],
+            included: [
+                .prereleaseVersion(PrereleaseVersion(
+                    type: .preReleaseVersions,
+                    id: "prv-1",
+                    attributes: .init(version: "1.2.0", platform: .ios)
+                ))
+            ],
+            links: .init(this: "")
+        ))
+
+        let repo = SDKBuildRepository(client: stub)
+        let result = try await repo.listBuilds(appId: nil, platform: nil, version: nil, limit: nil)
+
+        #expect(result.data[0].version == "1.2.0")
+        #expect(result.data[0].buildNumber == "42")
+        #expect(result.data[0].platform == .iOS)
+    }
+
+    @Test func `listBuilds without preReleaseVersion falls back to build string as version`() async throws {
+        let stub = StubAPIClient()
+        stub.willReturn(BuildsResponse(
+            data: [
+                AppStoreConnect_Swift_SDK.Build(
+                    type: .builds,
+                    id: "build-1",
+                    attributes: .init(version: "42", processingState: .valid)
+                ),
+            ],
+            links: .init(this: "")
+        ))
+
+        let repo = SDKBuildRepository(client: stub)
+        let result = try await repo.listBuilds(appId: nil, platform: nil, version: nil, limit: nil)
+
+        #expect(result.data[0].version == "42")
+        #expect(result.data[0].buildNumber == "42")
+        #expect(result.data[0].platform == nil)
     }
 
     @Test func `listBuilds maps all processing states`() async throws {
@@ -45,7 +95,7 @@ struct SDKBuildRepositoryTests {
             ))
 
             let repo = SDKBuildRepository(client: stub)
-            let result = try await repo.listBuilds(appId: nil, limit: nil)
+            let result = try await repo.listBuilds(appId: nil, platform: nil, version: nil, limit: nil)
 
             #expect(result.data[0].processingState == domainState)
         }
@@ -64,7 +114,7 @@ struct SDKBuildRepositoryTests {
         ))
 
         let repo = SDKBuildRepository(client: stub)
-        let result = try await repo.listBuilds(appId: "app-42", limit: nil)
+        let result = try await repo.listBuilds(appId: "app-42", platform: nil, version: nil, limit: nil)
 
         #expect(result.data.count == 1)
         #expect(result.data[0].id == "build-app-1")

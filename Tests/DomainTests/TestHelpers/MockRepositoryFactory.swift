@@ -35,14 +35,16 @@ struct MockRepositoryFactory {
         version: String = "1.0",
         expired: Bool = false,
         processingState: Build.ProcessingState = .valid,
-        buildNumber: String? = "1"
+        buildNumber: String? = "1",
+        platform: BuildUploadPlatform? = nil
     ) -> Build {
         Build(
             id: id,
             version: version,
             expired: expired,
             processingState: processingState,
-            buildNumber: buildNumber
+            buildNumber: buildNumber,
+            platform: platform
         )
     }
 

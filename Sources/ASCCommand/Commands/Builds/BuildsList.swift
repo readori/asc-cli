@@ -12,6 +12,12 @@ struct BuildsList: AsyncParsableCommand {
     @Option(name: .long, help: "Filter by app ID")
     var appId: String?
 
+    @Option(name: .long, help: "Filter by platform (ios, macos, tvos, visionos)")
+    var platform: String?
+
+    @Option(name: .long, help: "Filter by version (e.g. 1.0.0)")
+    var version: String?
+
     @Option(name: .long, help: "Maximum number of builds to return")
     var limit: Int?
 
@@ -21,12 +27,13 @@ struct BuildsList: AsyncParsableCommand {
     }
 
     func execute(repo: any BuildRepository) async throws -> String {
-        let response = try await repo.listBuilds(appId: appId, limit: limit)
+        let platformFilter = platform.flatMap { BuildUploadPlatform(cliArgument: $0) }
+        let response = try await repo.listBuilds(appId: appId, platform: platformFilter, version: version, limit: limit)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
             response.data,
-            headers: ["ID", "Version", "State", "Expired"],
-            rowMapper: { [$0.id, $0.version, $0.processingState.rawValue, $0.expired ? "Yes" : "No"] }
+            headers: ["ID", "Version", "Build Number", "Platform", "State", "Expired"],
+            rowMapper: { [$0.id, $0.version, $0.buildNumber ?? "-", $0.platform?.rawValue ?? "-", $0.processingState.rawValue, $0.expired ? "Yes" : "No"] }
         )
     }
 }

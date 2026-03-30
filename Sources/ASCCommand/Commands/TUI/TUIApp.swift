@@ -374,7 +374,7 @@ final class TUIApp {
     private func loadBuilds() async {
         do {
             let repo = try ClientProvider.makeBuildRepository()
-            let response = try await repo.listBuilds(appId: nil, limit: nil)
+            let response = try await repo.listBuilds(appId: nil, platform: nil, version: nil, limit: nil)
             let items = response.data.map { build in
                 let state = build.processingState.rawValue
                 let expired = build.expired ? " (expired)" : ""

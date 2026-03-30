@@ -8,18 +8,45 @@ public struct SDKBuildRepository: BuildRepository, @unchecked Sendable {
         self.client = client
     }
 
-    public func listBuilds(appId: String?, limit: Int?) async throws -> PaginatedResponse<Domain.Build> {
+    public func listBuilds(appId: String?, platform: BuildUploadPlatform?, version: String?, limit: Int?) async throws -> PaginatedResponse<Domain.Build> {
         var filterApp: [String]?
         if let appId {
             filterApp = [appId]
         }
 
+        let filterPlatform: [APIEndpoint.V1.Builds.GetParameters.FilterPreReleaseVersionPlatform]?
+        if let platform {
+            let sdkPlatform = APIEndpoint.V1.Builds.GetParameters.FilterPreReleaseVersionPlatform(rawValue: platform.rawValue)
+            filterPlatform = sdkPlatform.map { [$0] }
+        } else {
+            filterPlatform = nil
+        }
+
+        let filterVersion: [String]? = version.map { [$0] }
+
         let request = APIEndpoint.v1.builds.get(parameters: .init(
+            filterPreReleaseVersionVersion: filterVersion,
+            filterPreReleaseVersionPlatform: filterPlatform,
             filterApp: filterApp,
-            limit: limit
+            sort: [.minusuploadedDate],
+            limit: limit,
+            include: [.preReleaseVersion]
         ))
         let response = try await client.request(request)
-        let builds = response.data.map { mapBuild($0) }
+
+        // Build a lookup of preReleaseVersion ID → PrereleaseVersion from included resources
+        var preReleaseVersions: [String: PrereleaseVersion] = [:]
+        for item in response.included ?? [] {
+            if case .prereleaseVersion(let prv) = item {
+                preReleaseVersions[prv.id] = prv
+            }
+        }
+
+        let builds = response.data.map { sdkBuild in
+            let prvId = sdkBuild.relationships?.preReleaseVersion?.data?.id
+            let prv = prvId.flatMap { preReleaseVersions[$0] }
+            return mapBuild(sdkBuild, preReleaseVersion: prv)
+        }
         let nextCursor = response.links.next
         return PaginatedResponse(data: builds, nextCursor: nextCursor)
     }
@@ -44,16 +71,30 @@ public struct SDKBuildRepository: BuildRepository, @unchecked Sendable {
         try await client.request(APIEndpoint.v1.builds.id(buildId).relationships.betaGroups.delete(body))
     }
 
-    private func mapBuild(_ sdkBuild: AppStoreConnect_Swift_SDK.Build) -> Domain.Build {
-        Domain.Build(
+    private func mapBuild(_ sdkBuild: AppStoreConnect_Swift_SDK.Build, preReleaseVersion: PrereleaseVersion? = nil) -> Domain.Build {
+        let buildString = sdkBuild.attributes?.version
+        let marketingVersion = preReleaseVersion?.attributes?.version
+        let platform = preReleaseVersion?.attributes?.platform.flatMap { mapPlatform($0) }
+
+        return Domain.Build(
             id: sdkBuild.id,
-            version: sdkBuild.attributes?.version ?? "",
+            version: marketingVersion ?? buildString ?? "",
             uploadedDate: sdkBuild.attributes?.uploadedDate,
             expirationDate: sdkBuild.attributes?.expirationDate,
             expired: sdkBuild.attributes?.isExpired ?? false,
             processingState: mapProcessingState(sdkBuild.attributes?.processingState),
-            buildNumber: nil
+            buildNumber: buildString,
+            platform: platform
         )
+    }
+
+    private func mapPlatform(_ sdkPlatform: Platform) -> BuildUploadPlatform? {
+        switch sdkPlatform {
+        case .ios: return .iOS
+        case .macOs: return .macOS
+        case .tvOs: return .tvOS
+        case .visionOs: return .visionOS
+        }
     }
 
     private func mapProcessingState(_ state: AppStoreConnect_Swift_SDK.Build.Attributes.ProcessingState?) -> Domain.Build.ProcessingState {

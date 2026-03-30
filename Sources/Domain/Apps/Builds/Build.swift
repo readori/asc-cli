@@ -8,6 +8,7 @@ public struct Build: Sendable, Codable, Equatable, Identifiable {
     public let expired: Bool
     public let processingState: ProcessingState
     public let buildNumber: String?
+    public let platform: BuildUploadPlatform?
 
     public init(
         id: String,
@@ -16,7 +17,8 @@ public struct Build: Sendable, Codable, Equatable, Identifiable {
         expirationDate: Date? = nil,
         expired: Bool = false,
         processingState: ProcessingState = .valid,
-        buildNumber: String? = nil
+        buildNumber: String? = nil,
+        platform: BuildUploadPlatform? = nil
     ) {
         self.id = id
         self.version = version
@@ -25,6 +27,7 @@ public struct Build: Sendable, Codable, Equatable, Identifiable {
         self.expired = expired
         self.processingState = processingState
         self.buildNumber = buildNumber
+        self.platform = platform
     }
 
     public var isUsable: Bool {

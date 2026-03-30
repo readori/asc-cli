@@ -57,4 +57,18 @@ struct BuildTests {
         #expect(Build(id: "b-1", version: "1.0", expired: false, processingState: .invalid).affordances.isEmpty)
         #expect(Build(id: "b-1", version: "1.0", expired: true,  processingState: .valid).affordances.isEmpty)
     }
+
+    // MARK: - Platform field
+
+    @Test
+    func `build carries platform from preReleaseVersion`() {
+        let build = MockRepositoryFactory.makeBuild(id: "b-1", version: "1.0", platform: .iOS)
+        #expect(build.platform == .iOS)
+    }
+
+    @Test
+    func `build platform is nil when not provided`() {
+        let build = MockRepositoryFactory.makeBuild(id: "b-1", version: "1.0")
+        #expect(build.platform == nil)
+    }
 }
