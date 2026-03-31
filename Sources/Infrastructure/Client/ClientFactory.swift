@@ -242,6 +242,10 @@ public struct ClientFactory: Sendable {
         SimctlSimulatorRepository()
     }
 
+    public func makeSimulatorInteractionRepository() -> any SimulatorInteractionRepository {
+        AXeInteractionRepository()
+    }
+
     // MARK: - Skills (no ASC auth needed — subprocess + local filesystem)
 
     public func makeSkillRepository() -> any SkillRepository {

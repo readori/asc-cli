@@ -218,6 +218,10 @@ struct ClientProvider {
         ClientFactory().makeSimulatorRepository()
     }
 
+    static func makeSimulatorInteractionRepository() -> any SimulatorInteractionRepository {
+        ClientFactory().makeSimulatorInteractionRepository()
+    }
+
     // MARK: - Skills
 
     static func makeSkillRepository() -> any SkillRepository {
