@@ -218,118 +218,151 @@ function resolveAxePath() {
 
 const AXE = resolveAxePath();
 
-// --- Stream state ---
-let streamProcess = null; // { proc, udid }
-let latestFrame = null;
-let mjpegClients = []; // connected MJPEG stream response objects
-let streamBuffer = Buffer.alloc(0);
-let streamHeaderSkipped = false;
+// =============================================================================
+// Frame Capture — captures simulator frames via best available method
+// Responsibilities: start/stop capture, provide latest frame
+// =============================================================================
 
-function startStream(udid, fps = 15) {
-  stopStream();
-  if (!AXE) return;
-  streamBuffer = Buffer.alloc(0);
-  streamHeaderSkipped = false;
+const FrameCapture = {
+  _proc: null,
+  _udid: null,
+  _latestFrame: null,
+  _buffer: Buffer.alloc(0),
+  _headerSkipped: false,
+  _onFrame: null, // callback(frameBuffer)
 
-  const proc = spawn(AXE, [
-    'stream-video', '--format', 'mjpeg',
-    '--fps', String(fps), '--quality', '70', '--scale', '0.5',
-    '--udid', udid,
-  ], { stdio: ['pipe', 'pipe', 'pipe'] });
+  get latestFrame() { return this._latestFrame; },
+  get isRunning() { return this._proc !== null; },
 
-  streamProcess = { proc, udid };
+  start(udid, fps = 15) {
+    this.stop();
+    this._udid = udid;
 
-  proc.stdout.on('data', (chunk) => {
-    streamBuffer = Buffer.concat([streamBuffer, chunk]);
+    // Strategy 1: AXe stream-video (MJPEG, continuous, best when available)
+    if (AXE) return this._startAXeStream(udid, fps);
+    // Strategy 2: simctl screenshot to stdout loop (no AXe needed)
+    this._startSimctlLoop(udid, fps);
+  },
 
-    // Skip AXe's HTTP header (first line up to \r\n\r\n)
-    if (!streamHeaderSkipped) {
-      const headerEnd = streamBuffer.indexOf('\r\n\r\n');
-      if (headerEnd === -1) return;
-      streamBuffer = streamBuffer.slice(headerEnd + 4);
-      streamHeaderSkipped = true;
+  stop() {
+    if (this._proc) { this._proc.kill(); this._proc = null; }
+    this._latestFrame = null;
+    this._buffer = Buffer.alloc(0);
+    this._headerSkipped = false;
+    this._udid = null;
+  },
+
+  // Single frame capture (for screenshot endpoint when no stream running)
+  captureSingle(udid, cb) {
+    execFile('xcrun', ['simctl', 'io', udid, 'screenshot', '--type=jpeg', '-'],
+      { encoding: 'buffer', maxBuffer: 10 * 1024 * 1024, timeout: 5000 },
+      (err, stdout) => cb(err ? null : stdout));
+  },
+
+  _startAXeStream(udid, fps) {
+    this._buffer = Buffer.alloc(0);
+    this._headerSkipped = false;
+    const proc = spawn(AXE, [
+      'stream-video', '--format', 'mjpeg',
+      '--fps', String(fps), '--quality', '55', '--scale', '0.4',
+      '--udid', udid,
+    ], { stdio: ['pipe', 'pipe', 'pipe'] });
+    this._proc = proc;
+
+    proc.stdout.on('data', (chunk) => {
+      this._buffer = Buffer.concat([this._buffer, chunk]);
+      if (!this._headerSkipped) {
+        const idx = this._buffer.indexOf('\r\n\r\n');
+        if (idx === -1) return;
+        this._buffer = this._buffer.slice(idx + 4);
+        this._headerSkipped = true;
+      }
+      this._extractMJPEGFrames();
+    });
+    proc.on('exit', () => { if (this._proc === proc) this._proc = null; });
+  },
+
+  _extractMJPEGFrames() {
+    const BOUNDARY = Buffer.from('--mjpegstream');
+    const HEND = Buffer.from('\r\n\r\n');
+    while (true) {
+      const bi = this._buffer.indexOf(BOUNDARY);
+      if (bi === -1) break;
+      const rest = this._buffer.slice(bi + BOUNDARY.length);
+      const hi = rest.indexOf(HEND);
+      if (hi === -1) break;
+      const hdr = rest.slice(0, hi).toString();
+      const m = hdr.match(/Content-Length:\s*(\d+)/i);
+      if (!m) { this._buffer = rest.slice(hi + 4); continue; }
+      const len = parseInt(m[1], 10);
+      if (rest.length < hi + 4 + len) break;
+      const frame = rest.slice(hi + 4, hi + 4 + len);
+      this._latestFrame = frame;
+      if (this._onFrame) this._onFrame(frame);
+      this._buffer = rest.slice(hi + 4 + len);
     }
+  },
 
-    // Extract complete MJPEG frames and push to clients
-    extractAndPushFrames();
-  });
+  _startSimctlLoop(udid, fps) {
+    const interval = Math.max(1000 / fps, 100);
+    let running = true;
+    const capture = () => {
+      if (!running) return;
+      execFile('xcrun', ['simctl', 'io', udid, 'screenshot', '--type=jpeg', '-'],
+        { encoding: 'buffer', maxBuffer: 10 * 1024 * 1024, timeout: 5000 },
+        (err, stdout) => {
+          if (!err && stdout && stdout.length > 0) {
+            this._latestFrame = stdout;
+            if (this._onFrame) this._onFrame(stdout);
+          }
+          if (running) setTimeout(capture, interval);
+        });
+    };
+    this._proc = { kill: () => { running = false; } };
+    capture();
+  },
+};
 
-  proc.on('exit', () => {
-    if (streamProcess && streamProcess.proc === proc) {
-      streamProcess = null;
+// =============================================================================
+// Stream Broadcaster — manages MJPEG client connections, pushes frames
+// Responsibilities: accept clients, broadcast frames, clean up dead connections
+// =============================================================================
+
+const StreamBroadcaster = {
+  _clients: [],
+
+  addClient(res) {
+    res.writeHead(200, {
+      'Content-Type': 'multipart/x-mixed-replace; boundary=frame',
+      'Cache-Control': 'no-cache', 'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    });
+    this._clients.push(res);
+    // Send latest frame immediately
+    if (FrameCapture.latestFrame) this.pushFrame(FrameCapture.latestFrame);
+  },
+
+  removeClient(res) {
+    this._clients = this._clients.filter(c => c !== res);
+  },
+
+  pushFrame(frameData) {
+    const dead = [];
+    for (const c of this._clients) {
+      try {
+        c.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${frameData.length}\r\n\r\n`);
+        c.write(frameData);
+        c.write('\r\n');
+      } catch { dead.push(c); }
     }
-  });
-}
+    if (dead.length) this._clients = this._clients.filter(c => !dead.includes(c));
+  },
 
-function stopStream() {
-  if (streamProcess) {
-    streamProcess.proc.kill();
-    streamProcess = null;
-    latestFrame = null;
-    streamBuffer = Buffer.alloc(0);
-    streamHeaderSkipped = false;
-  }
-}
+  get clientCount() { return this._clients.length; },
+};
 
-const BOUNDARY = Buffer.from('--mjpegstream');
-const HEADER_END = Buffer.from('\r\n\r\n');
-
-function extractAndPushFrames() {
-  // AXe MJPEG format: --mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: NNN\r\n\r\n[JPEG]\r\n
-  while (true) {
-    const bIdx = streamBuffer.indexOf(BOUNDARY);
-    if (bIdx === -1) break;
-
-    const afterBoundary = streamBuffer.slice(bIdx + BOUNDARY.length);
-    const hEnd = afterBoundary.indexOf(HEADER_END);
-    if (hEnd === -1) break;
-
-    // Parse Content-Length from frame headers
-    const headerStr = afterBoundary.slice(0, hEnd).toString();
-    const match = headerStr.match(/Content-Length:\s*(\d+)/i);
-    if (!match) { streamBuffer = afterBoundary.slice(hEnd + 4); continue; }
-
-    const contentLen = parseInt(match[1], 10);
-    const frameStart = hEnd + 4;
-    const frameEnd = frameStart + contentLen;
-
-    if (afterBoundary.length < frameEnd) break; // incomplete frame
-
-    const frame = afterBoundary.slice(frameStart, frameEnd);
-    latestFrame = frame;
-    pushMJPEGFrame(frame);
-
-    streamBuffer = afterBoundary.slice(frameEnd);
-  }
-}
-
-function captureScreenshot(udid) {
-  const tmpFile = path.join(os.tmpdir(), `sim-${udid}-${Date.now()}.png`);
-  try {
-    if (AXE) {
-      execFileSync(AXE, ['screenshot', '--output', tmpFile, '--udid', udid], { timeout: 5000, stdio: 'pipe' });
-    } else {
-      execFileSync('xcrun', ['simctl', 'io', udid, 'screenshot', '--type=png', tmpFile], { timeout: 5000, stdio: 'pipe' });
-    }
-    const buf = fs.readFileSync(tmpFile);
-    try { fs.unlinkSync(tmpFile); } catch {}
-    return buf;
-  } catch { return null; }
-}
-
-function pushMJPEGFrame(frameData) {
-  const dead = [];
-  for (const client of mjpegClients) {
-    try {
-      client.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${frameData.length}\r\n\r\n`);
-      client.write(frameData);
-      client.write('\r\n');
-    } catch {
-      dead.push(client);
-    }
-  }
-  if (dead.length) mjpegClients = mjpegClients.filter(c => !dead.includes(c));
-}
+// Wire: every captured frame → broadcast to all MJPEG clients
+FrameCapture._onFrame = (frame) => StreamBroadcaster.pushFrame(frame);
 
 // --- AXe actions ---
 function axe(args, opts = {}) {
@@ -377,60 +410,48 @@ async function handleSimulator(req, res, urlPath, parsedUrl) {
     }
   }
 
-  // GET /api/sim/stream?udid=X — MJPEG stream (single connection, server pushes frames)
+  // GET /api/sim/stream?udid=X — MJPEG stream
   if (req.method === 'GET' && urlPath === '/api/sim/stream') {
     const udid = query.udid;
     if (!udid) return json(res, { error: 'missing udid' }, 400);
-    res.writeHead(200, {
-      'Content-Type': 'multipart/x-mixed-replace; boundary=frame',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-    });
-    mjpegClients.push(res);
-    // Send latest frame immediately if available
-    if (latestFrame) pushMJPEGFrame(latestFrame);
-    // Start stream if not already running
-    if (!streamProcess) startStream(udid);
-    // Clean up on disconnect
-    req.on('close', () => {
-      mjpegClients = mjpegClients.filter(c => c !== res);
-    });
-    return; // keep connection open
+    StreamBroadcaster.addClient(res);
+    if (!FrameCapture.isRunning) FrameCapture.start(udid);
+    req.on('close', () => StreamBroadcaster.removeClient(res));
+    return;
   }
 
   // GET /api/sim/screenshot?udid=X
   if (req.method === 'GET' && urlPath === '/api/sim/screenshot') {
     const udid = query.udid;
     if (!udid) return json(res, { error: 'missing udid' }, 400);
-    // Fast path: cached frame from stream (JPEG)
-    if (latestFrame) {
+    // Fast path: cached frame from running stream
+    if (FrameCapture.latestFrame) {
       res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-cache', 'Access-Control-Allow-Origin': '*' });
-      return res.end(latestFrame);
+      return res.end(FrameCapture.latestFrame);
     }
-    // Slow path: single capture
-    const buf = captureScreenshot(udid);
-    if (buf) {
-      res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'no-cache', 'Access-Control-Allow-Origin': '*' });
-      return res.end(buf);
-    }
-    return json(res, { error: 'capture failed' }, 500);
+    // Slow path: single async capture
+    FrameCapture.captureSingle(udid, (buf) => {
+      if (buf) {
+        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-cache', 'Access-Control-Allow-Origin': '*' });
+        res.end(buf);
+      } else {
+        json(res, { error: 'capture failed' }, 500);
+      }
+    });
+    return;
   }
 
   // POST /api/sim/stream-start
   if (req.method === 'POST' && urlPath === '/api/sim/stream-start') {
     const body = await readBody(req);
     if (!body.udid) return json(res, { error: 'missing udid' }, 400);
-    if (AXE) {
-      startStream(body.udid, body.fps || 15);
-      return json(res, { success: true, method: 'axe-stream' });
-    }
-    return json(res, { success: true, method: 'simctl-polling' });
+    FrameCapture.start(body.udid, body.fps || 15);
+    return json(res, { success: true, method: AXE ? 'axe-stream' : 'simctl-loop' });
   }
 
   // POST /api/sim/stream-stop
   if (req.method === 'POST' && urlPath === '/api/sim/stream-stop') {
-    stopStream();
+    FrameCapture.stop();
     return json(res, { success: true });
   }
 
