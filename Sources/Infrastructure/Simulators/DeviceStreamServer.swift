@@ -13,6 +13,7 @@ public final class DeviceStreamServer: @unchecked Sendable {
     private let interactionRepo: any SimulatorInteractionRepository
     private let htmlContent: String
     private let deviceConfigJSON: String
+    private let streamManager = AXeStreamManager()
 
     public init(
         port: UInt16 = 8425,
@@ -103,6 +104,12 @@ public final class DeviceStreamServer: @unchecked Sendable {
         case ("GET", "/api/screenshot"):
             handleScreenshot(udid: query["udid"] ?? "", connection: connection)
 
+        case ("POST", "/api/stream-start"):
+            handleStreamStart(body: body, connection: connection)
+
+        case ("POST", "/api/stream-stop"):
+            handleStreamStop(connection: connection)
+
         case ("POST", "/api/boot"):
             handleBoot(udid: body["udid"] as? String ?? "", connection: connection)
 
@@ -165,6 +172,13 @@ public final class DeviceStreamServer: @unchecked Sendable {
         guard !udid.isEmpty else {
             return sendJSON(["error": "missing udid"], status: 400, connection: connection)
         }
+
+        // Fast path: serve cached frame from AXe stream (JPEG)
+        if let frame = streamManager.currentFrame {
+            return sendJPEG(frame, connection: connection)
+        }
+
+        // Slow path: fall back to per-frame simctl capture
         nonisolated(unsafe) let conn = connection
         Task { let connection = conn
             do {
@@ -178,6 +192,24 @@ public final class DeviceStreamServer: @unchecked Sendable {
                 sendJSON(["error": "capture failed"], status: 500, connection: connection)
             }
         }
+    }
+
+    private func handleStreamStart(body: [String: Any], connection: NWConnection) {
+        let udid = body["udid"] as? String ?? ""
+        guard !udid.isEmpty else {
+            return sendJSON(["error": "missing udid"], status: 400, connection: connection)
+        }
+        if streamManager.isAvailable {
+            streamManager.start(udid: udid, fps: 10, quality: 75, scale: 0.5)
+            sendJSON(["success": true, "method": "axe-mjpeg"], connection: connection)
+        } else {
+            sendJSON(["success": true, "method": "simctl-polling"], connection: connection)
+        }
+    }
+
+    private func handleStreamStop(connection: NWConnection) {
+        streamManager.stop()
+        sendJSON(["success": true], connection: connection)
     }
 
     private func handleBoot(udid: String, connection: NWConnection) {
@@ -391,6 +423,15 @@ public final class DeviceStreamServer: @unchecked Sendable {
         let headers = "HTTP/1.1 \(status) \(statusText)\r\nContent-Type: application/json\r\nContent-Length: \(body.count)\r\nAccess-Control-Allow-Origin: *\r\nConnection: close\r\n\r\n"
         var payload = Data(headers.utf8)
         payload.append(body)
+        connection.send(content: payload, isComplete: true, completion: .contentProcessed { _ in
+            connection.cancel()
+        })
+    }
+
+    private func sendJPEG(_ imageData: Data, connection: NWConnection) {
+        let headers = "HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: \(imageData.count)\r\nCache-Control: no-cache\r\nConnection: close\r\n\r\n"
+        var payload = Data(headers.utf8)
+        payload.append(imageData)
         connection.send(content: payload, isComplete: true, completion: .contentProcessed { _ in
             connection.cancel()
         })

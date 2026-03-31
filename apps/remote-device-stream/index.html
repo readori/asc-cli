@@ -716,7 +716,7 @@
       } catch (e) { alert("Boot failed: " + e.message); hideLoading(); }
     }
 
-    function startStream(udid, name) {
+    async function startStream(udid, name) {
       stopStream();
       selectedUdid = udid; selectedName = name; streaming = true;
       document.getElementById("placeholder").style.display = "none";
@@ -727,6 +727,22 @@
 
       const { img } = buildBezelFrame(name, "deviceFrame");
       frameCount = 0;
+
+      // Start AXe stream (server caches frames for fast serving)
+      try {
+        const res = await fetch("/api/stream-start", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ udid }),
+        });
+        const data = await res.json();
+        if (data.method === "axe-mjpeg") {
+          logAction("Stream: axe MJPEG (fast)");
+          // Give AXe a moment to produce the first frame
+          await new Promise(r => setTimeout(r, 500));
+        } else {
+          logAction("Stream: simctl polling (install axe for smoother)");
+        }
+      } catch (e) {}
 
       const loadFrame = () => {
         if (!streaming) return;
@@ -740,7 +756,7 @@
           }
           img.src = tmp.src;
           frameCount++;
-          if (streaming) frameTimer = setTimeout(loadFrame, 200);
+          if (streaming) frameTimer = setTimeout(loadFrame, 100); // faster polling when AXe caches frames
         };
         tmp.onerror = () => { if (streaming) frameTimer = setTimeout(loadFrame, 500); };
         tmp.src = url;
@@ -763,6 +779,8 @@
       document.getElementById("deviceFrame").innerHTML = "";
       document.getElementById("placeholder").style.display = "";
       document.getElementById("streamFps").textContent = "";
+      // Stop AXe stream subprocess
+      fetch("/api/stream-stop", { method: "POST" }).catch(() => {});
       renderDevices();
     }
 
