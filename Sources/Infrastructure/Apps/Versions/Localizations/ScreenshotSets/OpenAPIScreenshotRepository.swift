@@ -115,7 +115,8 @@ public struct SDKScreenshotRepository: ScreenshotRepository, @unchecked Sendable
             fileSize: sdkScreenshot.attributes?.fileSize ?? 0,
             assetState: state,
             imageWidth: sdkScreenshot.attributes?.imageAsset?.width,
-            imageHeight: sdkScreenshot.attributes?.imageAsset?.height
+            imageHeight: sdkScreenshot.attributes?.imageAsset?.height,
+            sourceUrl: sdkScreenshot.attributes?.imageAsset?.templateURL
         )
     }
 

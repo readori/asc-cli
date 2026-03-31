@@ -76,4 +76,37 @@ struct AppScreenshotTests {
         let s = MockRepositoryFactory.makeScreenshot(id: "img-1", setId: "set-99")
         #expect(s.setId == "set-99")
     }
+
+    // MARK: - Image URL
+
+    @Test
+    func `imageUrl resolves template with actual dimensions and png format`() {
+        let template = "https://example.com/image/{w}x{h}bb.{f}"
+        let s = MockRepositoryFactory.makeScreenshot(
+            id: "1", imageWidth: 1290, imageHeight: 2796, sourceUrl: template
+        )
+        #expect(s.imageUrl == "https://example.com/image/1290x2796bb.png")
+    }
+
+    @Test
+    func `imageUrl is nil when sourceUrl is nil`() {
+        let s = MockRepositoryFactory.makeScreenshot(id: "1", sourceUrl: nil)
+        #expect(s.imageUrl == nil)
+    }
+
+    @Test
+    func `imageUrl is nil when dimensions are missing`() {
+        let template = "https://example.com/image/{w}x{h}bb.{f}"
+        let s = MockRepositoryFactory.makeScreenshot(
+            id: "1", imageWidth: nil, imageHeight: nil, sourceUrl: template
+        )
+        #expect(s.imageUrl == nil)
+    }
+
+    @Test
+    func `sourceUrl is stored as-is from API`() {
+        let template = "https://is1-ssl.mzstatic.com/image/thumb/Purple/{w}x{h}bb.{f}"
+        let s = MockRepositoryFactory.makeScreenshot(id: "1", sourceUrl: template)
+        #expect(s.sourceUrl == template)
+    }
 }

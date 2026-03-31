@@ -15,6 +15,8 @@ public final class DeviceStreamServer: @unchecked Sendable {
     private let framesDirectory: URL?
     private let frameInsetsJSON: String
     private let streamManager = AXeStreamManager()
+    private let mjpegLock = NSLock()
+    private var mjpegClients: [NWConnection] = []
 
     public init(
         port: UInt16 = 8425,
@@ -103,6 +105,9 @@ public final class DeviceStreamServer: @unchecked Sendable {
 
         case ("GET", "/api/frame"):
             handleFrame(name: query["name"] ?? "", connection: connection)
+
+        case ("GET", "/api/stream"):
+            handleMJPEGStream(udid: query["udid"] ?? "", connection: connection)
 
         case ("GET", "/api/devices"):
             handleDevices(connection: connection)
@@ -210,6 +215,55 @@ public final class DeviceStreamServer: @unchecked Sendable {
             return sendPNG(data, connection: connection)
         }
         sendJSON(["error": "frame not found for \(name)"], status: 404, connection: connection)
+    }
+
+    private func handleMJPEGStream(udid: String, connection: NWConnection) {
+        guard !udid.isEmpty else {
+            return sendJSON(["error": "missing udid"], status: 400, connection: connection)
+        }
+        // Send MJPEG headers
+        let headers = "HTTP/1.1 200 OK\r\nContent-Type: multipart/x-mixed-replace; boundary=frame\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\nAccess-Control-Allow-Origin: *\r\n\r\n"
+        connection.send(content: Data(headers.utf8), completion: .contentProcessed { [weak self] error in
+            guard error == nil, let self else { return }
+            self.mjpegLock.lock()
+            self.mjpegClients.append(connection)
+            self.mjpegLock.unlock()
+        })
+        // Start capture if not already running
+        if streamManager.currentFrame == nil {
+            streamManager.start(udid: udid)
+        }
+        // Push frames in a background loop
+        Task.detached { [weak self] in
+            while let self {
+                if let frame = self.streamManager.currentFrame {
+                    self.pushMJPEGFrame(frame)
+                }
+                try? await Task.sleep(nanoseconds: 100_000_000) // 10 fps
+            }
+        }
+    }
+
+    private func pushMJPEGFrame(_ frameData: Data) {
+        let boundary = "--frame\r\nContent-Type: image/png\r\nContent-Length: \(frameData.count)\r\n\r\n"
+        let footer = "\r\n"
+        var payload = Data(boundary.utf8)
+        payload.append(frameData)
+        payload.append(Data(footer.utf8))
+
+        mjpegLock.lock()
+        let clients = mjpegClients
+        mjpegLock.unlock()
+
+        for client in clients {
+            client.send(content: payload, completion: .contentProcessed { [weak self] error in
+                if error != nil {
+                    self?.mjpegLock.lock()
+                    self?.mjpegClients.removeAll { $0 === client }
+                    self?.mjpegLock.unlock()
+                }
+            })
+        }
     }
 
     private func handleStreamStart(body: [String: Any], connection: NWConnection) {

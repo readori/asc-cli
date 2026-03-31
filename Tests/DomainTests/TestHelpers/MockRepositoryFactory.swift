@@ -222,7 +222,8 @@ struct MockRepositoryFactory {
         fileSize: Int = 1_048_576,
         assetState: AppScreenshot.AssetDeliveryState? = .complete,
         imageWidth: Int? = 2796,
-        imageHeight: Int? = 1290
+        imageHeight: Int? = 1290,
+        sourceUrl: String? = nil
     ) -> AppScreenshot {
         AppScreenshot(
             id: id,
@@ -231,7 +232,8 @@ struct MockRepositoryFactory {
             fileSize: fileSize,
             assetState: assetState,
             imageWidth: imageWidth,
-            imageHeight: imageHeight
+            imageHeight: imageHeight,
+            sourceUrl: sourceUrl
         )
     }
 
