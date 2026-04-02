@@ -16,4 +16,10 @@ struct AppTests {
         let app = App(id: "1", name: "", bundleId: "com.example.app")
         #expect(app.displayName == "com.example.app")
     }
+
+    @Test
+    func `registryProperties includes app name`() {
+        let app = App(id: "1", name: "My App", bundleId: "com.example.app")
+        #expect(app.registryProperties["name"] == "My App")
+    }
 }

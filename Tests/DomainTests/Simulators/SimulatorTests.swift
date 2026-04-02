@@ -140,4 +140,14 @@ struct SimulatorTests {
         #expect(sim.affordances["stream"] == nil)
         #expect(sim.affordances["listSimulators"] == "asc simulators list")
     }
+
+    @Test func `booted simulator registryProperties has isBooted true`() {
+        let sim = MockRepositoryFactory.makeSimulator(state: .booted)
+        #expect(sim.registryProperties["isBooted"] == "true")
+    }
+
+    @Test func `shutdown simulator registryProperties has isBooted false`() {
+        let sim = MockRepositoryFactory.makeSimulator(state: .shutdown)
+        #expect(sim.registryProperties["isBooted"] == "false")
+    }
 }
