@@ -15,8 +15,8 @@ struct PluginsMarketTests {
                 version: "1.0",
                 description: "Simulator streaming, interaction & tunnel sharing",
                 author: "slamhan",
-                repositoryURL: "https://github.com/slamhan/asc-pro",
-                downloadURL: "https://github.com/slamhan/asc-pro/releases/latest/download/ASCPro.plugin.zip",
+                repositoryURL: "https://github.com/tddworks/asc-pro",
+                downloadURL: "https://github.com/tddworks/asc-pro/releases/latest/download/ASCPro.plugin.zip",
                 categories: ["simulators", "streaming"],
                 isInstalled: false
             ),

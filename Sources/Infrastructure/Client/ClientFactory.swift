@@ -254,10 +254,12 @@ public struct ClientFactory: Sendable {
         FileSkillConfigStorage()
     }
 
-    // MARK: - Plugins (no ASC auth needed — local filesystem)
+    // MARK: - Plugins (no ASC auth needed — local filesystem + GitHub registry)
 
     public func makePluginRepository() -> any PluginRepository {
-        PluginMarketRepository()
+        PluginMarketRepository(sources: [
+            GitHubPluginSource(owner: "tddworks", repo: "asc-registry"),
+        ])
     }
 
     // MARK: - Iris (private API, cookie-based auth)

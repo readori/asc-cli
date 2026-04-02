@@ -670,8 +670,8 @@ struct MockRepositoryFactory {
         version: String = "1.0",
         description: String = "Simulator streaming, interaction & tunnel sharing",
         author: String? = "slamhan",
-        repositoryURL: String? = "https://github.com/slamhan/asc-pro",
-        downloadURL: String = "https://github.com/slamhan/asc-pro/releases/latest/download/ASCPro.plugin.zip",
+        repositoryURL: String? = "https://github.com/tddworks/asc-pro",
+        downloadURL: String = "https://github.com/tddworks/asc-pro/releases/latest/download/ASCPro.plugin.zip",
         categories: [String] = ["simulators", "streaming"],
         isInstalled: Bool = false
     ) -> MarketPlugin {

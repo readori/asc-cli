@@ -12,7 +12,7 @@ struct MarketPluginTests {
         #expect(mp.version == "1.0")
         #expect(mp.description == "Simulator streaming, interaction & tunnel sharing")
         #expect(mp.author == "slamhan")
-        #expect(mp.downloadURL == "https://github.com/slamhan/asc-pro/releases/latest/download/ASCPro.plugin.zip")
+        #expect(mp.downloadURL == "https://github.com/tddworks/asc-pro/releases/latest/download/ASCPro.plugin.zip")
         #expect(mp.categories == ["simulators", "streaming"])
         #expect(mp.isInstalled == false)
     }
@@ -40,7 +40,7 @@ struct MarketPluginTests {
     }
 
     @Test func `market plugin affordances include repository link when available`() {
-        let mp = MockRepositoryFactory.makeMarketPlugin(repositoryURL: "https://github.com/slamhan/asc-pro")
+        let mp = MockRepositoryFactory.makeMarketPlugin(repositoryURL: "https://github.com/tddworks/asc-pro")
         #expect(mp.affordances["viewRepository"] != nil)
     }
 
