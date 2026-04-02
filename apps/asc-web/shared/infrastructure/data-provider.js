@@ -196,6 +196,19 @@ export const DataProvider = {
       const raw = MockDataProvider.screenshots[sid];
       result = raw ? { data: raw.data } : { data: [] };
     }
+    else if (args[0] === 'plugins' && args[1] === 'list') {
+      result = { data: MockDataProvider.plugins.data };
+    }
+    else if (args[0] === 'plugins' && args[1] === 'market' && args[2] === 'list') {
+      result = { data: MockDataProvider.marketPlugins.data };
+    }
+    else if (args[0] === 'plugins' && args[1] === 'market' && args[2] === 'search') {
+      const q = (flag('--query') || '').toLowerCase();
+      result = { data: MockDataProvider.marketPlugins.data.filter(p =>
+        p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) ||
+        (p.categories || []).some(c => c.toLowerCase().includes(q))
+      )};
+    }
     else if (args[0] === 'auth' && args[1] === 'check') {
       result = { data: [{ ...MockDataProvider.authStatus, affordances: authStatusAffordances() }] };
     }

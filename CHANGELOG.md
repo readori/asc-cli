@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Plugin Marketplace** — `asc plugins market list` and `asc plugins market search --query X` to browse and search a plugin registry
+- **Plugins page in Command Center** — web UI with Installed and Marketplace tabs, install/uninstall actions
+- **`asc plugins install --name X`** — install dylib plugins from the marketplace
+- **`asc plugins uninstall --name X`** — remove installed `.plugin` bundles
+
+### Changed
+- **Refactored plugin system** — replaced event-based script plugins with dylib `.plugin` bundle management. `asc plugins list` now shows installed dylib plugins (from `PluginLoader`), not script-based event plugins
+- **Removed event plugin system** — deleted `PluginEvent`, `PluginEventPayload`, `PluginResult`, `PluginRunner`, `PluginEventBus` and all infrastructure (`LocalPluginRepository`, `ProcessPluginRunner`, `LocalPluginEventBus`)
+- **Removed event bus from commands** — `BuildsUpload` and `VersionsSubmit` no longer emit plugin events
+
 ---
 
 ## [0.1.62] - 2026-04-02

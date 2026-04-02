@@ -333,6 +333,47 @@ export const MockDataProvider = {
     ],
   },
 
+  // ===== Installed Plugins =====
+  plugins: {
+    data: [
+      {
+        id: 'asc-pro', name: 'ASC Pro', version: '1.0', slug: 'ASCPro',
+        uiScripts: ['ui/sim-stream.js'],
+        affordances: { uninstall: 'asc plugins uninstall --name ASCPro', browseMarket: 'asc plugins market list' },
+      },
+    ],
+  },
+
+  // ===== Plugin Marketplace =====
+  marketPlugins: {
+    data: [
+      {
+        id: 'asc-pro', name: 'ASC Pro', version: '1.0',
+        description: 'Simulator streaming, interaction & tunnel sharing',
+        author: 'slamhan', repositoryURL: 'https://github.com/slamhan/asc-pro',
+        downloadURL: 'https://github.com/slamhan/asc-pro/releases/latest/download/ASCPro.plugin.zip',
+        categories: ['simulators', 'streaming'], isInstalled: true,
+        affordances: { uninstall: 'asc plugins uninstall --name asc-pro', listMarket: 'asc plugins market list', viewRepository: 'https://github.com/slamhan/asc-pro' },
+      },
+      {
+        id: 'asc-analytics', name: 'ASC Analytics', version: '0.5',
+        description: 'Advanced App Store analytics dashboard with charts',
+        author: 'community', repositoryURL: 'https://github.com/example/asc-analytics',
+        downloadURL: 'https://github.com/example/asc-analytics/releases/latest/download/ASCAnalytics.plugin.zip',
+        categories: ['analytics', 'reports'], isInstalled: false,
+        affordances: { install: 'asc plugins install --name asc-analytics', listMarket: 'asc plugins market list', viewRepository: 'https://github.com/example/asc-analytics' },
+      },
+      {
+        id: 'asc-notify', name: 'ASC Notify', version: '1.2',
+        description: 'Slack and Telegram notifications for review status changes',
+        author: 'community',
+        downloadURL: 'https://github.com/example/asc-notify/releases/latest/download/ASCNotify.plugin.zip',
+        categories: ['notifications'], isInstalled: false,
+        affordances: { install: 'asc plugins install --name asc-notify', listMarket: 'asc plugins market list' },
+      },
+    ],
+  },
+
   // ===== Auth Status =====
   authStatus: {
     name: 'default',
