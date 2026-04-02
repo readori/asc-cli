@@ -32,7 +32,7 @@ struct PluginsMarketTests {
               "affordances" : {
                 "install" : "asc plugins install --name asc-pro",
                 "listMarket" : "asc plugins market list",
-                "viewRepository" : "https:\\/\\/github.com\\/slamhan\\/asc-pro"
+                "viewRepository" : "https:\\/\\/github.com\\/tddworks\\/asc-pro"
               },
               "author" : "slamhan",
               "categories" : [
@@ -40,11 +40,11 @@ struct PluginsMarketTests {
                 "streaming"
               ],
               "description" : "Simulator streaming, interaction & tunnel sharing",
-              "downloadURL" : "https:\\/\\/github.com\\/slamhan\\/asc-pro\\/releases\\/latest\\/download\\/ASCPro.plugin.zip",
+              "downloadURL" : "https:\\/\\/github.com\\/tddworks\\/asc-pro\\/releases\\/latest\\/download\\/ASCPro.plugin.zip",
               "id" : "asc-pro",
               "isInstalled" : false,
               "name" : "ASC Pro",
-              "repositoryURL" : "https:\\/\\/github.com\\/slamhan\\/asc-pro",
+              "repositoryURL" : "https:\\/\\/github.com\\/tddworks\\/asc-pro",
               "version" : "1.0"
             }
           ]

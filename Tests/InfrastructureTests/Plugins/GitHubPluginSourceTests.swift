@@ -36,7 +36,7 @@ struct GitHubPluginSourceTests {
         #expect(plugins[0].id == "asc-pro")
         #expect(plugins[0].name == "ASC Pro")
         #expect(plugins[0].version == "1.0")
-        #expect(plugins[0].author == "slamhan")
+        #expect(plugins[0].author == "tddworks")
         #expect(plugins[0].categories == ["simulators"])
         #expect(plugins[0].isInstalled == false)
     }
