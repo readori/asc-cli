@@ -30,6 +30,28 @@ struct WithAffordances<T: Encodable & AffordanceProviding>: Encodable {
     }
 }
 
+/// Like `WithAffordances` but also merges plugin affordances from `AffordanceRegistry`.
+/// Domain models don't need to call `AffordanceRegistry.affordances(for:)` themselves.
+struct WithPluginAffordances<T: Encodable & AffordanceProviding & Identifiable>: Encodable {
+    private let item: T
+
+    init(_ item: T) { self.item = item }
+
+    func encode(to encoder: any Encoder) throws {
+        try item.encode(to: encoder)
+        var merged = item.affordances
+        merged.merge(
+            AffordanceRegistry.affordances(for: T.self, id: "\(item.id)")
+        ) { _, new in new }
+        var container = encoder.container(keyedBy: AffordanceCodingKey.self)
+        try container.encode(merged, forKey: .affordances)
+    }
+
+    private enum AffordanceCodingKey: String, CodingKey {
+        case affordances
+    }
+}
+
 // MARK: - OutputFormatter
 
 struct OutputFormatter {
@@ -72,6 +94,23 @@ struct OutputFormatter {
         switch format {
         case .json:
             return try formatJSON(DataResponse(data: items.map(WithAffordances.init)))
+        case .table:
+            return renderTable(headers: headers, rows: items.map(rowMapper))
+        case .markdown:
+            return renderMarkdownTable(headers: headers, rows: items.map(rowMapper))
+        }
+    }
+
+    /// Agent-first format with plugin affordances merged from `AffordanceRegistry`.
+    /// This overload is selected automatically for `Identifiable` models.
+    func formatAgentItems<T: Encodable & AffordanceProviding & Identifiable>(
+        _ items: [T],
+        headers: [String],
+        rowMapper: (T) -> [String]
+    ) throws -> String {
+        switch format {
+        case .json:
+            return try formatJSON(DataResponse(data: items.map(WithPluginAffordances.init)))
         case .table:
             return renderTable(headers: headers, rows: items.map(rowMapper))
         case .markdown:

@@ -26,15 +26,10 @@ public struct App: Sendable, Codable, Equatable, Identifiable {
 
 extension App: AffordanceProviding {
     public var affordances: [String: String] {
-        var cmds: [String: String] = [
+        [
             "listVersions": "asc versions list --app-id \(id)",
             "listAppInfos": "asc app-infos list --app-id \(id)",
             "listReviews": "asc reviews list --app-id \(id)",
         ]
-        cmds.merge(AffordanceRegistry.affordances(
-            for: Self.self, id: id,
-            properties: ["name": name]
-        )) { _, new in new }
-        return cmds
     }
 }
