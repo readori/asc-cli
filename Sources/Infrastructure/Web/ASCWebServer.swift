@@ -161,6 +161,26 @@ public struct ASCWebServer: Sendable {
                      body: .init(byteBuffer: ByteBuffer(data: pluginJSON)))
         }
 
+        // /api/templates — direct access to registered templates (no subprocess)
+        router.get("/api/templates") { _, _ in
+            let templates = try await AggregateTemplateRepository.shared.listTemplates(size: nil)
+            // Encode with affordances merged in
+            var items: [[String: Any]] = []
+            for t in templates {
+                var dict: [String: Any] = [
+                    "id": t.id, "name": t.name, "category": t.category.rawValue,
+                    "description": t.description,
+                    "supportedSizes": t.supportedSizes.map(\.rawValue),
+                    "deviceSlots": t.deviceSlots.map { ["x": $0.x, "y": $0.y, "scale": $0.scale] },
+                ]
+                dict["affordances"] = t.affordances
+                items.append(dict)
+            }
+            let data = try JSONSerialization.data(withJSONObject: ["data": items])
+            return Response(status: .ok, headers: [.contentType: "application/json"],
+                            body: .init(byteBuffer: .init(data: data)))
+        }
+
         // Serve each plugin UI file at its exact path
         for p in plugins {
             let pluginDir = p.directory
