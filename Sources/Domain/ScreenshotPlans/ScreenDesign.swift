@@ -98,7 +98,7 @@ extension ScreenDesign: AffordanceProviding {
         ]
         if isComplete {
             cmds["generate"] = "asc app-shots generate --design design.json"
-            cmds["preview"] = "open preview.html"
+            cmds["previewHTML"] = previewHTML
         }
         if let template {
             cmds["templateDetail"] = "asc app-shots templates get --id \(template.id)"

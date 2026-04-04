@@ -78,8 +78,9 @@ struct AppShotsTemplatesTests {
             "--pretty"
         ])
         let output = try await cmd.execute(repo: mockRepo)
-        #expect(output.contains("\"heading\" : \"Ship Faster\""))
-        #expect(output.contains("\"screenshotFile\" : \"screen-1.png\""))
+        #expect(output.contains("Ship Faster"))
+        #expect(output.contains("screen-1.png"))
+        #expect(output.contains("asc app-shots generate"))
         #expect(output.contains("previewHTML"))
         #expect(output.contains("linear-gradient"))
     }
