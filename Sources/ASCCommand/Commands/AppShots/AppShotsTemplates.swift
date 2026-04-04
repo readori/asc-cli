@@ -52,12 +52,13 @@ struct AppShotsTemplatesGet: AsyncParsableCommand {
     @Option(name: .long, help: "Template ID")
     var id: String
 
-    @Flag(name: .long, help: "Output self-contained HTML preview page")
-    var preview: Bool = false
+    @Option(name: .long, help: "Output preview in format: html (self-contained page) or png (save to file)")
+    var preview: PreviewFormat?
 
     func run() async throws {
         let repo = ClientProvider.makeTemplateRepository()
-        print(try await execute(repo: repo))
+        let output = try await execute(repo: repo)
+        print(output)
     }
 
     func execute(repo: any TemplateRepository) async throws -> String {
@@ -65,8 +66,17 @@ struct AppShotsTemplatesGet: AsyncParsableCommand {
             throw ValidationError("Template '\(id)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
-        if preview {
-            return template.previewHTML
+        if let format = preview {
+            switch format {
+            case .html:
+                return template.previewHTML
+            case .png:
+                // Save HTML to temp file, render to PNG via headless browser would be ideal
+                // For now: save HTML and tell user to open it
+                let path = ".asc/template-preview-\(id).html"
+                try template.previewHTML.write(toFile: path, atomically: true, encoding: .utf8)
+                return "{\"preview\":\"\(path)\",\"format\":\"html\",\"hint\":\"Open in browser to view. PNG rendering requires a headless browser.\"}"
+            }
         }
 
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
@@ -133,3 +143,8 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
 // MARK: - ScreenSize ArgumentParser conformance
 
 extension ScreenSize: ExpressibleByArgument {}
+
+enum PreviewFormat: String, ExpressibleByArgument, CaseIterable {
+    case html
+    case png
+}

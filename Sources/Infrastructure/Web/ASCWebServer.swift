@@ -161,29 +161,6 @@ public struct ASCWebServer: Sendable {
                      body: .init(byteBuffer: ByteBuffer(data: pluginJSON)))
         }
 
-        // /api/templates — list all templates (lightweight, no inline HTML)
-        router.get("/api/templates") { _, _ in
-            let templates = try await AggregateTemplateRepository.shared.listTemplates(size: nil)
-            var items: [[String: Any]] = []
-            for t in templates {
-                items.append([
-                    "id": t.id, "name": t.name, "category": t.category.rawValue,
-                    "description": t.description,
-                    "supportedSizes": t.supportedSizes.map(\.rawValue),
-                    "deviceSlots": t.deviceSlots.map { d in
-                        var slot: [String: Any] = ["x": d.x, "y": d.y, "scale": d.scale]
-                        if let r = d.rotation { slot["rotation"] = r }
-                        if let z = d.zIndex { slot["zIndex"] = z }
-                        return slot
-                    },
-                    "affordances": t.affordances,
-                ])
-            }
-            let data = try JSONSerialization.data(withJSONObject: ["data": items])
-            return Response(status: .ok, headers: [.contentType: "application/json"],
-                            body: .init(byteBuffer: .init(data: data)))
-        }
-
         // Serve each plugin UI file at its exact path
         for p in plugins {
             let pluginDir = p.directory
