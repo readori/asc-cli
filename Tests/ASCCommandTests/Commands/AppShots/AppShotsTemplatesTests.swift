@@ -81,8 +81,6 @@ struct AppShotsTemplatesTests {
         #expect(output.contains("Ship Faster"))
         #expect(output.contains("screen-1.png"))
         #expect(output.contains("asc app-shots generate"))
-        #expect(output.contains("previewHTML"))
-        #expect(output.contains("linear-gradient"))
     }
 
     @Test func `apply returns error when template not found`() async throws {

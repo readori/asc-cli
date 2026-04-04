@@ -161,24 +161,41 @@ public struct ASCWebServer: Sendable {
                      body: .init(byteBuffer: ByteBuffer(data: pluginJSON)))
         }
 
-        // /api/templates — direct access to registered templates (no subprocess)
+        // /api/templates — list all templates (lightweight, no inline HTML)
         router.get("/api/templates") { _, _ in
             let templates = try await AggregateTemplateRepository.shared.listTemplates(size: nil)
-            // Encode with affordances merged in
             var items: [[String: Any]] = []
             for t in templates {
-                var dict: [String: Any] = [
+                items.append([
                     "id": t.id, "name": t.name, "category": t.category.rawValue,
                     "description": t.description,
                     "supportedSizes": t.supportedSizes.map(\.rawValue),
-                    "deviceSlots": t.deviceSlots.map { ["x": $0.x, "y": $0.y, "scale": $0.scale] },
-                ]
-                dict["affordances"] = t.affordances
-                items.append(dict)
+                    "deviceSlots": t.deviceSlots.map { d in
+                        var slot: [String: Any] = ["x": d.x, "y": d.y, "scale": d.scale]
+                        if let r = d.rotation { slot["rotation"] = r }
+                        if let z = d.zIndex { slot["zIndex"] = z }
+                        return slot
+                    },
+                    "affordances": t.affordances,
+                ])
             }
             let data = try JSONSerialization.data(withJSONObject: ["data": items])
             return Response(status: .ok, headers: [.contentType: "application/json"],
                             body: .init(byteBuffer: .init(data: data)))
+        }
+
+        // /api/templates/{id}/preview — rendered HTML preview page
+        router.get("/api/templates/{id}/preview") { _, context in
+            guard let id = context.parameters.get("id") else {
+                return jsonError("Missing template id")
+            }
+            guard let template = try await AggregateTemplateRepository.shared.getTemplate(id: id) else {
+                return jsonError("Template not found", status: .notFound)
+            }
+            let html = template.previewHTML
+            return Response(status: .ok,
+                            headers: [.contentType: "text/html; charset=utf-8", .cacheControl: "no-cache"],
+                            body: .init(byteBuffer: .init(string: html)))
         }
 
         // Serve each plugin UI file at its exact path
