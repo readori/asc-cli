@@ -1,5 +1,6 @@
 import ArgumentParser
 import Domain
+import Foundation
 import Infrastructure
 
 struct AppShotsTemplatesCommand: AsyncParsableCommand {
@@ -23,13 +24,38 @@ struct AppShotsTemplatesList: AsyncParsableCommand {
     @Option(name: .long, help: "Filter by size: portrait, landscape, portrait43, square")
     var size: ScreenSize?
 
+    @Flag(name: .long, help: "Include self-contained HTML preview for each template")
+    var preview: Bool = false
+
     func run() async throws {
         let repo = ClientProvider.makeTemplateRepository()
         print(try await execute(repo: repo))
     }
 
     func execute(repo: any TemplateRepository) async throws -> String {
-        let templates = try await repo.listTemplates(size: size)
+        var templates = try await repo.listTemplates(size: size)
+
+        if preview {
+            // Include previewHTML in affordances
+            let items = templates.map { t -> [String: Any] in
+                var affordances = t.affordances
+                affordances["previewHTML"] = t.previewHTML
+                return [
+                    "id": t.id, "name": t.name,
+                    "category": t.category.rawValue,
+                    "description": t.description,
+                    "supportedSizes": t.supportedSizes.map(\.rawValue),
+                    "deviceCount": t.deviceCount,
+                    "affordances": affordances,
+                ]
+            }
+            let data = try JSONSerialization.data(
+                withJSONObject: ["data": items],
+                options: globals.pretty ? [.prettyPrinted, .sortedKeys] : []
+            )
+            return String(data: data, encoding: .utf8) ?? "{}"
+        }
+
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
             templates,
@@ -52,13 +78,12 @@ struct AppShotsTemplatesGet: AsyncParsableCommand {
     @Option(name: .long, help: "Template ID")
     var id: String
 
-    @Option(name: .long, help: "Output preview in format: html (self-contained page) or png (save to file)")
-    var preview: PreviewFormat?
+    @Flag(name: .long, help: "Output self-contained HTML preview page")
+    var preview: Bool = false
 
     func run() async throws {
         let repo = ClientProvider.makeTemplateRepository()
-        let output = try await execute(repo: repo)
-        print(output)
+        print(try await execute(repo: repo))
     }
 
     func execute(repo: any TemplateRepository) async throws -> String {
@@ -66,17 +91,8 @@ struct AppShotsTemplatesGet: AsyncParsableCommand {
             throw ValidationError("Template '\(id)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
-        if let format = preview {
-            switch format {
-            case .html:
-                return template.previewHTML
-            case .png:
-                // Save HTML to temp file, render to PNG via headless browser would be ideal
-                // For now: save HTML and tell user to open it
-                let path = ".asc/template-preview-\(id).html"
-                try template.previewHTML.write(toFile: path, atomically: true, encoding: .utf8)
-                return "{\"preview\":\"\(path)\",\"format\":\"html\",\"hint\":\"Open in browser to view. PNG rendering requires a headless browser.\"}"
-            }
+        if preview {
+            return template.previewHTML
         }
 
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
