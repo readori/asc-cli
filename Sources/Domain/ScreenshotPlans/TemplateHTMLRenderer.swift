@@ -7,6 +7,11 @@ import Foundation
 /// status bar, UI cards, and the real iPhone frame PNG overlay.
 public enum TemplateHTMLRenderer {
 
+    /// Base64 data URL of the iPhone frame PNG.
+    /// Set by infrastructure at startup (e.g. from plugin's iphone-frame.png).
+    /// If nil, a CSS wireframe is used instead.
+    nonisolated(unsafe) public static var phoneFrameDataURL: String?
+
     /// Render a complete HTML page (for saving as .html file).
     public static func renderPage(_ template: ScreenshotTemplate, content: TemplateContent? = nil) -> String {
         let inner = render(template, content: content)
@@ -127,9 +132,19 @@ public enum TemplateHTMLRenderer {
         let frameBg = lit ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.08)"
         let frameBorder = lit ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.15)"
 
+        // Real iPhone frame overlay or CSS fallback
+        let frameOverlay: String
+        let outerStyle: String
+        if let dataURL = phoneFrameDataURL {
+            frameOverlay = "<img src=\"\(dataURL)\" style=\"position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none\" alt=\"\">"
+            outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)))"
+        } else {
+            frameOverlay = ""
+            outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)));background:\(frameBg);border-radius:12%/5.5%;border:1.5px solid \(frameBorder);overflow:hidden"
+        }
+
         return """
-        <div style="aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)));\
-        background:\(frameBg);border-radius:12%/5.5%;border:1.5px solid \(frameBorder);overflow:hidden">\
+        <div style="\(outerStyle)">\
         <div style="position:absolute;inset:2.6% 2.2%;background:\(scr);border-radius:8%/4%;overflow:hidden;z-index:1">\
         <div style="padding:5% 5% 0;display:flex;justify-content:space-between">\
         <div style="font-size:max(3.5px,1.6cqi);font-weight:600;color:\(uitx);font-family:system-ui">9:41</div>\
@@ -160,7 +175,7 @@ public enum TemplateHTMLRenderer {
         <div style="flex:1"><div style="height:max(1.5px,0.7cqi);width:50%;background:\(ui2);border-radius:1px"></div></div></div>\
         </div>\
         <div style="position:absolute;bottom:1.2%;left:30%;right:30%;height:max(1.5px,0.6cqi);background:\(uitx);border-radius:4px"></div>\
-        </div></div>
+        </div>\(frameOverlay)</div>
         """
     }
 
