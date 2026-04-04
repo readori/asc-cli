@@ -2,7 +2,7 @@ import Foundation
 
 /// A deterministic composition plan for HTML-based App Store screenshot generation.
 ///
-/// Unlike `ScreenPlan` (designed for AI generation), `CompositionPlan` gives full control
+/// Unlike `ScreenshotDesign` (designed for AI generation), `CompositionPlan` gives full control
 /// over device placement, text overlays, and backgrounds. The same plan always produces
 /// identical output.
 ///

@@ -1,12 +1,12 @@
 import Domain
 import Foundation
 
-/// Pure renderer: (ScreenPlan, RenderAssets, width, height) → HTML String.
+/// Pure renderer: (ScreenshotDesign, RenderAssets, width, height) → HTML String.
 /// No file I/O, no CLI parsing — just data in, HTML out.
 enum LegacyHTMLRenderer {
 
     static func render(
-        plan: ScreenPlan,
+        plan: ScreenshotDesign,
         assets: RenderAssets,
         width: Int,
         height: Int
@@ -438,7 +438,7 @@ enum LegacyHTMLRenderer {
 
     // MARK: - Private helpers
 
-    private static func renderDeviceHTML(dataURI: String?, mockupInfo: MockupInfo?, plan: ScreenPlan, screenIndex: Int) -> String {
+    private static func renderDeviceHTML(dataURI: String?, mockupInfo: MockupInfo?, plan: ScreenshotDesign, screenIndex: Int) -> String {
         if let m = mockupInfo {
             let screenshotTag: String
             if let uri = dataURI {
@@ -466,10 +466,10 @@ enum LegacyHTMLRenderer {
     }
 
     private static func renderScreenCard(
-        screen: ScreenConfig,
+        screen: ScreenDesign,
         dataURI: String?,
         mockupInfo: MockupInfo?,
-        plan: ScreenPlan,
+        plan: ScreenshotDesign,
         width: Int,
         height: Int
     ) -> String {
@@ -498,10 +498,10 @@ enum LegacyHTMLRenderer {
     }
 
     private static func renderExportSlide(
-        screen: ScreenConfig,
+        screen: ScreenDesign,
         dataURI: String?,
         mockupInfo: MockupInfo?,
-        plan: ScreenPlan,
+        plan: ScreenshotDesign,
         width: Int,
         height: Int
     ) -> String {
@@ -520,7 +520,7 @@ enum LegacyHTMLRenderer {
         """
     }
 
-    private static func matchScreenshot(screen: ScreenConfig, dataURIs: [String: String]) -> String? {
+    private static func matchScreenshot(screen: ScreenDesign, dataURIs: [String: String]) -> String? {
         if let uri = dataURIs[screen.screenshotFile] {
             return uri
         }

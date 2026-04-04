@@ -608,15 +608,15 @@ struct MockRepositoryFactory {
         AppShotsConfig(geminiApiKey: geminiApiKey)
     }
 
-    static func makeScreenPlan(
+    static func makeScreenshotDesign(
         appId: String = "app-1",
         appName: String = "Test App",
         tagline: String = "Great app for everyone",
         tone: ScreenTone = .professional,
         colors: ScreenColors = ScreenColors(primary: "#000000", accent: "#FF0000", text: "#FFFFFF", subtext: "#CCCCCC"),
-        screens: [ScreenConfig] = []
-    ) -> ScreenPlan {
-        ScreenPlan(
+        screens: [ScreenDesign] = []
+    ) -> ScreenshotDesign {
+        ScreenshotDesign(
             appId: appId,
             appName: appName,
             tagline: tagline,
@@ -626,7 +626,7 @@ struct MockRepositoryFactory {
         )
     }
 
-    static func makeScreenConfig(
+    static func makeScreenDesign(
         index: Int = 0,
         screenshotFile: String = "screen1.png",
         heading: String = "Work Smarter",
@@ -634,8 +634,8 @@ struct MockRepositoryFactory {
         layoutMode: LayoutMode = .center,
         visualDirection: String = "Main dashboard with task list",
         imagePrompt: String = "Clean dark UI with colorful task cards"
-    ) -> ScreenConfig {
-        ScreenConfig(
+    ) -> ScreenDesign {
+        ScreenDesign(
             index: index,
             screenshotFile: screenshotFile,
             heading: heading,
@@ -1213,5 +1213,34 @@ struct MockRepositoryFactory {
         runtime: String = "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
     ) -> Simulator {
         Simulator(id: id, name: name, state: state, runtime: runtime)
+    }
+
+    // MARK: - Screenshot Templates
+
+    static func makeScreenshotTemplate(
+        id: String = "top-hero",
+        name: String = "Top Hero",
+        category: TemplateCategory = .bold,
+        supportedSizes: [ScreenSize] = [.portrait],
+        description: String = "Indigo gradient with bold headline",
+        background: SlideBackground = .gradient(from: "#4338CA", to: "#6D28D9", angle: 150),
+        deviceCount: Int = 1
+    ) -> ScreenshotTemplate {
+        let textSlots = [
+            TemplateTextSlot(role: .heading, preview: "Your\nHeadline", x: 0.5, y: 0.04, fontSize: 0.10, color: "#FFFFFF")
+        ]
+        let deviceSlots = (0..<deviceCount).map { i in
+            TemplateDeviceSlot(x: 0.5, y: 0.18, scale: 0.85)
+        }
+        return ScreenshotTemplate(
+            id: id,
+            name: name,
+            category: category,
+            supportedSizes: supportedSizes,
+            description: description,
+            background: background,
+            textSlots: textSlots,
+            deviceSlots: deviceSlots
+        )
     }
 }

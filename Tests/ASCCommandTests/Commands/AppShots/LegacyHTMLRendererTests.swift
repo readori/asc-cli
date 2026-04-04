@@ -10,9 +10,9 @@ struct LegacyHTMLRendererTests {
 
     private func makePlan(
         appName: String = "TestApp",
-        screens: [ScreenConfig] = []
-    ) -> ScreenPlan {
-        ScreenPlan(
+        screens: [ScreenDesign] = []
+    ) -> ScreenshotDesign {
+        ScreenshotDesign(
             appId: "app-1",
             appName: appName,
             tagline: "Your best app",
@@ -27,8 +27,8 @@ struct LegacyHTMLRendererTests {
         heading: String = "Great Feature",
         subheading: String = "Makes life easier",
         layoutMode: LayoutMode = .center
-    ) -> ScreenConfig {
-        ScreenConfig(
+    ) -> ScreenDesign {
+        ScreenDesign(
             index: index,
             screenshotFile: "screen\(index).png",
             heading: heading,

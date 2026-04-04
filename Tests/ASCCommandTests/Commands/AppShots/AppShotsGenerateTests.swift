@@ -16,9 +16,9 @@ struct AppShotsGenerateTests {
 
     private func makePlan(
         appId: String = "app-1",
-        screens: [ScreenConfig] = []
-    ) -> ScreenPlan {
-        ScreenPlan(
+        screens: [ScreenDesign] = []
+    ) -> ScreenshotDesign {
+        ScreenshotDesign(
             appId: appId,
             appName: "TestApp",
             tagline: "Your best app",
@@ -28,8 +28,8 @@ struct AppShotsGenerateTests {
         )
     }
 
-    private func makeScreen(index: Int = 0) -> ScreenConfig {
-        ScreenConfig(
+    private func makeScreen(index: Int = 0) -> ScreenDesign {
+        ScreenDesign(
             index: index,
             screenshotFile: "screen\(index).png",
             heading: "Great Feature",
@@ -40,7 +40,7 @@ struct AppShotsGenerateTests {
         )
     }
 
-    private func writePlanFile(_ plan: ScreenPlan) throws -> String {
+    private func writePlanFile(_ plan: ScreenshotDesign) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let data = try encoder.encode(plan)

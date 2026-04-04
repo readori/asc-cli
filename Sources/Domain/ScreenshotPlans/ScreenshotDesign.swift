@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ScreenPlan: Sendable, Equatable, Identifiable {
+public struct ScreenshotDesign: Sendable, Equatable, Identifiable {
     public var id: String { appId }
     public let appId: String
     public let appName: String
@@ -11,7 +11,7 @@ public struct ScreenPlan: Sendable, Equatable, Identifiable {
     public let appDescription: String?
     public let tone: ScreenTone
     public let colors: ScreenColors
-    public let screens: [ScreenConfig]
+    public let screens: [ScreenDesign]
 
     public init(
         appId: String,
@@ -20,7 +20,7 @@ public struct ScreenPlan: Sendable, Equatable, Identifiable {
         appDescription: String? = nil,
         tone: ScreenTone,
         colors: ScreenColors,
-        screens: [ScreenConfig]
+        screens: [ScreenDesign]
     ) {
         self.appId = appId
         self.appName = appName
@@ -32,7 +32,7 @@ public struct ScreenPlan: Sendable, Equatable, Identifiable {
     }
 }
 
-extension ScreenPlan: Codable {
+extension ScreenshotDesign: Codable {
     private enum CodingKeys: String, CodingKey {
         case appId, appName, tagline, appDescription, tone, colors, screens
     }
@@ -45,7 +45,7 @@ extension ScreenPlan: Codable {
         appDescription = try c.decodeIfPresent(String.self, forKey: .appDescription)
         tone = try c.decode(ScreenTone.self, forKey: .tone)
         colors = try c.decode(ScreenColors.self, forKey: .colors)
-        screens = try c.decode([ScreenConfig].self, forKey: .screens)
+        screens = try c.decode([ScreenDesign].self, forKey: .screens)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -60,7 +60,7 @@ extension ScreenPlan: Codable {
     }
 }
 
-extension ScreenPlan: AffordanceProviding {
+extension ScreenshotDesign: AffordanceProviding {
     public var affordances: [String: String] {
         [
             "generate": "asc app-shots generate --plan app-shots-plan.json --gemini-api-key $GEMINI_API_KEY",

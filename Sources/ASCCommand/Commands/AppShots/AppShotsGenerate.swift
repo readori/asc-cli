@@ -57,7 +57,7 @@ struct AppShotsGenerate: AsyncParsableCommand {
         // Load plan
         let planURL = URL(fileURLWithPath: plan)
         let planData = try Data(contentsOf: planURL)
-        let loadedPlan = try JSONDecoder().decode(ScreenPlan.self, from: planData)
+        let loadedPlan = try JSONDecoder().decode(ScreenshotDesign.self, from: planData)
 
         // Resolve screenshots — auto-discover from plan directory if none given
         let resolvedScreenshots: [String]

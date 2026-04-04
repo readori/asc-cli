@@ -3,10 +3,10 @@ import Testing
 @testable import Domain
 
 @Suite
-struct ScreenPlanTests {
+struct ScreenshotDesignTests {
 
     @Test func `screen plan id equals appId`() {
-        let plan = ScreenPlan(
+        let plan = ScreenshotDesign(
             appId: "app-123",
             appName: "TestApp",
             tagline: "Great app",
@@ -18,7 +18,7 @@ struct ScreenPlanTests {
     }
 
     @Test func `affordances include generate command`() {
-        let plan = ScreenPlan(
+        let plan = ScreenshotDesign(
             appId: "app-123",
             appName: "TestApp",
             tagline: "Great app",
@@ -45,7 +45,7 @@ struct ScreenPlanTests {
     }
 
     @Test func `screen config id equals index string`() {
-        let config = ScreenConfig(
+        let config = ScreenDesign(
             index: 2,
             screenshotFile: "screen2.png",
             heading: "Great Feature",
@@ -59,14 +59,14 @@ struct ScreenPlanTests {
     }
 
     @Test func `screen plan roundtrips through JSON`() throws {
-        let plan = ScreenPlan(
+        let plan = ScreenshotDesign(
             appId: "6736834466",
             appName: "MyApp",
             tagline: "Your companion",
             tone: .elegant,
             colors: ScreenColors(primary: "#1A1A2E", accent: "#E94560", text: "#FFFFFF", subtext: "#CCCCCC"),
             screens: [
-                ScreenConfig(
+                ScreenDesign(
                     index: 0,
                     screenshotFile: "screen1.png",
                     heading: "Work Smarter",
@@ -78,14 +78,14 @@ struct ScreenPlanTests {
             ]
         )
         let data = try JSONEncoder().encode(plan)
-        let decoded = try JSONDecoder().decode(ScreenPlan.self, from: data)
+        let decoded = try JSONDecoder().decode(ScreenshotDesign.self, from: data)
         #expect(decoded == plan)
         #expect(decoded.appId == "6736834466")
         #expect(decoded.screens.count == 1)
     }
 
     @Test func `appDescription is preserved in JSON roundtrip`() throws {
-        let plan = ScreenPlan(
+        let plan = ScreenshotDesign(
             appId: "app-1",
             appName: "MyApp",
             tagline: "Great app",
@@ -95,12 +95,12 @@ struct ScreenPlanTests {
             screens: []
         )
         let data = try JSONEncoder().encode(plan)
-        let decoded = try JSONDecoder().decode(ScreenPlan.self, from: data)
+        let decoded = try JSONDecoder().decode(ScreenshotDesign.self, from: data)
         #expect(decoded.appDescription == "A powerful productivity tool for iOS developers.")
     }
 
     @Test func `appDescription is omitted from JSON when nil`() throws {
-        let plan = ScreenPlan(
+        let plan = ScreenshotDesign(
             appId: "app-1",
             appName: "MyApp",
             tagline: "Great app",
@@ -120,7 +120,7 @@ struct ScreenPlanTests {
          "colors":{"primary":"#000","accent":"#fff","text":"#fff","subtext":"#ccc"},
          "screens":[]}
         """
-        let decoded = try JSONDecoder().decode(ScreenPlan.self, from: Data(json.utf8))
+        let decoded = try JSONDecoder().decode(ScreenshotDesign.self, from: Data(json.utf8))
         #expect(decoded.appDescription == nil)
     }
 }

@@ -15,9 +15,9 @@ struct AppShotsHTMLTests {
 
     private func makePlan(
         appName: String = "TestApp",
-        screens: [ScreenConfig] = []
-    ) -> ScreenPlan {
-        ScreenPlan(
+        screens: [ScreenDesign] = []
+    ) -> ScreenshotDesign {
+        ScreenshotDesign(
             appId: "app-1",
             appName: appName,
             tagline: "Your best app",
@@ -32,8 +32,8 @@ struct AppShotsHTMLTests {
         heading: String = "Great Feature",
         subheading: String = "Makes life easier",
         layoutMode: LayoutMode = .center
-    ) -> ScreenConfig {
-        ScreenConfig(
+    ) -> ScreenDesign {
+        ScreenDesign(
             index: index,
             screenshotFile: "screen\(index).png",
             heading: heading,
@@ -45,7 +45,7 @@ struct AppShotsHTMLTests {
     }
 
     private func writePlanAndScreenshots(
-        plan: ScreenPlan,
+        plan: ScreenshotDesign,
         screenshotCount: Int = 0
     ) throws -> (planPath: String, screenshotPaths: [String]) {
         let dir = FileManager.default.temporaryDirectory

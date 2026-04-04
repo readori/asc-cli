@@ -60,15 +60,15 @@ private func makeOpenAICompatImageResponse(imageData: Data = fakePNGData) -> Dat
     return body.data(using: .utf8)!
 }
 
-private func makeSingleScreenPlan(imagePrompt: String = "App screenshot on dark navy background") -> ScreenPlan {
-    ScreenPlan(
+private func makeSingleScreenshotDesign(imagePrompt: String = "App screenshot on dark navy background") -> ScreenshotDesign {
+    ScreenshotDesign(
         appId: "app-123",
         appName: "TestApp",
         tagline: "Great app",
         tone: .professional,
         colors: ScreenColors(primary: "#000000", accent: "#FF0000", text: "#FFFFFF", subtext: "#CCCCCC"),
         screens: [
-            ScreenConfig(
+            ScreenDesign(
                 index: 0,
                 screenshotFile: "screen1.png",
                 heading: "Work Smarter",
@@ -97,7 +97,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://generativelanguage.googleapis.com/v1beta/openai",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+        _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
 
         // Must use native endpoint, not /chat/completions
         let url = stub.lastRequest?.url?.absoluteString ?? ""
@@ -117,7 +117,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://generativelanguage.googleapis.com/v1beta/openai",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+        _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url == "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=my-key")
@@ -128,7 +128,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
         stub.response = (makeNativeGeminiImageResponse(), makeHTTPResponse())
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "test-key", httpClient: stub)
-        let results = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+        let results = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
 
         #expect(results.count == 1)
         #expect(results[0] != nil)
@@ -141,7 +141,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
         _ = try await repo.generateImages(
-            plan: makeSingleScreenPlan(imagePrompt: "Dark navy with glowing accents"),
+            plan: makeSingleScreenshotDesign(imagePrompt: "Dark navy with glowing accents"),
             screenshotURLs: [],
             styleReferenceURL: nil
         )
@@ -162,7 +162,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             model: "gemini-3.1-flash-image-preview",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+        _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url.contains("gemini-3.1-flash-image-preview"))
@@ -174,7 +174,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "bad-key", httpClient: stub)
         do {
-            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+            _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
             Issue.record("Expected error to be thrown")
         } catch let error as Domain.APIError {
             if case .unknown(let msg) = error {
@@ -192,7 +192,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
         do {
-            _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+            _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
             Issue.record("Expected error to be thrown")
         } catch let error as Domain.APIError {
             if case .unknown(let msg) = error {
@@ -205,7 +205,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
     @Test func `generateImages returns empty dict for plan with no screens`() async throws {
         let stub = StubHTTPClient()
-        let emptyPlan = ScreenPlan(
+        let emptyPlan = ScreenshotDesign(
             appId: "app-1", appName: "App", tagline: "t", tone: .minimal,
             colors: ScreenColors(primary: "#000", accent: "#fff", text: "#fff", subtext: "#ccc"),
             screens: []
@@ -228,7 +228,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
             baseURL: "https://api.openai.com/v1",
             httpClient: stub
         )
-        _ = try await repo.generateImages(plan: makeSingleScreenPlan(), screenshotURLs: [], styleReferenceURL: nil)
+        _ = try await repo.generateImages(plan: makeSingleScreenshotDesign(), screenshotURLs: [], styleReferenceURL: nil)
 
         let url = stub.lastRequest?.url?.absoluteString ?? ""
         #expect(url.contains("chat/completions"))
@@ -249,7 +249,7 @@ struct GeminiScreenshotGenerationRepositoryTests {
 
         let repo = GeminiScreenshotGenerationRepository(apiKey: "key", httpClient: stub)
         _ = try await repo.generateImages(
-            plan: makeSingleScreenPlan(),
+            plan: makeSingleScreenshotDesign(),
             screenshotURLs: [],
             styleReferenceURL: refFile
         )

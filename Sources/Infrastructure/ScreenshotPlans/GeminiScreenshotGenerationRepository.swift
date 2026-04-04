@@ -37,7 +37,7 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
 
     // MARK: - Protocol conformance
 
-    public func generateImages(plan: ScreenPlan, screenshotURLs: [URL], styleReferenceURL: URL?) async throws -> [Int: Data] {
+    public func generateImages(plan: ScreenshotDesign, screenshotURLs: [URL], styleReferenceURL: URL?) async throws -> [Int: Data] {
         // When a style reference is provided, the reference image owns all visual design.
         // Skip the plan's imagePrompt / colors / tone entirely — only pass heading + subheading
         // so Gemini knows what text to render. Otherwise prepend app context to the imagePrompt.
@@ -83,7 +83,7 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
     /// The prompt addresses images by position and enumerates every layout element so
     /// Gemini does not fall back on its built-in App Store screenshot conventions.
     /// Parts order: [style reference image] [app screenshot image] [this text]
-    private func buildStyleReferencePrompt(screen: ScreenConfig) -> String {
+    private func buildStyleReferencePrompt(screen: ScreenDesign) -> String {
         """
         Recreate this App Store screenshot using the FIRST image as the definitive visual reference.
         - Place the SECOND image (app UI) inside a device mockup
@@ -108,7 +108,7 @@ public struct GeminiScreenshotGenerationRepository: ScreenshotGenerationReposito
 
     /// Builds a brief context string from plan metadata to prepend to each imagePrompt,
     /// giving Gemini richer understanding of the app's purpose and target audience.
-    private func buildAppContext(plan: ScreenPlan) -> String {
+    private func buildAppContext(plan: ScreenshotDesign) -> String {
         var parts: [String] = ["App: \(plan.appName)"]
         if !plan.tagline.isEmpty { parts.append(plan.tagline) }
         if let desc = plan.appDescription, !desc.isEmpty {

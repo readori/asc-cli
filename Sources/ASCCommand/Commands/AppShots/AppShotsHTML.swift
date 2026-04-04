@@ -46,12 +46,12 @@ struct AppShotsHTML: AsyncParsableCommand {
         let planData = try Data(contentsOf: planURL)
         let planDir = planURL.deletingLastPathComponent()
 
-        // Try CompositionPlan first (has "canvas" key), fallback to ScreenPlan
+        // Try CompositionPlan first (has "canvas" key), fallback to ScreenshotDesign
         if let compositionPlan = try? JSONDecoder().decode(CompositionPlan.self, from: planData) {
             return try executeComposition(compositionPlan, planDir: planDir)
         }
 
-        let loadedPlan = try JSONDecoder().decode(ScreenPlan.self, from: planData)
+        let loadedPlan = try JSONDecoder().decode(ScreenshotDesign.self, from: planData)
         return try executeLegacy(loadedPlan, planDir: planDir)
     }
 
@@ -74,9 +74,9 @@ struct AppShotsHTML: AsyncParsableCommand {
         return try writeHTML(html)
     }
 
-    // MARK: - Legacy ScreenPlan path
+    // MARK: - Legacy ScreenshotDesign path
 
-    private func executeLegacy(_ loadedPlan: ScreenPlan, planDir: URL) throws -> String {
+    private func executeLegacy(_ loadedPlan: ScreenshotDesign, planDir: URL) throws -> String {
         let effectiveWidth = deviceType.map { $0.dimensions.width } ?? outputWidth
         let effectiveHeight = deviceType.map { $0.dimensions.height } ?? outputHeight
 

@@ -14,8 +14,8 @@ struct AppShotsTranslateTests {
         return Data(bytes)
     }()
 
-    private func makePlan(screens: [ScreenConfig] = []) -> ScreenPlan {
-        ScreenPlan(
+    private func makePlan(screens: [ScreenDesign] = []) -> ScreenshotDesign {
+        ScreenshotDesign(
             appId: "app-1",
             appName: "TestApp",
             tagline: "Your best app",
@@ -25,8 +25,8 @@ struct AppShotsTranslateTests {
         )
     }
 
-    private func makeScreen(index: Int = 0) -> ScreenConfig {
-        ScreenConfig(
+    private func makeScreen(index: Int = 0) -> ScreenDesign {
+        ScreenDesign(
             index: index,
             screenshotFile: "screen\(index).png",
             heading: "Great Feature",
@@ -38,7 +38,7 @@ struct AppShotsTranslateTests {
     }
 
     /// Writes a plan to a temp file and returns the path.
-    private func writePlanFile(_ plan: ScreenPlan) throws -> String {
+    private func writePlanFile(_ plan: ScreenshotDesign) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let data = try encoder.encode(plan)
@@ -131,7 +131,7 @@ struct AppShotsTranslateTests {
         let sourceDir = try makeSourceDir(count: 1)
         let outputBase = makeTempDir()
 
-        var capturedPlan: ScreenPlan?
+        var capturedPlan: ScreenshotDesign?
         let mockRepo = MockScreenshotGenerationRepository()
         given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { capturedPlanArg, _, _ in
             capturedPlan = capturedPlanArg
@@ -168,7 +168,7 @@ struct AppShotsTranslateTests {
         let sourceDir = try makeSourceDir(count: 1)
         let outputBase = makeTempDir()
 
-        var capturedPlan: ScreenPlan?
+        var capturedPlan: ScreenshotDesign?
         let mockRepo = MockScreenshotGenerationRepository()
         given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { p, _, _ in
             capturedPlan = p
@@ -195,7 +195,7 @@ struct AppShotsTranslateTests {
     }
 
     @Test func `translate omits subheading line from prompt when subheading is empty`() async throws {
-        let emptySubheadingScreen = ScreenConfig(
+        let emptySubheadingScreen = ScreenDesign(
             index: 0,
             screenshotFile: "screen0.png",
             heading: "Great Feature",
@@ -214,7 +214,7 @@ struct AppShotsTranslateTests {
             try? FileManager.default.removeItem(atPath: outputBase)
         }
 
-        var capturedPlan: ScreenPlan?
+        var capturedPlan: ScreenshotDesign?
         let mockRepo = MockScreenshotGenerationRepository()
         given(mockRepo).generateImages(plan: .any, screenshotURLs: .any, styleReferenceURL: .any).willProduce { p, _, _ in
             capturedPlan = p

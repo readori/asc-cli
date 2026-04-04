@@ -67,7 +67,7 @@ struct AppShotsTranslate: AsyncParsableCommand {
         // Load plan
         let planURL = URL(fileURLWithPath: plan)
         let planData = try Data(contentsOf: planURL)
-        let loadedPlan = try JSONDecoder().decode(ScreenPlan.self, from: planData)
+        let loadedPlan = try JSONDecoder().decode(ScreenshotDesign.self, from: planData)
 
         // Discover existing generated screenshots from source dir
         let sourceDirURL = URL(fileURLWithPath: sourceDir)
@@ -129,7 +129,7 @@ struct AppShotsTranslate: AsyncParsableCommand {
         return formatOutput(results: localeResults)
     }
 
-    private func buildTranslationPlan(plan: ScreenPlan, targetLocale: String) -> ScreenPlan {
+    private func buildTranslationPlan(plan: ScreenshotDesign, targetLocale: String) -> ScreenshotDesign {
         let translatedScreens = plan.screens.map { screen in
             var textLines = ["  - Heading: \"\(screen.heading)\""]
             if !screen.subheading.isEmpty {
@@ -148,7 +148,7 @@ struct AppShotsTranslate: AsyncParsableCommand {
             Do NOT change any text inside the device mockup (app UI content, labels, data).
             Do NOT alter any other visual element.
             """
-            return ScreenConfig(
+            return ScreenDesign(
                 index: screen.index,
                 screenshotFile: screen.screenshotFile,
                 heading: screen.heading,
@@ -160,7 +160,7 @@ struct AppShotsTranslate: AsyncParsableCommand {
         }
         // Clear tagline and appDescription so buildAppContext in generateImages returns ""
         // and no design-spec context is prepended to the translation prompt.
-        return ScreenPlan(
+        return ScreenshotDesign(
             appId: plan.appId,
             appName: plan.appName,
             tagline: "",

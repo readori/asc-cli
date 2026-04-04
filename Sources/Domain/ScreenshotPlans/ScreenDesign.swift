@@ -1,4 +1,4 @@
-public struct ScreenConfig: Sendable, Equatable, Identifiable {
+public struct ScreenDesign: Sendable, Equatable, Identifiable {
     public let id: String
     public let index: Int
     public let screenshotFile: String
@@ -29,7 +29,7 @@ public struct ScreenConfig: Sendable, Equatable, Identifiable {
 }
 
 // Custom Codable: `id` is derived from `index`, never round-tripped through JSON.
-extension ScreenConfig: Codable {
+extension ScreenDesign: Codable {
     private enum CodingKeys: String, CodingKey {
         case index, screenshotFile, heading, subheading, layoutMode, visualDirection, imagePrompt
     }
