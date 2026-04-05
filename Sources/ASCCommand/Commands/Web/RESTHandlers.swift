@@ -126,7 +126,7 @@ enum RESTHandlers {
     // MARK: - App Shots
 
     static func listTemplates(repo: any TemplateRepository) async throws -> String {
-        let cmd = try AppShotsTemplatesList.parse(["--pretty"])
+        let cmd = try AppShotsTemplatesList.parse(["--preview", "--pretty"])
         return try await cmd.execute(repo: repo, affordanceMode: .rest)
     }
 
