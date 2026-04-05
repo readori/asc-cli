@@ -66,16 +66,16 @@ extension Simulator: Presentable {
 }
 
 extension Simulator: AffordanceProviding {
-    public var affordances: [String: String] {
-        var cmds: [String: String] = [
-            "listSimulators": "asc simulators list",
+    public var structuredAffordances: [Affordance] {
+        var items: [Affordance] = [
+            Affordance(key: "listSimulators", command: "simulators", action: "list", params: [:]),
         ]
         if state.isBooted {
-            cmds["shutdown"] = "asc simulators shutdown --udid \(id)"
+            items.append(Affordance(key: "shutdown", command: "simulators", action: "shutdown", params: ["udid": id]))
         } else if state == .shutdown {
-            cmds["boot"] = "asc simulators boot --udid \(id)"
+            items.append(Affordance(key: "boot", command: "simulators", action: "boot", params: ["udid": id]))
         }
-        return cmds
+        return items
     }
 
     public var registryProperties: [String: String] {

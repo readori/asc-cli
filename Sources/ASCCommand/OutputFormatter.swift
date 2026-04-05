@@ -45,43 +45,6 @@ struct WithAffordances<T: Encodable & AffordanceProviding>: Encodable {
     }
 }
 
-/// Like `WithAffordances` but also merges plugin affordances from `AffordanceRegistry`.
-/// Domain models don't need to call `AffordanceRegistry.affordances(for:)` themselves.
-struct WithPluginAffordances<T: Encodable & AffordanceProviding & Identifiable>: Encodable {
-    private let item: T
-    private let mode: AffordanceMode
-
-    init(_ item: T, mode: AffordanceMode = .cli) {
-        self.item = item
-        self.mode = mode
-    }
-
-    func encode(to encoder: any Encoder) throws {
-        try item.encode(to: encoder)
-        let pluginAffordances = AffordanceRegistry.affordances(for: T.self, id: "\(item.id)", properties: item.registryProperties)
-        switch mode {
-        case .cli:
-            var merged = item.affordances
-            for a in pluginAffordances { merged[a.key] = a.cliCommand }
-            var container = encoder.container(keyedBy: CLIAffordanceCodingKey.self)
-            try container.encode(merged, forKey: .affordances)
-        case .rest:
-            var merged = item.apiLinks
-            for a in pluginAffordances { merged[a.key] = a.restLink }
-            var container = encoder.container(keyedBy: RESTLinksCodingKey.self)
-            try container.encode(merged, forKey: ._links)
-        }
-    }
-
-    private enum CLIAffordanceCodingKey: String, CodingKey {
-        case affordances
-    }
-
-    private enum RESTLinksCodingKey: String, CodingKey {
-        case _links
-    }
-}
-
 // MARK: - OutputFormatter
 
 struct OutputFormatter {
@@ -116,13 +79,18 @@ struct OutputFormatter {
     }
 
     /// Agent-first format using `Presentable` — no headers/rowMapper needed.
-    /// Delegates to the explicit-headers overload, which picks the `Identifiable`
-    /// variant (with plugin affordances) automatically when `T` conforms.
     func formatAgentItems<T: Encodable & AffordanceProviding & Presentable>(
         _ items: [T],
         affordanceMode: AffordanceMode = .cli
     ) throws -> String {
-        try formatAgentItems(items, headers: T.tableHeaders, rowMapper: \.tableRow, affordanceMode: affordanceMode)
+        switch format {
+        case .json:
+            return try formatJSON(DataResponse(data: items.map { WithAffordances($0, mode: affordanceMode) }))
+        case .table:
+            return renderTable(headers: T.tableHeaders, rows: items.map(\.tableRow))
+        case .markdown:
+            return renderMarkdownTable(headers: T.tableHeaders, rows: items.map(\.tableRow))
+        }
     }
 
     /// Agent-first format: {"data": [...]} with affordances merged into each item.
@@ -142,23 +110,8 @@ struct OutputFormatter {
         }
     }
 
-    /// Agent-first format with plugin affordances merged from `AffordanceRegistry`.
-    /// This overload is selected automatically for `Identifiable` models.
-    func formatAgentItems<T: Encodable & AffordanceProviding & Identifiable>(
-        _ items: [T],
-        headers: [String],
-        rowMapper: (T) -> [String],
-        affordanceMode: AffordanceMode = .cli
-    ) throws -> String {
-        switch format {
-        case .json:
-            return try formatJSON(DataResponse(data: items.map { WithPluginAffordances($0, mode: affordanceMode) }))
-        case .table:
-            return renderTable(headers: headers, rows: items.map(rowMapper))
-        case .markdown:
-            return renderMarkdownTable(headers: headers, rows: items.map(rowMapper))
-        }
-    }
+    // Plugin affordances are now merged by the AffordanceProviding protocol itself (OCP).
+    // No need for a separate Identifiable overload — WithAffordances handles everything.
 
     private func formatJSON<T: Encodable>(_ value: T) throws -> String {
         let encoder = JSONEncoder()

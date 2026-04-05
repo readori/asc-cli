@@ -31,7 +31,7 @@ extension AffordanceProviding {
     public var structuredAffordances: [Affordance] { [] }
 
     /// Derives CLI affordances from `structuredAffordances`.
-    /// Models that override `affordances` directly bypass this.
+    /// Models that override `affordances` directly bypass this default.
     public var affordances: [String: String] {
         Dictionary(uniqueKeysWithValues: structuredAffordances.map { ($0.key, $0.cliCommand) })
     }
@@ -42,4 +42,25 @@ extension AffordanceProviding {
     }
 
     public var registryProperties: [String: String] { [:] }
+}
+
+/// Identifiable models automatically merge plugin affordances from the registry.
+/// This is the OCP extension point — plugins register via `AffordanceRegistry`,
+/// and the protocol merges them without the encoder knowing about it.
+extension AffordanceProviding where Self: Identifiable {
+    public var affordances: [String: String] {
+        var base = Dictionary(uniqueKeysWithValues: structuredAffordances.map { ($0.key, $0.cliCommand) })
+        for a in AffordanceRegistry.affordances(for: Self.self, id: "\(id)", properties: registryProperties) {
+            base[a.key] = a.cliCommand
+        }
+        return base
+    }
+
+    public var apiLinks: [String: APILink] {
+        var base = Dictionary(uniqueKeysWithValues: structuredAffordances.map { ($0.key, $0.restLink) })
+        for a in AffordanceRegistry.affordances(for: Self.self, id: "\(id)", properties: registryProperties) {
+            base[a.key] = a.restLink
+        }
+        return base
+    }
 }
