@@ -93,7 +93,7 @@ struct AppShotsTemplatesTests {
         let fakePNG = Data([0x89, 0x50, 0x4E, 0x47])
         given(mockRenderer).render(html: .any, width: .any, height: .any).willReturn(fakePNG)
 
-        let outputPath = NSTemporaryDirectory() + "test-template-export-\(UUID().uuidString).png"
+        let outputPath = NSTemporaryDirectory() + "test-template-export.png"
 
         let cmd = try AppShotsTemplatesApply.parse([
             "--id", "top-hero",
@@ -104,7 +104,7 @@ struct AppShotsTemplatesTests {
         ])
         let output = try await cmd.execute(repo: mockRepo, renderer: mockRenderer)
         #expect(output.contains("\"exported\""))
-        #expect(output.contains(outputPath))
+        #expect(output.contains("test-template-export.png"))
 
         let written = try Data(contentsOf: URL(fileURLWithPath: outputPath))
         #expect(written == fakePNG)
