@@ -10,7 +10,7 @@ import {
 import { authStatusAffordances } from '../domain/affordances.js';
 
 export const DataProvider = {
-  _mode: 'mock', // 'mock' | 'cli' | 'rest'
+  _mode: 'mock', // 'mock' | 'rest'
   _serverUrl: '',
   _onModeChange: null,   // callback: () => void
   _onCommand: null,       // callback: (cmd) => void
@@ -19,39 +19,21 @@ export const DataProvider = {
   _onNotify: null,        // callback: (message, type) => void
 
   async init() {
-    // When loaded from HTTPS, try HTTPS localhost first to avoid mixed-content blocking.
     const isSecure = window.location.protocol === 'https:';
     const isLocalServer = window.location.port === '8420' || window.location.port === '8421';
     const bases = isSecure
       ? ['https://localhost:8421', 'https://127.0.0.1:8421']
       : isLocalServer
-        ? ['']  // Already on the server — same origin
+        ? ['']
         : ['http://localhost:8420', 'http://127.0.0.1:8420'];
 
     for (const base of bases) {
       try {
-        // Try REST API first (preferred)
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 2000);
         const resp = await fetch(`${base}/api/v1`, { signal: controller.signal });
         if (resp.ok) {
           this._mode = 'rest';
-          this._serverUrl = base;
-          return;
-        }
-      } catch {}
-      try {
-        // Fall back to CLI bridge
-        const controller = new AbortController();
-        setTimeout(() => controller.abort(), 2000);
-        const resp = await fetch(`${base}/api/run`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ command: 'asc version' }),
-          signal: controller.signal,
-        });
-        if (resp.ok) {
-          this._mode = 'cli';
           this._serverUrl = base;
           return;
         }
@@ -62,33 +44,20 @@ export const DataProvider = {
 
   setMode(mode) {
     this._mode = mode;
-    const labels = { cli: 'Live CLI', mock: 'Mock Data', rest: 'REST API' };
-    if (this._onNotify) this._onNotify(`Switched to ${labels[mode] || mode} mode`, 'info');
+    if (this._onNotify) this._onNotify(`Switched to ${mode === 'rest' ? 'REST API' : 'Mock Data'} mode`, 'info');
     if (this._onModeChange) this._onModeChange();
-  },
-
-  /// Fetch a CLI command (legacy). Routes to appropriate backend.
-  async fetch(command) {
-    if (this._onCommand) this._onCommand(`asc ${command}`);
-    if (this._mode === 'rest') return this._fetchCLI(command); // REST mode still supports CLI fallback for non-REST commands
-    if (this._mode === 'cli') return this._fetchCLI(command);
-    return this._fetchMock(command);
   },
 
   // MARK: - REST API (HATEOAS)
 
-  /// Follow a HATEOAS link from a server response.
-  /// Usage: `const result = await DataProvider.follow(app._links.listVersions)`
-  async follow(link) {
-    if (!link?.href) return null;
-    const method = link.method || 'GET';
-    const label = `${method} ${link.href}`;
-    if (this._onCommand) this._onCommand(label);
-
-    if (this._mode === 'mock') return this._followMock(link.href);
+  /// Primary data method. Fetches a REST API path.
+  /// Usage: `const result = await DataProvider.get('/api/v1/apps')`
+  async get(path) {
+    if (this._onCommand) this._onCommand(`GET ${path}`);
+    if (this._mode === 'mock') return this._followMock(path);
 
     try {
-      const resp = await fetch(`${this._serverUrl}${link.href}`, { method });
+      const resp = await fetch(`${this._serverUrl}${path}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const result = await resp.json();
       if (this._onOutput) this._onOutput(JSON.stringify(result, null, 2).substring(0, 500));
@@ -99,49 +68,12 @@ export const DataProvider = {
     }
   },
 
-  /// Fetch a REST API path directly.
-  /// Usage: `const result = await DataProvider.get('/api/v1/apps')`
-  async get(path) {
-    return this.follow({ href: path, method: 'GET' });
-  },
-
-  /// Fetch the API root to discover available resources.
-  async apiRoot() {
-    return this.get('/api/v1');
-  },
-
-  // MARK: - CLI bridge
-
-  async _fetchCLI(command) {
-    try {
-      const fullCmd = command.startsWith('asc ') ? command : `asc ${command}`;
-      const resp = await fetch(`${this._serverUrl}/api/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: fullCmd }),
-      });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      if (data.error) {
-        if (this._onError) this._onError(data.error);
-        if (this._onNotify) this._onNotify(`CLI error: ${data.error}`, 'error');
-        return null;
-      }
-      if (data.exit_code !== 0) {
-        if (this._onError) this._onError(data.stderr || `Exit code ${data.exit_code}`);
-        return null;
-      }
-      let result;
-      try { result = JSON.parse(data.stdout); } catch { result = data.stdout; }
-      if (this._onOutput) this._onOutput(JSON.stringify(result, null, 2).substring(0, 500));
-      return result;
-    } catch (e) {
-      if (this._onError) this._onError(e.message);
-      if (this._onNotify) this._onNotify('CLI connection failed — falling back to mock', 'error');
-      this._mode = 'mock';
-      if (this._onModeChange) this._onModeChange();
-      return this._fetchMock(command);
-    }
+  /// Follow a HATEOAS link from a server response.
+  /// Usage: `await DataProvider.follow(app.affordances.listVersions)`
+  async follow(link) {
+    if (!link) return null;
+    if (typeof link === 'object' && link.href) return this.get(link.href);
+    return null;
   },
 
   // MARK: - Mock data
