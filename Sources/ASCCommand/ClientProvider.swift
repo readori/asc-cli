@@ -244,6 +244,10 @@ struct ClientProvider {
         AggregateThemeRepository.shared
     }
 
+    static func makeHTMLRenderer() -> any HTMLRenderer {
+        WebKitHTMLRenderer()
+    }
+
     static func makeAppShotsConfigStorage() -> any AppShotsConfigStorage {
         FileAppShotsConfigStorage()
     }

@@ -106,6 +106,12 @@ struct AppShotsTemplatesGet: AsyncParsableCommand {
 
 // MARK: - Apply
 
+/// Preview output format for apply commands.
+enum PreviewFormat: String, CaseIterable, ExpressibleByArgument {
+    case html
+    case image
+}
+
 struct AppShotsTemplatesApply: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "apply",
@@ -132,33 +138,49 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
     @Option(name: .long, help: "App name")
     var appName: String = "My App"
 
-    @Flag(name: .long, help: "Output self-contained HTML preview with real screenshot")
-    var preview: Bool = false
+    @Option(name: .long, help: "Preview format: html (default) or image (renders to PNG)")
+    var preview: PreviewFormat?
+
+    @Option(name: .long, help: "Output PNG path (for --preview image)")
+    var imageOutput: String?
 
     func run() async throws {
         let repo = ClientProvider.makeTemplateRepository()
-        print(try await execute(repo: repo))
+        if preview == .image {
+            let renderer = ClientProvider.makeHTMLRenderer()
+            print(try await execute(repo: repo, renderer: renderer))
+        } else {
+            print(try await execute(repo: repo))
+        }
     }
 
-    func execute(repo: any TemplateRepository) async throws -> String {
+    func execute(repo: any TemplateRepository, renderer: (any HTMLRenderer)? = nil) async throws -> String {
         guard let template = try await repo.getTemplate(id: id) else {
             throw ValidationError("Template '\(id)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
+        let isPreview = preview != nil
+
         // For preview mode, use just the filename so the HTML works when opened
         // from the same directory as the screenshot
-        let displayFile = preview
+        let displayFile = isPreview
             ? URL(fileURLWithPath: screenshot).lastPathComponent
             : screenshot
 
-        if preview {
+        if isPreview {
             let content = TemplateContent(
                 headline: headline,
                 subtitle: subtitle,
                 tagline: tagline,
                 screenshotFile: displayFile
             )
-            return TemplateHTMLRenderer.renderPage(template, content: content)
+            let html = TemplateHTMLRenderer.renderPage(template, content: content)
+
+            if preview == .image, let renderer {
+                return try await renderToImage(html: html, renderer: renderer)
+            }
+
+            return html
         }
 
         let screen = ScreenDesign(
@@ -175,6 +197,19 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             headers: ["Heading", "Screenshot", "Template", "Complete"],
             rowMapper: { [$0.heading, $0.screenshotFile, $0.template?.name ?? "-", $0.isComplete ? "✓" : "✗"] }
         )
+    }
+
+    private func renderToImage(html: String, renderer: any HTMLRenderer) async throws -> String {
+        let width = 1320
+        let height = 2868
+        let pngData = try await renderer.render(html: html, width: width, height: height)
+        let outputPath = imageOutput ?? ".asc/app-shots/output/screen-0.png"
+        let fileURL = URL(fileURLWithPath: outputPath)
+        try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try pngData.write(to: fileURL)
+        let result: [String: Any] = ["exported": outputPath, "width": width, "height": height, "bytes": pngData.count]
+        let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+        return String(data: data, encoding: .utf8) ?? "{}"
     }
 }
 

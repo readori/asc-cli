@@ -109,13 +109,24 @@ struct AppShotsThemesApply: AsyncParsableCommand {
     @Option(name: .long, help: "Canvas height in pixels (default: 2868)")
     var canvasHeight: Int = 2868
 
+    @Option(name: .long, help: "Preview format: html (default) or image (renders to PNG)")
+    var preview: PreviewFormat?
+
+    @Option(name: .long, help: "Output PNG path (for --preview image)")
+    var imageOutput: String?
+
     func run() async throws {
         let themeRepo = ClientProvider.makeThemeRepository()
         let templateRepo = ClientProvider.makeTemplateRepository()
-        print(try await execute(themeRepo: themeRepo, templateRepo: templateRepo))
+        if preview == .image {
+            let renderer = ClientProvider.makeHTMLRenderer()
+            print(try await execute(themeRepo: themeRepo, templateRepo: templateRepo, renderer: renderer))
+        } else {
+            print(try await execute(themeRepo: themeRepo, templateRepo: templateRepo))
+        }
     }
 
-    func execute(themeRepo: any ThemeRepository, templateRepo: any TemplateRepository) async throws -> String {
+    func execute(themeRepo: any ThemeRepository, templateRepo: any TemplateRepository, renderer: (any HTMLRenderer)? = nil) async throws -> String {
         // Resolve template
         guard let tmpl = try await templateRepo.getTemplate(id: template) else {
             throw ValidationError("Template '\(template)' not found. Run `asc app-shots templates list` to see available templates.")
@@ -137,7 +148,24 @@ struct AppShotsThemesApply: AsyncParsableCommand {
         )
 
         // Wrap in a full HTML page with correct canvas dimensions
-        return Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight)
+        let html = Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight)
+
+        if preview == .image, let renderer {
+            return try await renderToImage(html: html, renderer: renderer)
+        }
+
+        return html
+    }
+
+    private func renderToImage(html: String, renderer: any HTMLRenderer) async throws -> String {
+        let pngData = try await renderer.render(html: html, width: canvasWidth, height: canvasHeight)
+        let outputPath = imageOutput ?? ".asc/app-shots/output/screen-0.png"
+        let fileURL = URL(fileURLWithPath: outputPath)
+        try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try pngData.write(to: fileURL)
+        let result: [String: Any] = ["exported": outputPath, "width": canvasWidth, "height": canvasHeight, "bytes": pngData.count]
+        let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+        return String(data: data, encoding: .utf8) ?? "{}"
     }
 
     static func wrapInPage(_ body: String, width: Int, height: Int) -> String {

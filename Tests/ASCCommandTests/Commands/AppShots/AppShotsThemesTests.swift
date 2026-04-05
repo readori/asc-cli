@@ -113,6 +113,110 @@ struct AppShotsThemesTests {
         #expect(output.contains("<div>themed output</div>"))
     }
 
+    @Test func `apply with preview image renders HTML to PNG and writes file`() async throws {
+        let mockThemeRepo = MockThemeRepository()
+        given(mockThemeRepo).compose(themeId: .value("space"), html: .any, canvasWidth: .any, canvasHeight: .any)
+            .willReturn("<div>themed output</div>")
+
+        let mockTemplateRepo = MockTemplateRepository()
+        given(mockTemplateRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let mockRenderer = MockHTMLRenderer()
+        let fakePNG = Data([0x89, 0x50, 0x4E, 0x47])
+        given(mockRenderer).render(html: .any, width: .any, height: .any).willReturn(fakePNG)
+
+        let outputPath = NSTemporaryDirectory() + "test-export.png"
+
+        let cmd = try AppShotsThemesApply.parse([
+            "--theme", "space",
+            "--template", "top-hero",
+            "--screenshot", "screen.png",
+            "--headline", "Ship Faster",
+            "--preview", "image",
+            "--image-output", outputPath,
+        ])
+        let output = try await cmd.execute(themeRepo: mockThemeRepo, templateRepo: mockTemplateRepo, renderer: mockRenderer)
+        #expect(output.contains("\"exported\""))
+        #expect(output.contains("test-export.png"))
+
+        let written = try Data(contentsOf: URL(fileURLWithPath: outputPath))
+        #expect(written == fakePNG)
+        try? FileManager.default.removeItem(atPath: outputPath)
+    }
+
+    @Test func `apply defaults to html format`() async throws {
+        let mockThemeRepo = MockThemeRepository()
+        given(mockThemeRepo).compose(themeId: .value("space"), html: .any, canvasWidth: .any, canvasHeight: .any)
+            .willReturn("<div>themed</div>")
+
+        let mockTemplateRepo = MockTemplateRepository()
+        given(mockTemplateRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let cmd = try AppShotsThemesApply.parse([
+            "--theme", "space",
+            "--template", "top-hero",
+            "--screenshot", "screen.png",
+        ])
+        let output = try await cmd.execute(themeRepo: mockThemeRepo, templateRepo: mockTemplateRepo)
+        #expect(output.contains("<!DOCTYPE html>"))
+    }
+
+    @Test func `apply with preview image renders HTML to PNG and writes file`() async throws {
+        let mockThemeRepo = MockThemeRepository()
+        given(mockThemeRepo).compose(themeId: .value("space"), html: .any, canvasWidth: .any, canvasHeight: .any)
+            .willReturn("<div>themed output</div>")
+
+        let mockTemplateRepo = MockTemplateRepository()
+        given(mockTemplateRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let mockRenderer = MockHTMLRenderer()
+        let fakePNG = Data([0x89, 0x50, 0x4E, 0x47])
+        given(mockRenderer).render(html: .any, width: .any, height: .any).willReturn(fakePNG)
+
+        let outputPath = NSTemporaryDirectory() + "test-export-\(UUID().uuidString).png"
+
+        let cmd = try AppShotsThemesApply.parse([
+            "--theme", "space",
+            "--template", "top-hero",
+            "--screenshot", "screen.png",
+            "--headline", "Ship Faster",
+            "--preview", "image",
+            "--image-output", outputPath,
+        ])
+        let output = try await cmd.execute(themeRepo: mockThemeRepo, templateRepo: mockTemplateRepo, renderer: mockRenderer)
+        #expect(output.contains("\"exported\""))
+        #expect(output.contains(outputPath))
+
+        let written = try Data(contentsOf: URL(fileURLWithPath: outputPath))
+        #expect(written == fakePNG)
+        try? FileManager.default.removeItem(atPath: outputPath)
+    }
+
+    @Test func `apply defaults to html output when no preview flag`() async throws {
+        let mockThemeRepo = MockThemeRepository()
+        given(mockThemeRepo).compose(themeId: .value("space"), html: .any, canvasWidth: .any, canvasHeight: .any)
+            .willReturn("<div>themed</div>")
+
+        let mockTemplateRepo = MockTemplateRepository()
+        given(mockTemplateRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let cmd = try AppShotsThemesApply.parse([
+            "--theme", "space",
+            "--template", "top-hero",
+            "--screenshot", "screen.png",
+        ])
+        let output = try await cmd.execute(themeRepo: mockThemeRepo, templateRepo: mockTemplateRepo)
+        #expect(output.contains("<!DOCTYPE html>"))
+    }
+
     @Test func `apply fails when template not found`() async throws {
         let mockThemeRepo = MockThemeRepository()
         let mockTemplateRepo = MockTemplateRepository()

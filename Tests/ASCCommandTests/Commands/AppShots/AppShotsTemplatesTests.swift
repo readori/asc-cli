@@ -83,6 +83,51 @@ struct AppShotsTemplatesTests {
         #expect(output.contains("asc app-shots generate"))
     }
 
+    @Test func `apply with preview image renders HTML to PNG and writes file`() async throws {
+        let mockRepo = MockTemplateRepository()
+        given(mockRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let mockRenderer = MockHTMLRenderer()
+        let fakePNG = Data([0x89, 0x50, 0x4E, 0x47])
+        given(mockRenderer).render(html: .any, width: .any, height: .any).willReturn(fakePNG)
+
+        let outputPath = NSTemporaryDirectory() + "test-template-export-\(UUID().uuidString).png"
+
+        let cmd = try AppShotsTemplatesApply.parse([
+            "--id", "top-hero",
+            "--screenshot", "screen-1.png",
+            "--headline", "Ship Faster",
+            "--preview", "image",
+            "--image-output", outputPath,
+        ])
+        let output = try await cmd.execute(repo: mockRepo, renderer: mockRenderer)
+        #expect(output.contains("\"exported\""))
+        #expect(output.contains(outputPath))
+
+        let written = try Data(contentsOf: URL(fileURLWithPath: outputPath))
+        #expect(written == fakePNG)
+        try? FileManager.default.removeItem(atPath: outputPath)
+    }
+
+    @Test func `apply with preview html outputs HTML page`() async throws {
+        let mockRepo = MockTemplateRepository()
+        given(mockRepo).getTemplate(id: .value("top-hero")).willReturn(
+            makeTemplate(id: "top-hero", name: "Top Hero")
+        )
+
+        let cmd = try AppShotsTemplatesApply.parse([
+            "--id", "top-hero",
+            "--screenshot", "screen-1.png",
+            "--headline", "Ship Faster",
+            "--preview", "html",
+        ])
+        let output = try await cmd.execute(repo: mockRepo)
+        #expect(output.contains("<!DOCTYPE html>"))
+        #expect(output.contains("Ship Faster"))
+    }
+
     @Test func `apply returns error when template not found`() async throws {
         let mockRepo = MockTemplateRepository()
         given(mockRepo).getTemplate(id: .value("nope")).willReturn(nil)
