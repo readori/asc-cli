@@ -58,19 +58,18 @@ struct WithPluginAffordances<T: Encodable & AffordanceProviding & Identifiable>:
 
     func encode(to encoder: any Encoder) throws {
         try item.encode(to: encoder)
+        let pluginAffordances = AffordanceRegistry.affordances(for: T.self, id: "\(item.id)", properties: item.registryProperties)
         switch mode {
         case .cli:
             var merged = item.affordances
-            merged.merge(
-                AffordanceRegistry.affordances(for: T.self, id: "\(item.id)", properties: item.registryProperties)
-            ) { _, new in new }
+            for a in pluginAffordances { merged[a.key] = a.cliCommand }
             var container = encoder.container(keyedBy: CLIAffordanceCodingKey.self)
             try container.encode(merged, forKey: .affordances)
         case .rest:
-            let links = item.apiLinks
-            // Plugin affordances are CLI-only for now; REST mode uses model links only
+            var merged = item.apiLinks
+            for a in pluginAffordances { merged[a.key] = a.restLink }
             var container = encoder.container(keyedBy: RESTLinksCodingKey.self)
-            try container.encode(links, forKey: ._links)
+            try container.encode(merged, forKey: ._links)
         }
     }
 

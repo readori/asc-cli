@@ -7,22 +7,21 @@ import Foundation
 /// ```swift
 /// // Plugin registers at startup:
 /// AffordanceRegistry.register(Simulator.self) { id, props in
-///     if props["isBooted"] == "true" {
-///         return ["stream": "asc simulators stream --udid \(id)"]
-///     }
-///     return [:]
+///     guard props["isBooted"] == "true" else { return [] }
+///     return [Affordance(key: "stream", command: "simulators", action: "stream", params: ["udid": id])]
 /// }
 ///
-/// // Domain model merges at output time:
+/// // Merged at output time — renders to both CLI and REST:
 /// AffordanceRegistry.affordances(for: Self.self, id: id, properties: [...])
 /// ```
 public enum AffordanceRegistry {
-    public typealias Provider = @Sendable (String, [String: String]) -> [String: String]
+    public typealias Provider = @Sendable (String, [String: String]) -> [Affordance]
 
     private static let lock = NSLock()
     private static nonisolated(unsafe) var providers: [String: [Provider]] = [:]
 
-    /// Register affordances for a domain model type.
+    /// Register structured affordances for a domain model type.
+    /// Returns `[Affordance]` — renders to both CLI commands and REST `_links`.
     public static func register<T: AffordanceProviding>(_ type: T.Type, _ provider: @escaping Provider) {
         let key = String(describing: type)
         lock.lock()
@@ -38,13 +37,13 @@ public enum AffordanceRegistry {
     }
 
     /// Get plugin affordances for a model instance.
-    public static func affordances<T: AffordanceProviding>(for type: T.Type, id: String, properties: [String: String] = [:]) -> [String: String] {
+    public static func affordances<T: AffordanceProviding>(for type: T.Type, id: String, properties: [String: String] = [:]) -> [Affordance] {
         let key = String(describing: type)
         lock.lock()
         let fns = providers[key] ?? []
         lock.unlock()
-        var result: [String: String] = [:]
-        for fn in fns { result.merge(fn(id, properties)) { _, new in new } }
+        var result: [Affordance] = []
+        for fn in fns { result.append(contentsOf: fn(id, properties)) }
         return result
     }
 }
