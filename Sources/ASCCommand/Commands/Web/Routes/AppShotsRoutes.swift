@@ -51,22 +51,14 @@ enum AppShotsRoutes {
                     return jsonError("Template not found", status: .notFound)
                 }
 
-                // Write screenshot to temp file if base64 provided
-                var screenshotPath = json["screenshotPath"] as? String ?? ""
-                if let b64 = screenshotBase64, let data = Data(base64Encoded: b64) {
-                    let tmpDir = FileManager.default.temporaryDirectory
-                    let tmpFile = tmpDir.appendingPathComponent("blitz-\(UUID().uuidString).png")
-                    try data.write(to: tmpFile)
-                    screenshotPath = tmpFile.path
-                }
-
-                let content = TemplateContent(
-                    headline: headline,
-                    subtitle: subtitle,
-                    screenshotFile: screenshotPath.isEmpty ? "" : URL(fileURLWithPath: screenshotPath).lastPathComponent
-                )
-
                 if previewFormat == "image" {
+                    // Image render: WebKit needs a real file path
+                    var screenshotPath = ""
+                    if let b64 = screenshotBase64, let data = Data(base64Encoded: b64) {
+                        let tmpFile = FileManager.default.temporaryDirectory.appendingPathComponent("blitz-\(UUID().uuidString).png")
+                        try data.write(to: tmpFile)
+                        screenshotPath = tmpFile.path
+                    }
                     let renderer = ClientProvider.makeHTMLRenderer()
                     let fullContent = TemplateContent(
                         headline: headline,
@@ -87,7 +79,13 @@ enum AppShotsRoutes {
                     )
                 }
 
-                // HTML preview
+                // HTML preview: embed screenshot as data URL so iframe can display it
+                let screenshotDataURL = screenshotBase64.map { "data:image/png;base64,\($0)" } ?? ""
+                let content = TemplateContent(
+                    headline: headline,
+                    subtitle: subtitle,
+                    screenshotFile: screenshotDataURL
+                )
                 let html = TemplateHTMLRenderer.renderPage(template, content: content)
                 let result = try JSONSerialization.data(
                     withJSONObject: ["html": html],
@@ -125,19 +123,12 @@ enum AppShotsRoutes {
                     return jsonError("Template not found", status: .notFound)
                 }
 
-                // Write screenshot to temp file if base64 provided
-                var screenshotPath = json["screenshotPath"] as? String ?? ""
-                if let b64 = screenshotBase64, let data = Data(base64Encoded: b64) {
-                    let tmpDir = FileManager.default.temporaryDirectory
-                    let tmpFile = tmpDir.appendingPathComponent("blitz-\(UUID().uuidString).png")
-                    try data.write(to: tmpFile)
-                    screenshotPath = tmpFile.path
-                }
-
+                // Embed screenshot as data URL so themed HTML renders inline
+                let screenshotDataURL = screenshotBase64.map { "data:image/png;base64,\($0)" } ?? ""
                 let content = TemplateContent(
                     headline: headline,
                     subtitle: json["subtitle"] as? String,
-                    screenshotFile: screenshotPath.isEmpty ? "" : URL(fileURLWithPath: screenshotPath).lastPathComponent
+                    screenshotFile: screenshotDataURL
                 )
                 let baseHTML = TemplateHTMLRenderer.renderPage(template, content: content)
                 let themedHTML = try await themeRepo.compose(
