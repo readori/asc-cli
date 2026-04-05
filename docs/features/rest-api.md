@@ -116,7 +116,7 @@ OutputFormatter(.cli)            OutputFormatter(.rest)
 }                                }
 ```
 
-Both call the same Domain repositories. CLI creates repos via `ClientProvider`. REST routes use the same `ClientProvider`.
+Both call the same Domain repositories. CLI creates repos via `ClientProvider`. REST controllers receive injected repos at startup (no per-request construction). Domain models conform to `Presentable` — both ports format output without duplicating headers/rowMapper.
 
 ## Domain Models
 

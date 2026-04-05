@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **`Presentable` protocol** — domain models own their table headers and row values; eliminates `headers:`/`rowMapper:` boilerplate from 37 list commands
+- **REST controllers with DI** — routes rewritten as controller structs (`AppsController`, `CodeSigningController`, etc.) with injected repo dependencies; repos created once at server startup, not per request
+- **No more `Command.parse([])` in REST layer** — controllers call domain repos and operations directly; CLI and REST are equal thin adapters
+- **`AffordanceRegistry` uses structured `Affordance`** — plugin affordances now render to both CLI commands and REST `_links` (previously CLI-only)
+- **`ScreenshotTemplate` domain operations** — `apply(content:)`, `renderFragment(content:)` as rich domain methods; `ThemedPage` value type for page wrapping
+- **`ScreenshotTemplate` Codable includes `previewHTML` and `deviceCount`** — REST consumers get preview data without special handling
+
 ---
 
 ## [0.1.64] - 2026-04-05
