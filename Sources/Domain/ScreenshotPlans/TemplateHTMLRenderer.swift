@@ -13,14 +13,21 @@ public enum TemplateHTMLRenderer {
     nonisolated(unsafe) public static var phoneFrameDataURL: String?
 
     /// Render a complete HTML page (for saving as .html file).
-    public static func renderPage(_ template: ScreenshotTemplate, content: TemplateContent? = nil) -> String {
+    /// When `fillViewport` is true, the preview fills the entire viewport (for image export).
+    public static func renderPage(_ template: ScreenshotTemplate, content: TemplateContent? = nil, fillViewport: Bool = false) -> String {
         let inner = render(template, content: content)
+        let previewStyle = fillViewport
+            ? "width:100%;height:100%;container-type:inline-size"
+            : "width:320px;aspect-ratio:1320/2868;container-type:inline-size"
+        let bodyStyle = fillViewport
+            ? "margin:0;overflow:hidden"
+            : "display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111"
         return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
             "<title>\(template.name)</title>" +
             "<style>*{margin:0;padding:0;box-sizing:border-box}" +
-            "body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111}" +
-            ".preview{width:320px;aspect-ratio:1320/2868;container-type:inline-size}</style>" +
+            "body{\(bodyStyle)}" +
+            ".preview{\(previewStyle)}</style>" +
             "</head><body><div class=\"preview\">\(inner)</div></body></html>"
     }
 
