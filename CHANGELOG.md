@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **REST API with HATEOAS** — `GET /api/v1/apps`, `GET /api/v1/apps/:id`, `GET /api/v1/apps/:id/versions` endpoints that call domain repositories directly (in-process, no subprocess), returning JSON with `_links` for agent navigation
+- **REST API with HATEOAS** — `GET /api/v1` entry point plus 12 resource endpoints (apps, versions, builds, testflight, certificates, bundle-ids, devices, profiles, simulators, plugins, territories) calling domain repositories directly (in-process, no subprocess), returning JSON with `_links` for agent navigation
+- **`APIRoot` model** — HATEOAS entry point at `GET /api/v1` listing all available top-level resources with navigable `_links`
 - **Structured `Affordance` type** — single source of truth for both CLI commands and REST links; models define affordances once, rendered to either format by `OutputFormatter`
 - **`APILink` and `AffordanceMode`** — domain types supporting dual-mode affordance rendering (`.cli` → `"affordances"`, `.rest` → `"_links"`)
-- **`RESTPathResolver`** — resolves CLI command + params into REST API paths using a static route table
+- **`RESTPathResolver`** — resolves CLI command + params into REST API paths using a route table covering 35+ resource types across the full domain hierarchy
 - **HTML-to-PNG export** — `--preview image` option on `asc app-shots templates apply` and `asc app-shots themes apply` renders composed HTML to PNG via WebKit, with `--image-output` for custom output path
 - **`HTMLRenderer` protocol** — `@Mockable` domain protocol for HTML-to-image rendering, implemented by `WebKitHTMLRenderer` using WKWebView snapshot
 

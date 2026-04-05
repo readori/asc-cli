@@ -72,7 +72,7 @@ struct RESTRoutesTests {
     @Test func `simulators list returns JSON with _links`() async throws {
         let mockRepo = MockSimulatorRepository()
         given(mockRepo).listSimulators(filter: .any).willReturn([
-            Simulator(udid: "ABC-123", name: "iPhone 15", state: .booted, runtime: "iOS 17.0"),
+            Simulator(id: "ABC-123", name: "iPhone 15", state: .booted, runtime: "iOS 17.0"),
         ])
         let output = try await RESTHandlers.listSimulators(repo: mockRepo)
         let normalized = output.replacingOccurrences(of: "\\/", with: "/")
