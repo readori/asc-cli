@@ -1,13 +1,15 @@
 # App Shots
 
-Create professional App Store marketing screenshots from raw app screenshots. Two approaches:
+Create professional App Store marketing screenshots from raw app screenshots. Three approaches:
 
-| | **Enhance** | **Compose + Enhance** |
-|---|---|---|
-| **What you do** | Feed a screenshot to Gemini AI | Pick a template, apply it, then enhance with AI |
-| **Command** | `asc app-shots generate` | `templates apply` → `generate` |
-| **AI required** | Yes (Gemini) | Yes (Gemini) |
-| **Control level** | Low — AI decides layout | Medium — you pick the template |
+| | **Enhance** | **Compose + Enhance** | **Theme + Compose** |
+|---|---|---|---|
+| **What you do** | Feed a screenshot to Gemini AI | Pick a template, apply it, then enhance with AI | Pick a template + theme, AI restyles |
+| **Command** | `asc app-shots generate` | `templates apply` → `generate` | `themes apply` → compose bridge |
+| **AI required** | Yes (Gemini) | Yes (Gemini) | Yes (Claude via compose bridge) |
+| **Control level** | Low — AI decides layout | Medium — you pick the template | High — exact layout + themed styling |
+
+See [App Shots Themes](app-shots-themes.md) for the full theme system design.
 
 ---
 
