@@ -13,20 +13,35 @@ struct SingleDataResponse<T: Encodable>: Encodable {
     let data: T
 }
 
-/// Merges affordances into the JSON encoding of any AffordanceProviding + Encodable item.
+/// Merges affordances (CLI mode) or _links (REST mode) into the JSON encoding
+/// of any AffordanceProviding + Encodable item.
 struct WithAffordances<T: Encodable & AffordanceProviding>: Encodable {
     private let item: T
+    private let mode: AffordanceMode
 
-    init(_ item: T) { self.item = item }
+    init(_ item: T, mode: AffordanceMode = .cli) {
+        self.item = item
+        self.mode = mode
+    }
 
     func encode(to encoder: any Encoder) throws {
         try item.encode(to: encoder)
-        var container = encoder.container(keyedBy: AffordanceCodingKey.self)
-        try container.encode(item.affordances, forKey: .affordances)
+        switch mode {
+        case .cli:
+            var container = encoder.container(keyedBy: CLIAffordanceCodingKey.self)
+            try container.encode(item.affordances, forKey: .affordances)
+        case .rest:
+            var container = encoder.container(keyedBy: RESTLinksCodingKey.self)
+            try container.encode(item.apiLinks, forKey: ._links)
+        }
     }
 
-    private enum AffordanceCodingKey: String, CodingKey {
+    private enum CLIAffordanceCodingKey: String, CodingKey {
         case affordances
+    }
+
+    private enum RESTLinksCodingKey: String, CodingKey {
+        case _links
     }
 }
 
@@ -34,21 +49,37 @@ struct WithAffordances<T: Encodable & AffordanceProviding>: Encodable {
 /// Domain models don't need to call `AffordanceRegistry.affordances(for:)` themselves.
 struct WithPluginAffordances<T: Encodable & AffordanceProviding & Identifiable>: Encodable {
     private let item: T
+    private let mode: AffordanceMode
 
-    init(_ item: T) { self.item = item }
+    init(_ item: T, mode: AffordanceMode = .cli) {
+        self.item = item
+        self.mode = mode
+    }
 
     func encode(to encoder: any Encoder) throws {
         try item.encode(to: encoder)
-        var merged = item.affordances
-        merged.merge(
-            AffordanceRegistry.affordances(for: T.self, id: "\(item.id)", properties: item.registryProperties)
-        ) { _, new in new }
-        var container = encoder.container(keyedBy: AffordanceCodingKey.self)
-        try container.encode(merged, forKey: .affordances)
+        switch mode {
+        case .cli:
+            var merged = item.affordances
+            merged.merge(
+                AffordanceRegistry.affordances(for: T.self, id: "\(item.id)", properties: item.registryProperties)
+            ) { _, new in new }
+            var container = encoder.container(keyedBy: CLIAffordanceCodingKey.self)
+            try container.encode(merged, forKey: .affordances)
+        case .rest:
+            var merged = item.apiLinks
+            // Plugin affordances are CLI-only for now; REST mode uses model links only
+            var container = encoder.container(keyedBy: RESTLinksCodingKey.self)
+            try container.encode(merged, forKey: ._links)
+        }
     }
 
-    private enum AffordanceCodingKey: String, CodingKey {
+    private enum CLIAffordanceCodingKey: String, CodingKey {
         case affordances
+    }
+
+    private enum RESTLinksCodingKey: String, CodingKey {
+        case _links
     }
 }
 
@@ -89,11 +120,12 @@ struct OutputFormatter {
     func formatAgentItems<T: Encodable & AffordanceProviding>(
         _ items: [T],
         headers: [String],
-        rowMapper: (T) -> [String]
+        rowMapper: (T) -> [String],
+        affordanceMode: AffordanceMode = .cli
     ) throws -> String {
         switch format {
         case .json:
-            return try formatJSON(DataResponse(data: items.map(WithAffordances.init)))
+            return try formatJSON(DataResponse(data: items.map { WithAffordances($0, mode: affordanceMode) }))
         case .table:
             return renderTable(headers: headers, rows: items.map(rowMapper))
         case .markdown:
@@ -106,11 +138,12 @@ struct OutputFormatter {
     func formatAgentItems<T: Encodable & AffordanceProviding & Identifiable>(
         _ items: [T],
         headers: [String],
-        rowMapper: (T) -> [String]
+        rowMapper: (T) -> [String],
+        affordanceMode: AffordanceMode = .cli
     ) throws -> String {
         switch format {
         case .json:
-            return try formatJSON(DataResponse(data: items.map(WithPluginAffordances.init)))
+            return try formatJSON(DataResponse(data: items.map { WithPluginAffordances($0, mode: affordanceMode) }))
         case .table:
             return renderTable(headers: headers, rows: items.map(rowMapper))
         case .markdown:

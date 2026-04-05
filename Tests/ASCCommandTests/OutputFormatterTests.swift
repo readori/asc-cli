@@ -149,4 +149,52 @@ struct OutputFormatterTests {
         #expect(output.contains("| ID | Name |"))
         #expect(output.contains("| 1 | My App |"))
     }
+
+    // MARK: - REST mode (HATEOAS _links)
+
+    @Test
+    func `formatAgentItems in rest mode renders _links instead of affordances`() throws {
+        let formatter = OutputFormatter(format: .json, pretty: true)
+        let apps = [App(id: "1", name: "Test App", bundleId: "com.test")]
+        let output = try formatter.formatAgentItems(
+            apps,
+            headers: ["ID", "Name"],
+            rowMapper: { [$0.id, $0.name] },
+            affordanceMode: .rest
+        )
+        #expect(output.contains("\"_links\""))
+        #expect(output.contains("\"href\""))
+        #expect(output.contains("\"method\""))
+        #expect(!output.contains("\"affordances\""))
+    }
+
+    @Test
+    func `formatAgentItems rest mode shows correct REST hrefs`() throws {
+        let formatter = OutputFormatter(format: .json, pretty: true)
+        let apps = [App(id: "42", name: "MyApp", bundleId: "com.test")]
+        let output = try formatter.formatAgentItems(
+            apps,
+            headers: ["ID", "Name"],
+            rowMapper: { [$0.id, $0.name] },
+            affordanceMode: .rest
+        )
+        // JSON may escape slashes as \/ so check for both forms
+        let normalized = output.replacingOccurrences(of: "\\/", with: "/")
+        #expect(normalized.contains("/api/v1/apps/42/versions"))
+        #expect(normalized.contains("/api/v1/apps/42/reviews"))
+        #expect(normalized.contains("/api/v1/apps/42/app-infos"))
+    }
+
+    @Test
+    func `formatAgentItems defaults to cli mode`() throws {
+        let formatter = OutputFormatter(format: .json, pretty: true)
+        let apps = [App(id: "1", name: "Test", bundleId: "com.test")]
+        let output = try formatter.formatAgentItems(
+            apps,
+            headers: ["ID", "Name"],
+            rowMapper: { [$0.id, $0.name] }
+        )
+        #expect(output.contains("\"affordances\""))
+        #expect(!output.contains("\"_links\""))
+    }
 }

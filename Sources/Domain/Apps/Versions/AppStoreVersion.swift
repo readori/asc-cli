@@ -67,17 +67,17 @@ extension AppStoreVersion: Codable {
 }
 
 extension AppStoreVersion: AffordanceProviding {
-    public var affordances: [String: String] {
-        var cmds: [String: String] = [
-            "listLocalizations": "asc version-localizations list --version-id \(id)",
-            "listVersions": "asc versions list --app-id \(appId)",
-            "checkReadiness": "asc versions check-readiness --version-id \(id)",
-            "getReviewDetail": "asc version-review-detail get --version-id \(id)",
+    public var structuredAffordances: [Affordance] {
+        var items: [Affordance] = [
+            Affordance(key: "listLocalizations", command: "version-localizations", action: "list", params: ["version-id": id]),
+            Affordance(key: "listVersions", command: "versions", action: "list", params: ["app-id": appId]),
+            Affordance(key: "checkReadiness", command: "versions", action: "check-readiness", params: ["version-id": id]),
+            Affordance(key: "getReviewDetail", command: "version-review-detail", action: "get", params: ["version-id": id]),
         ]
         if isEditable {
-            cmds["submitForReview"] = "asc versions submit --version-id \(id)"
+            items.append(Affordance(key: "submitForReview", command: "versions", action: "submit", params: ["version-id": id]))
         }
-        return cmds
+        return items
     }
 }
 

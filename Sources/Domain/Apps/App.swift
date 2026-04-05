@@ -25,11 +25,11 @@ public struct App: Sendable, Codable, Equatable, Identifiable {
 }
 
 extension App: AffordanceProviding {
-    public var affordances: [String: String] {
+    public var structuredAffordances: [Affordance] {
         [
-            "listVersions": "asc versions list --app-id \(id)",
-            "listAppInfos": "asc app-infos list --app-id \(id)",
-            "listReviews": "asc reviews list --app-id \(id)",
+            Affordance(key: "listVersions", command: "versions", action: "list", params: ["app-id": id]),
+            Affordance(key: "listAppInfos", command: "app-infos", action: "list", params: ["app-id": id]),
+            Affordance(key: "listReviews", command: "reviews", action: "list", params: ["app-id": id]),
         ]
     }
 
