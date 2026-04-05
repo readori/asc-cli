@@ -67,10 +67,10 @@ struct WithPluginAffordances<T: Encodable & AffordanceProviding & Identifiable>:
             var container = encoder.container(keyedBy: CLIAffordanceCodingKey.self)
             try container.encode(merged, forKey: .affordances)
         case .rest:
-            var merged = item.apiLinks
+            let links = item.apiLinks
             // Plugin affordances are CLI-only for now; REST mode uses model links only
             var container = encoder.container(keyedBy: RESTLinksCodingKey.self)
-            try container.encode(merged, forKey: ._links)
+            try container.encode(links, forKey: ._links)
         }
     }
 

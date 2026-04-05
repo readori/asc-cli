@@ -307,4 +307,30 @@ struct AffordanceTests {
         let a = Affordance(key: "listProducts", command: "xcode-cloud", action: "list", params: ["app-id": "1"])
         #expect(a.restLink.href == "/api/v1/apps/1/xcode-cloud")
     }
+
+    // MARK: - RESTPathResolver composability
+
+    @Test func `custom route registered at runtime resolves correctly`() {
+        RESTPathResolver.registerRoute(
+            command: "custom-widgets",
+            parentParam: "dashboard-id",
+            parentSegment: "dashboards",
+            segment: "widgets"
+        )
+        let a = Affordance(key: "listWidgets", command: "custom-widgets", action: "list", params: ["dashboard-id": "d-1"])
+        #expect(a.restLink.href == "/api/v1/dashboards/d-1/widgets")
+
+        // Clean up
+        RESTPathResolver.removeRoute(command: "custom-widgets")
+    }
+
+    @Test func `custom resource registered at runtime resolves for get`() {
+        // singularize("custom-widgets") → "custom-widget" → param "custom-widget-id"
+        RESTPathResolver.registerResource(param: "custom-widget-id", segment: "custom-widgets")
+        let a = Affordance(key: "getWidget", command: "custom-widgets", action: "get", params: ["custom-widget-id": "w-1"])
+        #expect(a.restLink.href == "/api/v1/custom-widgets/w-1")
+
+        // Clean up
+        RESTPathResolver.removeResource(param: "custom-widget-id")
+    }
 }
