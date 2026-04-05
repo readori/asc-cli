@@ -142,10 +142,16 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             throw ValidationError("Template '\(id)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
+        // For preview mode, use just the filename so the HTML works when opened
+        // from the same directory as the screenshot
+        let displayFile = preview
+            ? URL(fileURLWithPath: screenshot).lastPathComponent
+            : screenshot
+
         let screen = ScreenDesign(
             index: 0,
             template: template,
-            screenshotFile: screenshot,
+            screenshotFile: displayFile,
             heading: headline,
             subheading: subtitle ?? ""
         )

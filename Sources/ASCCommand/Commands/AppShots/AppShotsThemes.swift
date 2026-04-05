@@ -118,8 +118,11 @@ struct AppShotsThemesApply: AsyncParsableCommand {
             throw ValidationError("Template '\(template)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
+        // Use just the filename — HTML lives alongside screenshots
+        let filename = URL(fileURLWithPath: screenshot).lastPathComponent
+
         // Step 1: Render deterministic HTML from template
-        let content = TemplateContent(headline: headline, subtitle: subtitle, screenshotFile: screenshot)
+        let content = TemplateContent(headline: headline, subtitle: subtitle, screenshotFile: filename)
         let baseHTML = TemplateHTMLRenderer.render(tmpl, content: content)
 
         // Step 2: Compose with theme via provider's AI backend
@@ -130,6 +133,19 @@ struct AppShotsThemesApply: AsyncParsableCommand {
             canvasHeight: canvasHeight
         )
 
-        return themedHTML
+        // Wrap in a full HTML page with correct canvas dimensions
+        return Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight)
+    }
+
+    static func wrapInPage(_ body: String, width: Int, height: Int) -> String {
+        """
+        <!DOCTYPE html><html><head><meta charset="utf-8">\
+        <meta name="viewport" content="width=device-width,initial-scale=1">\
+        <title>Themed Screenshot</title>\
+        <style>*{margin:0;padding:0;box-sizing:border-box}\
+        body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111}\
+        .preview{width:320px;aspect-ratio:\(width)/\(height);container-type:inline-size}</style>\
+        </head><body><div class="preview">\(body)</div></body></html>
+        """
     }
 }
