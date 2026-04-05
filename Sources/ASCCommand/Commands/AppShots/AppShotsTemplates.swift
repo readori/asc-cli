@@ -174,13 +174,13 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
                 tagline: tagline,
                 screenshotFile: displayFile
             )
-            let html = TemplateHTMLRenderer.renderPage(template, content: content)
 
             if preview == .image, let renderer {
+                let html = TemplateHTMLRenderer.renderPage(template, content: content, fillViewport: true)
                 return try await renderToImage(html: html, renderer: renderer)
             }
 
-            return html
+            return TemplateHTMLRenderer.renderPage(template, content: content)
         }
 
         let screen = ScreenDesign(

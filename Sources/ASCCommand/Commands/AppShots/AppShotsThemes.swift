@@ -147,14 +147,14 @@ struct AppShotsThemesApply: AsyncParsableCommand {
             canvasHeight: canvasHeight
         )
 
-        // Wrap in a full HTML page with correct canvas dimensions
-        let html = Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight)
-
         if preview == .image, let renderer {
+            // For image export, preview fills the full viewport
+            let html = Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight, fillViewport: true)
             return try await renderToImage(html: html, renderer: renderer)
         }
 
-        return html
+        // For HTML output, preview is 320px centered (cqi units scale)
+        return Self.wrapInPage(themedHTML, width: canvasWidth, height: canvasHeight)
     }
 
     private func renderToImage(html: String, renderer: any HTMLRenderer) async throws -> String {
@@ -168,14 +168,20 @@ struct AppShotsThemesApply: AsyncParsableCommand {
         return String(data: data, encoding: .utf8) ?? "{}"
     }
 
-    static func wrapInPage(_ body: String, width: Int, height: Int) -> String {
-        """
+    static func wrapInPage(_ body: String, width: Int, height: Int, fillViewport: Bool = false) -> String {
+        let previewStyle = fillViewport
+            ? "width:100%;height:100%;container-type:inline-size"
+            : "width:320px;aspect-ratio:\(width)/\(height);container-type:inline-size"
+        let bodyStyle = fillViewport
+            ? "margin:0;overflow:hidden"
+            : "display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111"
+        return """
         <!DOCTYPE html><html><head><meta charset="utf-8">\
         <meta name="viewport" content="width=device-width,initial-scale=1">\
         <title>Themed Screenshot</title>\
         <style>*{margin:0;padding:0;box-sizing:border-box}\
-        body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111}\
-        .preview{width:320px;aspect-ratio:\(width)/\(height);container-type:inline-size}</style>\
+        body{\(bodyStyle)}\
+        .preview{\(previewStyle)}</style>\
         </head><body><div class="preview">\(body)</div></body></html>
         """
     }
