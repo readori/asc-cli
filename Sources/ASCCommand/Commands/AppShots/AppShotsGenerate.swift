@@ -17,125 +17,180 @@ struct AppShotsGenerate: AsyncParsableCommand {
     @Option(name: .long, help: "Gemini API key (falls back to GEMINI_API_KEY env var)")
     var geminiApiKey: String?
 
-    @Option(name: .long, help: "Gemini image generation model")
-    var model: String = "gemini-2.0-flash-exp"
+    @Option(name: .long, help: "Gemini model")
+    var model: String = "gemini-3.1-flash-image-preview"
 
-    @Option(name: .long, help: "Output directory (default: .asc/app-shots/output)")
+    @Option(name: .long, help: "Output directory")
     var outputDir: String = ".asc/app-shots/output"
 
     @Option(name: .long, help: "Style reference image — Gemini replicates its visual style")
     var styleReference: String?
 
-    @Option(name: .long, help: "Custom enhancement prompt — describe what to change")
+    @Option(name: .long, help: "Custom enhancement prompt")
     var prompt: String?
 
     func run() async throws {
         let configStorage = FileAppShotsConfigStorage()
         let apiKey = try resolveGeminiApiKey(geminiApiKey, configStorage: configStorage)
-        let repo = ClientProvider.makeScreenshotGenerationRepository(apiKey: apiKey, model: model)
-        print(try await execute(repo: repo))
+        print(try await execute(apiKey: apiKey))
     }
 
-    func execute(repo: any ScreenshotGenerationRepository) async throws -> String {
-        // Validate input file
+    func execute(apiKey: String) async throws -> String {
+        // Read input
         let fileURL = URL(fileURLWithPath: file)
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+        guard let imageData = FileManager.default.contents(atPath: fileURL.path) else {
             throw ValidationError("File not found: \(file)")
         }
 
-        // Style reference
-        let styleRefURL: URL? = try {
+        // Read style reference
+        let styleRefData: Data? = try {
             guard let path = styleReference, !path.isEmpty else { return nil }
-            let url = URL(fileURLWithPath: path)
-            guard FileManager.default.fileExists(atPath: url.path) else {
+            guard let data = FileManager.default.contents(atPath: path) else {
                 throw ValidationError("Style reference not found: \(path)")
             }
-            return url
+            return data
         }()
 
-        // Build the enhancement prompt
-        let enhancePrompt = buildPrompt(hasStyleRef: styleRefURL != nil)
+        // Build prompt
+        let enhancePrompt = buildPrompt(hasStyleRef: styleRefData != nil)
 
-        // Build a minimal ScreenshotDesign for the repository
-        let design = ScreenshotDesign(
-            appId: "", appName: "App",
-            tagline: enhancePrompt,
-            tone: .professional,
-            colors: ScreenColors(primary: "#000000", accent: "#4A90E2", text: "#FFFFFF", subtext: "#94A3B8"),
-            screens: [
-                ScreenDesign(
-                    index: 0, screenshotFile: file,
-                    heading: "", subheading: "",
-                    layoutMode: .center, visualDirection: "",
-                    imagePrompt: enhancePrompt
-                )
-            ]
-        )
-
-        // Create output directory
-        let outputDirURL = URL(fileURLWithPath: outputDir)
-        try FileManager.default.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
-
-        // Generate
-        let images = try await repo.generateImages(
-            plan: design, screenshotURLs: [fileURL], styleReferenceURL: styleRefURL
+        // Call Gemini directly
+        let resultData = try await callGemini(
+            apiKey: apiKey,
+            prompt: enhancePrompt,
+            imageData: imageData,
+            styleRefData: styleRefData
         )
 
         // Write output
-        var entries: [(index: Int, path: String)] = []
-        for (index, data) in images.sorted(by: { $0.key < $1.key }) {
-            let fileName = "screen-\(index).png"
-            let fileURL = outputDirURL.appendingPathComponent(fileName)
-            try data.write(to: fileURL)
-            entries.append((index: index, path: fileURL.path))
+        let outputDirURL = URL(fileURLWithPath: outputDir)
+        try FileManager.default.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
+        let outputPath = outputDirURL.appendingPathComponent("screen-0.png")
+        try resultData.write(to: outputPath)
+
+        return formatOutput(path: outputPath.path)
+    }
+
+    // MARK: - Gemini
+
+    private func callGemini(
+        apiKey: String,
+        prompt: String,
+        imageData: Data,
+        styleRefData: Data?
+    ) async throws -> Data {
+        let base = "https://generativelanguage.googleapis.com/v1beta"
+        let url = URL(string: "\(base)/models/\(model):generateContent?key=\(apiKey)")!
+
+        // Build parts: [style ref image?] [screenshot image] [prompt text]
+        var parts: [[String: Any]] = []
+
+        if let refData = styleRefData {
+            parts.append([
+                "inlineData": [
+                    "mimeType": "image/png",
+                    "data": refData.base64EncodedString()
+                ]
+            ])
         }
 
-        return formatOutput(entries: entries)
+        parts.append([
+            "inlineData": [
+                "mimeType": "image/png",
+                "data": imageData.base64EncodedString()
+            ]
+        ])
+
+        parts.append(["text": prompt])
+
+        let body: [String: Any] = [
+            "contents": [["parts": parts]],
+            "generationConfig": [
+                "responseModalities": ["TEXT", "IMAGE"],
+                "temperature": 1.0,
+            ]
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ValidationError("Invalid response from Gemini")
+        }
+        guard httpResponse.statusCode == 200 else {
+            let errorText = String(data: data, encoding: .utf8) ?? "Unknown error"
+            throw ValidationError("Gemini API error \(httpResponse.statusCode): \(errorText)")
+        }
+
+        // Parse response — extract base64 image from candidates
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let candidates = json["candidates"] as? [[String: Any]],
+              let content = candidates.first?["content"] as? [String: Any],
+              let responseParts = content["parts"] as? [[String: Any]] else {
+            throw ValidationError("Failed to parse Gemini response")
+        }
+
+        for part in responseParts {
+            if let inlineData = part["inlineData"] as? [String: Any],
+               let b64 = inlineData["data"] as? String,
+               let imageData = Data(base64Encoded: b64) {
+                return imageData
+            }
+        }
+
+        throw ValidationError("No image in Gemini response")
     }
 
     // MARK: - Prompt
 
     private func buildPrompt(hasStyleRef: Bool) -> String {
-        // Custom prompt takes priority
         if let custom = prompt, !custom.isEmpty {
             return custom
         }
 
-        // Style transfer mode
         if hasStyleRef {
             return """
-            You are enhancing an App Store screenshot to match the visual style of a reference image.
+            Enhance this App Store screenshot to match the visual style of the reference image.
 
-            STYLE REFERENCE (first image):
-            Match its visual style EXACTLY: same device frame rendering, same text treatment, same background style, same level of polish. This defines HOW the screenshot should look.
+            FIRST image = style reference. Match its device frame, text treatment, background, polish level.
+            SECOND image = screenshot to enhance. Keep its layout, text, and content exactly.
 
-            SCREENSHOT (second image):
-            This is the composed screenshot to enhance. Keep its layout, text, and content.
-
-            REQUIREMENTS:
-            - The device frame MUST be a photorealistic iPhone mockup — sleek, with accurate proportions, reflections, and subtle shadows
-            - Match the reference's background treatment, text rendering, and overall aesthetic
-            - Keep the screenshot's content and layout unchanged
-            - Professional, high-budget App Store quality
-            - No watermarks, no extra text, no app store UI chrome
+            Requirements:
+            - Photorealistic iPhone mockup with reflections and shadows
+            - Match the reference's background, text rendering, and aesthetic
+            - Keep all existing text and layout unchanged
+            - Professional App Store quality
+            - No watermarks, no extra text
             """
         }
 
-        // Default: auto-enhance
         return """
-        Transform this composed App Store screenshot into a polished, professional marketing image that makes someone tap Download.
+        You are a professional App Store screenshot designer. Analyze this image and enhance it into a high-converting marketing screenshot.
 
-        KEEP EXACTLY AS-IS:
-        - All text (wording, position, approximate size)
+        FIRST — analyze what's on screen:
+        - What app is this? What does it do?
+        - What's the most compelling feature visible?
+        - What headline text exists (if any)?
+        - What's the dominant color scheme?
+
+        THEN — enhance following these rules:
+
+        KEEP EXACTLY:
         - The app screenshot content shown on the device
-        - The overall layout and composition
+        - The overall layout (text position relative to device)
+        - Any existing headline/subtitle text wording
 
-        ENHANCE AND POLISH:
-        - Replace any flat device frame with a photorealistic iPhone 15 Pro mockup — sleek, modern, with accurate proportions, subtle reflections and shadows. The phone should look like a real device.
-        - If there is an obvious, compelling UI panel on the app screen, make it "break out" from the device frame — scale it up so it extends beyond both left and right edges of the phone, overlapping the bezel. Add a soft drop shadow beneath for depth. Only do this if a panel clearly reinforces the message. A clean screenshot with no breakout is better than a forced one.
-        - Optionally add 1-2 small supporting elements (contextual icons, subtle badges) that reinforce the message — but only if they add value. Less is more.
-        - Ensure text is crisp, bold, and highly readable
-        - The background should be clean and bold — no glows, gradients, radial patterns, or noise
+        ENHANCE:
+        - Device frame: replace with a photorealistic iPhone 15 Pro mockup — sleek, with accurate proportions, reflections, and subtle shadows. The phone should look like a real physical device.
+        - Breakout element: find the most compelling UI panel on the app screen and make it "break out" from the device frame — scale it up significantly so it extends beyond BOTH left and right edges of the phone, overlapping the bezel. Add a soft drop shadow beneath it to create depth. The panel must stay at the same vertical position as on screen — do NOT rotate it.
+        - Headline text: if existing text doesn't match the app, replace it with a strong 2-4 word ACTION VERB headline (e.g. "TRACK WEATHER", "MANAGE YOUR APPS") in large bold white uppercase. Add a subtitle in smaller italic text below.
+        - Background: use a clean gradient that complements the app's color scheme. Dark apps get dark backgrounds (deep navy/black). Light apps get light backgrounds. No glows, noise, or radial patterns.
+        - Supporting elements: add 1-2 small contextual elements (badges, stats, icons) floating near the device that reinforce the app's value. These should feel natural, not forced.
+        - Text must be crisp, bold, and readable at thumbnail size
 
         The result should look like it was designed by a professional App Store screenshot agency — polished, high-converting, visually striking. No watermarks, no extra text, no app store UI chrome.
         """
@@ -143,27 +198,17 @@ struct AppShotsGenerate: AsyncParsableCommand {
 
     // MARK: - Output
 
-    private func formatOutput(entries: [(index: Int, path: String)]) -> String {
+    private func formatOutput(path: String) -> String {
         switch globals.outputFormat {
         case .table:
-            var lines = ["| Screen | File |", "|--------|------|"]
-            for entry in entries {
-                lines.append("| \(entry.index)      | \(entry.path) |")
-            }
-            return lines.joined(separator: "\n")
+            return "| File |\n|------|\n| \(path) |"
         case .markdown:
-            var lines = ["## Generated Screenshots", ""]
-            for entry in entries {
-                lines.append("- Screen \(entry.index): `\(entry.path)`")
-            }
-            return lines.joined(separator: "\n")
+            return "- Generated: `\(path)`"
         default:
-            let objects = entries.map { "{\"screenIndex\":\($0.index),\"file\":\"\($0.path)\"}" }
-            let body = objects.joined(separator: globals.pretty ? ",\n  " : ",")
             if globals.pretty {
-                return "{\n  \"generated\" : [\n  \(body)\n  ]\n}"
+                return "{\n  \"generated\" : \"\(path)\"\n}"
             } else {
-                return "{\"generated\":[\(body)]}"
+                return "{\"generated\":\"\(path)\"}"
             }
         }
     }

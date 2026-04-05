@@ -156,6 +156,47 @@ public enum TextRole: String, Sendable, Equatable, Codable {
     case tagline
 }
 
+/// Background style for a slide or template.
+public enum SlideBackground: Sendable, Equatable {
+    case solid(String)
+    case gradient(from: String, to: String, angle: Int)
+}
+
+extension SlideBackground: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case type, color, from, to, angle
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try c.decode(String.self, forKey: .type)
+        switch type {
+        case "gradient":
+            let from = try c.decode(String.self, forKey: .from)
+            let to = try c.decode(String.self, forKey: .to)
+            let angle = try c.decodeIfPresent(Int.self, forKey: .angle) ?? 180
+            self = .gradient(from: from, to: to, angle: angle)
+        default:
+            let color = try c.decode(String.self, forKey: .color)
+            self = .solid(color)
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .solid(let color):
+            try c.encode("solid", forKey: .type)
+            try c.encode(color, forKey: .color)
+        case .gradient(let from, let to, let angle):
+            try c.encode("gradient", forKey: .type)
+            try c.encode(from, forKey: .from)
+            try c.encode(to, forKey: .to)
+            try c.encode(angle, forKey: .angle)
+        }
+    }
+}
+
 /// A device slot in a template — defines where a screenshot device appears.
 public struct TemplateDeviceSlot: Sendable, Equatable, Codable {
     /// Center X position (0–1).

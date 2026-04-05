@@ -236,10 +236,6 @@ struct ClientProvider {
         ClientFactory().makePluginRepository()
     }
 
-    static func makeScreenshotGenerationRepository(apiKey: String, model: String = "gemini-3.1-flash-image-preview") -> any ScreenshotGenerationRepository {
-        GeminiScreenshotGenerationRepository(apiKey: apiKey, model: model)
-    }
-
     static func makeTemplateRepository() -> AggregateTemplateRepository {
         AggregateTemplateRepository.shared
     }
