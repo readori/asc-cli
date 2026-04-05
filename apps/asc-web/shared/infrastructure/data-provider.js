@@ -252,11 +252,20 @@ export const DataProvider = {
       const appId = path.split('/')[4];
       return this._fetchMock(`reviews list --app-id ${appId}`);
     }
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/iap$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`iap list --app-id ${appId}`);
+    }
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/subscription-groups$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`subscription-groups list --app-id ${appId}`);
+    }
     if (path === '/api/v1/certificates') return this._fetchMock('certificates list');
     if (path === '/api/v1/bundle-ids') return this._fetchMock('bundle-ids list');
     if (path === '/api/v1/devices') return this._fetchMock('devices list');
     if (path === '/api/v1/profiles') return this._fetchMock('profiles list');
     if (path === '/api/v1/plugins') return this._fetchMock('plugins list');
+    if (path === '/api/v1/plugins/market') return this._fetchMock('plugins market list');
     return { data: [] };
   },
 };
