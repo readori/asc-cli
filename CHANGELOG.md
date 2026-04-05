@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.64] - 2026-04-05
+
 ### Added
 - **REST API with HATEOAS** — `GET /api/v1` entry point plus 12 resource endpoints (apps, versions, builds, testflight, certificates, bundle-ids, devices, profiles, simulators, plugins, territories) calling domain repositories directly (in-process, no subprocess), returning JSON with `_links` for agent navigation
 - **`APIRoot` model** — HATEOAS entry point at `GET /api/v1` listing all available top-level resources with navigable `_links`
@@ -622,7 +626,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.63...HEAD
+[Unreleased]: https://github.com/tddworks/asc-cli/compare/v0.1.64...HEAD
+[0.1.64]: https://github.com/tddworks/asc-cli/compare/v0.1.63...v0.1.64
 [0.1.63]: https://github.com/tddworks/asc-cli/compare/v0.1.62...v0.1.63
 [0.1.62]: https://github.com/tddworks/asc-cli/compare/v0.1.61...v0.1.62
 [0.1.61]: https://github.com/tddworks/asc-cli/compare/v0.1.60...v0.1.61
