@@ -1,4 +1,4 @@
-// Infrastructure: Abstraction layer for swapping mock <-> real CLI
+// Infrastructure: Abstraction layer for swapping mock <-> CLI <-> REST API
 // Decoupled from presentation — uses callback hooks for logging/notifications
 import { MockDataProvider } from './mock-data.js';
 import {
@@ -10,7 +10,7 @@ import {
 import { authStatusAffordances } from '../domain/affordances.js';
 
 export const DataProvider = {
-  _mode: 'mock', // 'mock' | 'cli'
+  _mode: 'mock', // 'mock' | 'cli' | 'rest'
   _serverUrl: '',
   _onModeChange: null,   // callback: () => void
   _onCommand: null,       // callback: (cmd) => void
@@ -30,6 +30,18 @@ export const DataProvider = {
 
     for (const base of bases) {
       try {
+        // Try REST API first (preferred)
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), 2000);
+        const resp = await fetch(`${base}/api/v1`, { signal: controller.signal });
+        if (resp.ok) {
+          this._mode = 'rest';
+          this._serverUrl = base;
+          return;
+        }
+      } catch {}
+      try {
+        // Fall back to CLI bridge
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 2000);
         const resp = await fetch(`${base}/api/run`, {
@@ -50,15 +62,55 @@ export const DataProvider = {
 
   setMode(mode) {
     this._mode = mode;
-    if (this._onNotify) this._onNotify(`Switched to ${mode === 'cli' ? 'Live CLI' : 'Mock Data'} mode`, 'info');
+    const labels = { cli: 'Live CLI', mock: 'Mock Data', rest: 'REST API' };
+    if (this._onNotify) this._onNotify(`Switched to ${labels[mode] || mode} mode`, 'info');
     if (this._onModeChange) this._onModeChange();
   },
 
+  /// Fetch a CLI command (legacy). Routes to appropriate backend.
   async fetch(command) {
     if (this._onCommand) this._onCommand(`asc ${command}`);
+    if (this._mode === 'rest') return this._fetchCLI(command); // REST mode still supports CLI fallback for non-REST commands
     if (this._mode === 'cli') return this._fetchCLI(command);
     return this._fetchMock(command);
   },
+
+  // MARK: - REST API (HATEOAS)
+
+  /// Follow a HATEOAS link from a server response.
+  /// Usage: `const result = await DataProvider.follow(app._links.listVersions)`
+  async follow(link) {
+    if (!link?.href) return null;
+    const method = link.method || 'GET';
+    const label = `${method} ${link.href}`;
+    if (this._onCommand) this._onCommand(label);
+
+    if (this._mode === 'mock') return this._followMock(link.href);
+
+    try {
+      const resp = await fetch(`${this._serverUrl}${link.href}`, { method });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const result = await resp.json();
+      if (this._onOutput) this._onOutput(JSON.stringify(result, null, 2).substring(0, 500));
+      return result;
+    } catch (e) {
+      if (this._onError) this._onError(e.message);
+      return null;
+    }
+  },
+
+  /// Fetch a REST API path directly.
+  /// Usage: `const result = await DataProvider.get('/api/v1/apps')`
+  async get(path) {
+    return this.follow({ href: path, method: 'GET' });
+  },
+
+  /// Fetch the API root to discover available resources.
+  async apiRoot() {
+    return this.get('/api/v1');
+  },
+
+  // MARK: - CLI bridge
 
   async _fetchCLI(command) {
     try {
@@ -91,6 +143,8 @@ export const DataProvider = {
       return this._fetchMock(command);
     }
   },
+
+  // MARK: - Mock data
 
   _fetchMock(command) {
     const args = command.split(/\s+/);
@@ -218,5 +272,32 @@ export const DataProvider = {
 
     if (this._onOutput) this._onOutput(JSON.stringify(result, null, 2).substring(0, 600));
     return result;
+  },
+
+  /// Mock handler for REST path-based requests.
+  _followMock(path) {
+    if (path === '/api/v1/apps') return this._fetchMock('apps list');
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/versions$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`versions list --app-id ${appId}`);
+    }
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/builds$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`builds list --app-id ${appId}`);
+    }
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/testflight$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`testflight groups list --app-id ${appId}`);
+    }
+    if (path.match(/^\/api\/v1\/apps\/[^/]+\/reviews$/)) {
+      const appId = path.split('/')[4];
+      return this._fetchMock(`reviews list --app-id ${appId}`);
+    }
+    if (path === '/api/v1/certificates') return this._fetchMock('certificates list');
+    if (path === '/api/v1/bundle-ids') return this._fetchMock('bundle-ids list');
+    if (path === '/api/v1/devices') return this._fetchMock('devices list');
+    if (path === '/api/v1/profiles') return this._fetchMock('profiles list');
+    if (path === '/api/v1/plugins') return this._fetchMock('plugins list');
+    return { data: [] };
   },
 };
