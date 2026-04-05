@@ -2,6 +2,6 @@
   "name": "discord-notify",
   "version": "1.0.0",
   "description": "Send Discord notifications for App Store Connect events",
-  "author": "asc-swift",
+  "author": "asc-cli",
   "events": ["build.uploaded", "version.submitted", "version.approved", "version.rejected"]
 }
