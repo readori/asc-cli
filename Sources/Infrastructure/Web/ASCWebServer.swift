@@ -13,10 +13,16 @@ import ASCPlugin
 public struct ASCWebServer: Sendable {
     public let port: Int
     public let commandRunner: @Sendable (String) async -> (String, Int)
+    public let restRouteConfigurator: (@Sendable (ASCRouter) -> Void)?
 
-    public init(port: Int = 8420, commandRunner: @escaping @Sendable (String) async -> (String, Int)) {
+    public init(
+        port: Int = 8420,
+        commandRunner: @escaping @Sendable (String) async -> (String, Int),
+        restRouteConfigurator: (@Sendable (ASCRouter) -> Void)? = nil
+    ) {
         self.port = port
         self.commandRunner = commandRunner
+        self.restRouteConfigurator = restRouteConfigurator
     }
 
     public func run() async throws {
@@ -43,6 +49,7 @@ public struct ASCWebServer: Sendable {
           │  http://localhost:\(port)                  │
         \(httpsLine)\
           │                                         │
+          │  /api/v1/*         REST API (HATEOAS)    │
           │  /api/run          CLI bridge           │
           │  /api/sim/devices  Simulator list       │
         \(plugins.isEmpty ? "" : "\(pluginNames)\n")\
@@ -177,6 +184,9 @@ public struct ASCWebServer: Sendable {
                 }
             }
         }
+
+        // REST API v1 routes (in-process, no subprocess)
+        restRouteConfigurator?(router)
 
         // Plugin server routes (dylib configures router directly)
         let routerPtr = Unmanaged.passUnretained(router).toOpaque()

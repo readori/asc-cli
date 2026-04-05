@@ -14,7 +14,11 @@ struct WebServerCommand: AsyncParsableCommand {
     var port: Int = 8420
 
     func run() async throws {
-        let server = ASCWebServer(port: port, commandRunner: Self.runCommand)
+        let server = ASCWebServer(
+            port: port,
+            commandRunner: Self.runCommand,
+            restRouteConfigurator: RESTRoutes.configure
+        )
         try await server.run()
     }
 
