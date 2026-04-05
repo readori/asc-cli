@@ -160,5 +160,74 @@ enum AppShotsRoutes {
                 return jsonError("Theme apply failed: \(error.localizedDescription)", status: .internalServerError)
             }
         }
+        // POST /api/v1/app-shots/generate
+        // Accepts: {screenshot (base64), geminiApiKey?, styleReference? (base64), deviceType?, prompt?}
+        // Returns: {png: base64, width, height}
+        group.post("/app-shots/generate") { request, _ -> Response in
+            let body = try await request.body.collect(upTo: 20 * 1024 * 1024)
+            guard let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
+                  let screenshotB64 = json["screenshot"] as? String,
+                  let screenshotData = Data(base64Encoded: screenshotB64) else {
+                return jsonError("Missing screenshot (base64)")
+            }
+
+            do {
+                // Resolve API key: request body → config storage → env var
+                let apiKey: String
+                if let key = json["geminiApiKey"] as? String, !key.isEmpty {
+                    apiKey = key
+                } else {
+                    let configStorage = ClientProvider.makeAppShotsConfigStorage()
+                    let config = try? configStorage.load()
+                    if let key = config?.geminiApiKey {
+                        apiKey = key
+                    } else if let key = ProcessInfo.processInfo.environment["GEMINI_API_KEY"] {
+                        apiKey = key
+                    } else {
+                        return jsonError("No Gemini API key provided. Pass geminiApiKey in request body or set GEMINI_API_KEY env var.")
+                    }
+                }
+
+                // Write screenshot to temp file (Gemini helper reads from Data, but generate expects file)
+                let tmpDir = FileManager.default.temporaryDirectory
+                let screenshotFile = tmpDir.appendingPathComponent("blitz-gen-\(UUID().uuidString).png")
+                try screenshotData.write(to: screenshotFile)
+
+                // Write style reference to temp file if provided
+                var styleRefPath: String? = nil
+                if let styleB64 = json["styleReference"] as? String, let styleData = Data(base64Encoded: styleB64) {
+                    let styleFile = tmpDir.appendingPathComponent("blitz-style-\(UUID().uuidString).png")
+                    try styleData.write(to: styleFile)
+                    styleRefPath = styleFile.path
+                }
+
+                // Build and run command
+                var args = ["--file", screenshotFile.path, "--gemini-api-key", apiKey, "--output-dir", tmpDir.path]
+                if let styleRef = styleRefPath { args += ["--style-reference", styleRef] }
+                if let deviceType = json["deviceType"] as? String { args += ["--device-type", deviceType] }
+                if let prompt = json["prompt"] as? String { args += ["--prompt", prompt] }
+
+                let cmd = try AppShotsGenerate.parse(args)
+                _ = try await cmd.execute(apiKey: apiKey)
+
+                // Read the output file
+                let outputFile = tmpDir.appendingPathComponent("screen-0.png")
+                guard let pngData = FileManager.default.contents(atPath: outputFile.path) else {
+                    return jsonError("Generate succeeded but output file not found", status: .internalServerError)
+                }
+
+                let resultJSON = try JSONSerialization.data(
+                    withJSONObject: ["png": pngData.base64EncodedString(), "width": 1320, "height": 2868],
+                    options: [.sortedKeys]
+                )
+                return Response(
+                    status: .ok,
+                    headers: [.contentType: "application/json"],
+                    body: .init(byteBuffer: ByteBuffer(data: resultJSON))
+                )
+            } catch {
+                return jsonError("Generate failed: \(error.localizedDescription)", status: .internalServerError)
+            }
+        }
     }
 }
