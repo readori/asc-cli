@@ -100,6 +100,9 @@ struct AppShotsThemesApply: AsyncParsableCommand {
     @Option(name: .long, help: "Subtitle text")
     var subtitle: String?
 
+    @Option(name: .long, help: "Tagline text (overrides template default)")
+    var tagline: String?
+
     @Option(name: .long, help: "Canvas width in pixels (default: 1320)")
     var canvasWidth: Int = 1320
 
@@ -122,7 +125,7 @@ struct AppShotsThemesApply: AsyncParsableCommand {
         let filename = URL(fileURLWithPath: screenshot).lastPathComponent
 
         // Step 1: Render deterministic HTML from template
-        let content = TemplateContent(headline: headline, subtitle: subtitle, screenshotFile: filename)
+        let content = TemplateContent(headline: headline, subtitle: subtitle, tagline: tagline, screenshotFile: filename)
         let baseHTML = TemplateHTMLRenderer.render(tmpl, content: content)
 
         // Step 2: Compose with theme via provider's AI backend

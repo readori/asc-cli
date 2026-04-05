@@ -126,6 +126,9 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
     @Option(name: .long, help: "Subtitle text")
     var subtitle: String?
 
+    @Option(name: .long, help: "Tagline text (overrides template default)")
+    var tagline: String?
+
     @Option(name: .long, help: "App name")
     var appName: String = "My App"
 
@@ -148,6 +151,16 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             ? URL(fileURLWithPath: screenshot).lastPathComponent
             : screenshot
 
+        if preview {
+            let content = TemplateContent(
+                headline: headline,
+                subtitle: subtitle,
+                tagline: tagline,
+                screenshotFile: displayFile
+            )
+            return TemplateHTMLRenderer.renderPage(template, content: content)
+        }
+
         let screen = ScreenDesign(
             index: 0,
             template: template,
@@ -155,10 +168,6 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             heading: headline,
             subheading: subtitle ?? ""
         )
-
-        if preview {
-            return screen.previewHTML
-        }
 
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
