@@ -86,13 +86,51 @@ public enum RESTPathResolver {
         "reviews": (parentParam: "app-id", parentSegment: "apps", segment: "reviews"),
         "app-infos": (parentParam: "app-id", parentSegment: "apps", segment: "app-infos"),
         "testflight": (parentParam: "app-id", parentSegment: "apps", segment: "testflight"),
+        "iap": (parentParam: "app-id", parentSegment: "apps", segment: "iap"),
+        "subscription-groups": (parentParam: "app-id", parentSegment: "apps", segment: "subscription-groups"),
+        "xcode-cloud": (parentParam: "app-id", parentSegment: "apps", segment: "xcode-cloud"),
+        "perf-metrics": (parentParam: "app-id", parentSegment: "apps", segment: "perf-metrics"),
+        "diagnostics": (parentParam: "app-id", parentSegment: "apps", segment: "diagnostics"),
+        "app-clips": (parentParam: "app-id", parentSegment: "apps", segment: "app-clips"),
 
         // Version children
         "version-localizations": (parentParam: "version-id", parentSegment: "versions", segment: "localizations"),
+        "version-review-detail": (parentParam: "version-id", parentSegment: "versions", segment: "review-detail"),
 
         // Localization children
         "screenshot-sets": (parentParam: "localization-id", parentSegment: "version-localizations", segment: "screenshot-sets"),
         "screenshots": (parentParam: "set-id", parentSegment: "screenshot-sets", segment: "screenshots"),
+        "app-preview-sets": (parentParam: "localization-id", parentSegment: "version-localizations", segment: "preview-sets"),
+        "app-previews": (parentParam: "set-id", parentSegment: "app-preview-sets", segment: "previews"),
+
+        // App info children
+        "app-info-localizations": (parentParam: "app-info-id", parentSegment: "app-infos", segment: "localizations"),
+        "age-rating": (parentParam: "app-info-id", parentSegment: "app-infos", segment: "age-rating"),
+
+        // IAP children
+        "iap-localizations": (parentParam: "iap-id", parentSegment: "iap", segment: "localizations"),
+        "iap-offer-codes": (parentParam: "iap-id", parentSegment: "iap", segment: "offer-codes"),
+        "iap-availability": (parentParam: "iap-id", parentSegment: "iap", segment: "availability"),
+
+        // Subscription group children
+        "subscriptions": (parentParam: "group-id", parentSegment: "subscription-groups", segment: "subscriptions"),
+
+        // Subscription children
+        "subscription-localizations": (parentParam: "subscription-id", parentSegment: "subscriptions", segment: "localizations"),
+        "subscription-offer-codes": (parentParam: "subscription-id", parentSegment: "subscriptions", segment: "offer-codes"),
+        "subscription-offers": (parentParam: "subscription-id", parentSegment: "subscriptions", segment: "introductory-offers"),
+        "subscription-availability": (parentParam: "subscription-id", parentSegment: "subscriptions", segment: "availability"),
+
+        // TestFlight children
+        "beta-review": (parentParam: "build-id", parentSegment: "builds", segment: "beta-review"),
+        "beta-build-localizations": (parentParam: "build-id", parentSegment: "builds", segment: "beta-localizations"),
+
+        // Xcode Cloud children
+        "xcode-cloud-workflows": (parentParam: "product-id", parentSegment: "xcode-cloud", segment: "workflows"),
+        "xcode-cloud-build-runs": (parentParam: "workflow-id", parentSegment: "xcode-cloud-workflows", segment: "build-runs"),
+
+        // Code signing children
+        "bundle-id-profiles": (parentParam: "bundle-id-id", parentSegment: "bundle-ids", segment: "profiles"),
     ]
 
     /// Maps CLI `--{param}-id` to the REST segment for the resource itself (used for get/update/delete).
@@ -103,6 +141,18 @@ public enum RESTPathResolver {
         "localization-id": "version-localizations",
         "set-id": "screenshot-sets",
         "review-id": "reviews",
+        "iap-id": "iap",
+        "group-id": "subscription-groups",
+        "subscription-id": "subscriptions",
+        "app-info-id": "app-infos",
+        "certificate-id": "certificates",
+        "device-id": "devices",
+        "profile-id": "profiles",
+        "bundle-id-id": "bundle-ids",
+        "product-id": "xcode-cloud",
+        "workflow-id": "xcode-cloud-workflows",
+        "simulator-id": "simulators",
+        "plugin-id": "plugins",
     ]
 
     static func resolve(command: String, action: String, params: [String: String]) -> String {

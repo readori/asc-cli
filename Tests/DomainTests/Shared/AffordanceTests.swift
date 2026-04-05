@@ -162,6 +162,40 @@ struct AffordanceTests {
         #expect(live.affordances["submitForReview"] == nil)
     }
 
+    // MARK: - APIRoot (HATEOAS entry point)
+
+    @Test func `APIRoot lists all top-level resources as REST links`() {
+        let root = APIRoot()
+        let links = root.apiLinks
+        // Core app management
+        #expect(links["apps"]?.href == "/api/v1/apps")
+        #expect(links["apps"]?.method == "GET")
+        // Code signing
+        #expect(links["certificates"]?.href == "/api/v1/certificates")
+        #expect(links["bundleIds"]?.href == "/api/v1/bundle-ids")
+        #expect(links["devices"]?.href == "/api/v1/devices")
+        #expect(links["profiles"]?.href == "/api/v1/profiles")
+        // Other top-level resources
+        #expect(links["simulators"]?.href == "/api/v1/simulators")
+        #expect(links["plugins"]?.href == "/api/v1/plugins")
+        #expect(links["territories"]?.href == "/api/v1/territories")
+    }
+
+    @Test func `APIRoot CLI affordances list all top-level commands`() {
+        let root = APIRoot()
+        let cmds = root.affordances
+        #expect(cmds["apps"] == "asc apps list")
+        #expect(cmds["certificates"] == "asc certificates list")
+        #expect(cmds["simulators"] == "asc simulators list")
+    }
+
+    @Test func `APIRoot is Codable`() throws {
+        let root = APIRoot()
+        let data = try JSONEncoder().encode(root)
+        let decoded = try JSONDecoder().decode(APIRoot.self, from: data)
+        #expect(decoded == root)
+    }
+
     // MARK: - Nested resource paths
 
     @Test func `affordance renders REST link for version localizations`() {
@@ -190,5 +224,87 @@ struct AffordanceTests {
         let link = affordance.restLink
         #expect(link.href == "/api/v1/apps/123/reviews")
         #expect(link.method == "GET")
+    }
+
+    // MARK: - Expanded route table
+
+    @Test func `testflight groups under app`() {
+        let a = Affordance(key: "listGroups", command: "testflight", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/testflight")
+    }
+
+    @Test func `certificates top-level`() {
+        let a = Affordance(key: "listCerts", command: "certificates", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/certificates")
+    }
+
+    @Test func `bundle-ids top-level`() {
+        let a = Affordance(key: "listBundleIds", command: "bundle-ids", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/bundle-ids")
+    }
+
+    @Test func `devices top-level`() {
+        let a = Affordance(key: "listDevices", command: "devices", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/devices")
+    }
+
+    @Test func `profiles top-level`() {
+        let a = Affordance(key: "listProfiles", command: "profiles", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/profiles")
+    }
+
+    @Test func `simulators top-level`() {
+        let a = Affordance(key: "listSims", command: "simulators", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/simulators")
+    }
+
+    @Test func `plugins top-level`() {
+        let a = Affordance(key: "listPlugins", command: "plugins", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/plugins")
+    }
+
+    @Test func `territories top-level`() {
+        let a = Affordance(key: "listTerritories", command: "territories", action: "list", params: [:])
+        #expect(a.restLink.href == "/api/v1/territories")
+    }
+
+    @Test func `iap under app`() {
+        let a = Affordance(key: "listIAP", command: "iap", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/iap")
+    }
+
+    @Test func `subscription-groups under app`() {
+        let a = Affordance(key: "listGroups", command: "subscription-groups", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/subscription-groups")
+    }
+
+    @Test func `subscriptions under group`() {
+        let a = Affordance(key: "listSubs", command: "subscriptions", action: "list", params: ["group-id": "g-1"])
+        #expect(a.restLink.href == "/api/v1/subscription-groups/g-1/subscriptions")
+    }
+
+    @Test func `iap-localizations under iap`() {
+        let a = Affordance(key: "listLocs", command: "iap-localizations", action: "list", params: ["iap-id": "iap-1"])
+        #expect(a.restLink.href == "/api/v1/iap/iap-1/localizations")
+    }
+
+    @Test func `app-infos under app`() {
+        let a = Affordance(key: "listInfos", command: "app-infos", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/app-infos")
+    }
+
+    @Test func `app-info-localizations under app-info`() {
+        let a = Affordance(key: "listLocs", command: "app-info-localizations", action: "list", params: ["app-info-id": "ai-1"])
+        #expect(a.restLink.href == "/api/v1/app-infos/ai-1/localizations")
+    }
+
+    @Test func `perf-metrics under app`() {
+        let a = Affordance(key: "listMetrics", command: "perf-metrics", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/perf-metrics")
+    }
+
+    @Test func `xcode-cloud products`() {
+        let a = Affordance(key: "listProducts", command: "xcode-cloud", action: "list", params: ["app-id": "1"])
+        #expect(a.restLink.href == "/api/v1/apps/1/xcode-cloud")
     }
 }
