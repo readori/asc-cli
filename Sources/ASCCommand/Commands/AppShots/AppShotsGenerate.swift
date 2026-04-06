@@ -35,11 +35,17 @@ struct AppShotsGenerate: AsyncParsableCommand {
     func run() async throws {
         let configStorage = FileAppShotsConfigStorage()
         let apiKey = try resolveGeminiApiKey(geminiApiKey, configStorage: configStorage)
-        print(try await execute(apiKey: apiKey))
+        let path = try await Self.run(
+            file: file, apiKey: apiKey, model: model,
+            outputDir: outputDir, styleReference: styleReference,
+            deviceType: deviceType, prompt: prompt
+        )
+        print(formatOutput(path: path))
     }
 
     /// Static entry point — callable without ArgumentParser parsing.
     /// Both CLI `run()` and REST controller use this.
+    /// Returns the output file path.
     static func run(
         file: String,
         apiKey: String,
@@ -49,17 +55,6 @@ struct AppShotsGenerate: AsyncParsableCommand {
         deviceType: AppShotsDisplayType? = nil,
         prompt: String? = nil
     ) async throws -> String {
-        var cmd = AppShotsGenerate()
-        cmd.file = file
-        cmd.model = model
-        cmd.outputDir = outputDir
-        cmd.styleReference = styleReference
-        cmd.deviceType = deviceType
-        cmd.prompt = prompt
-        return try await cmd.execute(apiKey: apiKey)
-    }
-
-    func execute(apiKey: String) async throws -> String {
         // Read input
         let fileURL = URL(fileURLWithPath: file)
         guard let imageData = FileManager.default.contents(atPath: fileURL.path) else {
@@ -76,10 +71,11 @@ struct AppShotsGenerate: AsyncParsableCommand {
         }()
 
         // Build prompt
-        let enhancePrompt = buildPrompt(hasStyleRef: styleRefData != nil)
+        let enhancePrompt = Self.buildPrompt(customPrompt: prompt, hasStyleRef: styleRefData != nil)
 
         // Call Gemini directly
         let resultData = try await callGemini(
+            model: model,
             apiKey: apiKey,
             prompt: enhancePrompt,
             imageData: imageData,
@@ -101,12 +97,13 @@ struct AppShotsGenerate: AsyncParsableCommand {
         let outputPath = outputDirURL.appendingPathComponent("screen-0.png")
         try finalData.write(to: outputPath)
 
-        return formatOutput(path: outputPath.path)
+        return outputPath.path
     }
 
     // MARK: - Gemini
 
-    private func callGemini(
+    private static func callGemini(
+        model: String,
         apiKey: String,
         prompt: String,
         imageData: Data,
@@ -180,8 +177,8 @@ struct AppShotsGenerate: AsyncParsableCommand {
 
     // MARK: - Prompt
 
-    private func buildPrompt(hasStyleRef: Bool) -> String {
-        if let custom = prompt, !custom.isEmpty {
+    private static func buildPrompt(customPrompt: String?, hasStyleRef: Bool) -> String {
+        if let custom = customPrompt, !custom.isEmpty {
             return custom
         }
 
