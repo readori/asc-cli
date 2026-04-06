@@ -153,6 +153,22 @@ struct AppShotsController: Sendable {
 
     // MARK: - Helpers
 
+    /// Parse a background JSON object into a SlideBackground.
+    private static func parseBackground(_ value: Any?) -> SlideBackground? {
+        guard let dict = value as? [String: Any],
+              let type = dict["type"] as? String else { return nil }
+        if type == "gradient",
+           let from = dict["from"] as? String,
+           let to = dict["to"] as? String {
+            let angle = dict["angle"] as? Int ?? 180
+            return .gradient(from: from, to: to, angle: angle)
+        }
+        if let color = dict["color"] as? String {
+            return .solid(color)
+        }
+        return nil
+    }
+
     /// Replace temp file paths with data URLs for inline browser display.
     private static func inlineBase64(_ html: String, screenshotPath: String, base64: String?) -> String {
         guard let b64 = base64 else { return html }
