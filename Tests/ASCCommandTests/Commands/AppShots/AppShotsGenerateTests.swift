@@ -40,10 +40,9 @@ struct AppShotsGenerateTests {
         #expect(cmd.deviceType == .iphone67)
     }
 
-    @Test func `execute throws when file not found`() async throws {
-        let cmd = try AppShotsGenerate.parse(["--file", "/nonexistent.png"])
+    @Test func `run throws when file not found`() async throws {
         do {
-            _ = try await cmd.execute(apiKey: "test-key")
+            _ = try await AppShotsGenerate.run(file: "/nonexistent.png", apiKey: "test-key")
             Issue.record("Expected error")
         } catch {
             #expect(String(describing: error).contains("not found"))
