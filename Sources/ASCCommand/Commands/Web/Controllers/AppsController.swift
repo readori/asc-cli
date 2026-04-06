@@ -9,6 +9,7 @@ import Infrastructure
 struct AppsController: Sendable {
     let appRepo: any AppRepository
     let versionRepo: any VersionRepository
+    let localizationRepo: any VersionLocalizationRepository
     let buildRepo: any BuildRepository
     let testFlightRepo: any TestFlightRepository
     let reviewRepo: any CustomerReviewRepository
@@ -31,6 +32,12 @@ struct AppsController: Sendable {
             guard let appId = context.parameters.get("appId") else { return jsonError("Missing appId") }
             let versions = try await self.versionRepo.listVersions(appId: appId)
             return try restFormat(versions)
+        }
+
+        group.get("/versions/:versionId/localizations") { _, context -> Response in
+            guard let versionId = context.parameters.get("versionId") else { return jsonError("Missing versionId") }
+            let localizations = try await self.localizationRepo.listLocalizations(versionId: versionId)
+            return try restFormat(localizations)
         }
 
         group.get("/apps/:appId/builds") { _, context -> Response in

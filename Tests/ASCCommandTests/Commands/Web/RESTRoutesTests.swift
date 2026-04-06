@@ -45,6 +45,21 @@ struct RESTRoutesTests {
         #expect(normalized.contains("/api/v1/versions/v-1/localizations"))
     }
 
+    // MARK: - Version Localizations
+
+    @Test func `version localizations list returns JSON with _links`() async throws {
+        let mockRepo = MockVersionLocalizationRepository()
+        given(mockRepo).listLocalizations(versionId: .any).willReturn([
+            AppStoreVersionLocalization(id: "loc-1", versionId: "v-1", locale: "en-US", description: "A great app"),
+        ])
+        let output = try await VersionLocalizationsList.parse(["--version-id", "v-1", "--pretty"]).execute(repo: mockRepo, affordanceMode: .rest)
+        let normalized = output.replacingOccurrences(of: "\\/", with: "/")
+        #expect(normalized.contains("\"_links\""))
+        #expect(normalized.contains("\"locale\" : \"en-US\""))
+        #expect(normalized.contains("\"description\" : \"A great app\""))
+        #expect(!normalized.contains("\"affordances\""))
+    }
+
     // MARK: - API Root
 
     @Test func `api root returns _links to all top-level resources`() throws {

@@ -68,6 +68,17 @@ extension AppStoreVersionLocalization: Codable {
     }
 }
 
+// MARK: - Presentable
+
+extension AppStoreVersionLocalization: Presentable {
+    public static var tableHeaders: [String] {
+        ["ID", "Locale", "Description", "Keywords"]
+    }
+    public var tableRow: [String] {
+        [id, locale, description ?? "", keywords ?? ""]
+    }
+}
+
 // MARK: - AffordanceProviding
 
 extension AppStoreVersionLocalization: AffordanceProviding {

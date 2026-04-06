@@ -25,13 +25,9 @@ struct VersionLocalizationsList: AsyncParsableCommand {
         print(try await execute(repo: repo))
     }
 
-    func execute(repo: any VersionLocalizationRepository) async throws -> String {
+    func execute(repo: any VersionLocalizationRepository, affordanceMode: AffordanceMode = .cli) async throws -> String {
         let localizations = try await repo.listLocalizations(versionId: versionId)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
-        return try formatter.formatAgentItems(
-            localizations,
-            headers: ["ID", "Locale"],
-            rowMapper: { [$0.id, $0.locale] }
-        )
+        return try formatter.formatAgentItems(localizations, affordanceMode: affordanceMode)
     }
 }

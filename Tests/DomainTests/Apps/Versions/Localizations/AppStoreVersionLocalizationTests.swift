@@ -53,6 +53,17 @@ struct AppStoreVersionLocalizationTests {
         #expect(json["promotionalText"] == nil)
     }
 
+    @Test func `localization table headers include locale and description`() {
+        #expect(AppStoreVersionLocalization.tableHeaders == ["ID", "Locale", "Description", "Keywords"])
+    }
+
+    @Test func `localization table row shows locale and truncated description`() {
+        let loc = MockRepositoryFactory.makeLocalization(
+            id: "loc-1", locale: "en-US", description: "A great app"
+        )
+        #expect(loc.tableRow == ["loc-1", "en-US", "A great app", ""])
+    }
+
     @Test func `localization round trips through JSON`() throws {
         let original = MockRepositoryFactory.makeLocalization(
             id: "loc-1",
