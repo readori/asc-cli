@@ -15,7 +15,7 @@ public func ascPlugin() -> UnsafeMutableRawPointer {
     // This adds a "greet" button to every app in the web UI.
     AffordanceRegistry.register(App.self) { id, props in
         let name = props["name"] ?? id
-        return ["greet": "asc hello greet --app-id \(id) --name \(name)"]
+        return [Affordance(key: "greet", command: "hello", action: "greet", params: ["app-id": id, "name": name])]
     }
 
     return Unmanaged.passRetained(plugin).toOpaque()
