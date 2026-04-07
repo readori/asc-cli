@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Controls background, text colors, badge styling, decoration tints.
 /// Same palette works with any template layout.
-public struct GalleryPalette: Sendable, Equatable, Identifiable {
+public struct GalleryPalette: Sendable, Equatable, Identifiable, Codable {
     public let id: String
     public let name: String
     public let background: String

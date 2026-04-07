@@ -3,7 +3,7 @@ import Foundation
 /// Layout for a single screen type — where headline, device, badges go.
 ///
 /// Used within a `GalleryTemplate` to define how each screen type is composed.
-public struct ScreenTemplate: Sendable, Equatable {
+public struct ScreenTemplate: Sendable, Equatable, Codable {
     public let headline: TextSlot
     public let device: DeviceSlot?
     public let decorations: [Decoration]
@@ -20,7 +20,7 @@ public struct ScreenTemplate: Sendable, Equatable {
 }
 
 /// Where and how text appears in a screen.
-public struct TextSlot: Sendable, Equatable {
+public struct TextSlot: Sendable, Equatable, Codable {
     public let y: Double
     public let size: Double
     public let weight: Int
@@ -35,7 +35,7 @@ public struct TextSlot: Sendable, Equatable {
 }
 
 /// Where the device frame appears in a screen.
-public struct DeviceSlot: Sendable, Equatable {
+public struct DeviceSlot: Sendable, Equatable, Codable {
     public let x: Double
     public let y: Double
     public let width: Double
@@ -48,7 +48,7 @@ public struct DeviceSlot: Sendable, Equatable {
 }
 
 /// An ambient decorative shape (gem, orb, sparkle, arrow).
-public struct Decoration: Sendable, Equatable {
+public struct Decoration: Sendable, Equatable, Codable {
     public let shape: DecorationShape
     public let x: Double
     public let y: Double
