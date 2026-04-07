@@ -5,103 +5,59 @@ import Testing
 @Suite("Gallery Preview HTML")
 struct GalleryPreviewTests {
 
-    @Test func `gallery template generates previewHTML`() {
-        let template = GalleryTemplate(
-            id: "neon-pop",
-            name: "Neon Pop",
-            description: "Vibrant green gradient",
-            background: "linear-gradient(165deg, #a8ff78, #78ffd6)",
+    private func makeGallery(
+        templateId: String = "neon-pop",
+        templateName: String = "Neon Pop",
+        background: String = "linear-gradient(165deg, #a8ff78, #78ffd6)",
+        heroHeadline: String = "PREMIUM\nMOCKUPS.",
+        featureHeadline: String = "CUSTOMIZE",
+        hasDevice: Bool = true
+    ) -> Gallery {
+        let gallery = Gallery(appName: "TestApp", screenshots: ["s0.png", "s1.png"])
+        gallery.appShots[0].headline = heroHeadline
+        gallery.appShots[1].headline = featureHeadline
+
+        let featureDevice = hasDevice ? DeviceSlot(y: 0.36, width: 0.68) : nil
+        gallery.template = GalleryTemplate(
+            id: templateId, name: templateName, background: background,
             screens: [
-                .feature: ScreenTemplate(
-                    headline: TextSlot(y: 0.05, size: 0.08, weight: 900, align: "left"),
-                    device: DeviceSlot(y: 0.36, width: 0.68)
-                ),
+                .hero: ScreenTemplate(headline: TextSlot(y: 0.07, size: 0.08, weight: 900, align: "left")),
+                .feature: ScreenTemplate(headline: TextSlot(y: 0.05, size: 0.08), device: featureDevice),
             ]
         )
-        let html = template.previewHTML
-        // Must not be empty
+        gallery.palette = GalleryPalette(id: "p", name: "P", background: background)
+        return gallery
+    }
+
+    @Test func `gallery generates previewHTML with all panels`() {
+        let gallery = makeGallery()
+        let html = gallery.previewHTML
         #expect(!html.isEmpty)
-        // Must be a full HTML page
         #expect(html.contains("<!DOCTYPE html>"))
-        // Must contain the template name as preview text
-        #expect(html.contains("Neon Pop"))
-        // Must contain the actual background color
-        #expect(html.contains("linear-gradient"))
+        #expect(html.contains("PREMIUM"))
+        #expect(html.contains("CUSTOMIZE"))
         #expect(html.contains("#a8ff78"))
-        // Must contain the wireframe phone structure
-        #expect(html.contains("9:41"))  // status bar time
     }
 
-    @Test func `gallery template with dark background uses light text`() {
-        let template = GalleryTemplate(
-            id: "cosmic",
-            name: "Cosmic",
-            background: "linear-gradient(170deg, #0f0c29, #302b63)",
-            screens: [
-                .feature: ScreenTemplate(
-                    headline: TextSlot(y: 0.05, size: 0.078, weight: 800, align: "left"),
-                    device: DeviceSlot(y: 0.36, width: 0.68)
-                ),
-            ]
+    @Test func `gallery with dark background uses light text`() {
+        let gallery = makeGallery(
+            templateId: "cosmic", templateName: "Cosmic",
+            background: "linear-gradient(170deg, #0f0c29, #302b63)"
         )
-        let html = template.previewHTML
-        #expect(html.contains("Cosmic"))
-        #expect(html.contains("#0f0c29"))
-        // Dark bg → light text
-        #expect(html.contains("#FFFFFF"))
+        let html = gallery.previewHTML
+        #expect(html.contains("#fff"))
     }
 
-    @Test func `gallery template with light background uses dark text`() {
-        let template = GalleryTemplate(
-            id: "neon-pop",
-            name: "Neon Pop",
-            background: "linear-gradient(165deg, #a8ff78, #78ffd6)",
-            screens: [
-                .feature: ScreenTemplate(
-                    headline: TextSlot(y: 0.05, size: 0.08),
-                    device: DeviceSlot(y: 0.36, width: 0.68)
-                ),
-            ]
-        )
-        let html = template.previewHTML
-        // Light bg → dark text
-        #expect(html.contains("#111111"))
+    @Test func `gallery with light background uses dark text`() {
+        let gallery = makeGallery(background: "linear-gradient(165deg, #a8ff78, #78ffd6)")
+        let html = gallery.previewHTML
+        #expect(html.contains("color:#000"))
     }
 
-    @Test func `gallery template without device shows no wireframe phone`() {
-        let template = GalleryTemplate(
-            id: "hero-only",
-            name: "Hero Only",
-            background: "#000",
-            screens: [
-                .hero: ScreenTemplate(
-                    headline: TextSlot(y: 0.25, size: 0.12)
-                    // no device
-                ),
-            ]
-        )
-        let html = template.previewHTML
-        #expect(html.contains("Hero Only"))
-        #expect(!html.isEmpty)
-    }
-
-    @Test func `gallery template previewHTML is included in JSON encoding`() throws {
-        let template = GalleryTemplate(
-            id: "test",
-            name: "Test",
-            background: "#fff",
-            screens: [
-                .feature: ScreenTemplate(
-                    headline: TextSlot(y: 0.05, size: 0.08),
-                    device: DeviceSlot(y: 0.3, width: 0.7)
-                ),
-            ]
-        )
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
-        let data = try encoder.encode(template)
+    @Test func `gallery previewHTML is included in JSON encoding`() throws {
+        let gallery = makeGallery()
+        let data = try JSONEncoder().encode(gallery)
         let json = String(data: data, encoding: .utf8) ?? ""
-        // previewHTML must be present in the encoded output
         #expect(json.contains("previewHTML"))
         #expect(json.contains("<!DOCTYPE html>"))
     }
