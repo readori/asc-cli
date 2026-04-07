@@ -191,16 +191,14 @@ public enum GalleryHTMLRenderer {
         guard !panels.isEmpty else { return "" }
 
         let panelDivs = panels.map { panel in
-            "<div style=\"width:160px;aspect-ratio:1320/2868;border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)\">\(panel)</div>"
+            "<div style=\"width:120px;aspect-ratio:1320/2868;border-radius:6px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)\">\(panel)</div>"
         }.joined()
-
-        let galleryBg = galleryTemplate.background.isEmpty ? "#dfe2e8" : "#dfe2e8"
 
         return """
         <!DOCTYPE html><html><head><meta charset="utf-8">
         <style>*{margin:0;padding:0;box-sizing:border-box}
-        body{background:\(galleryBg);display:flex;align-items:center;height:100vh;overflow:hidden;font-family:system-ui,-apple-system,sans-serif}
-        .g{display:flex;gap:6px;padding:12px;overflow:hidden}
+        body{background:#dfe2e8;display:flex;align-items:flex-start;height:100vh;overflow:hidden;font-family:system-ui,-apple-system,sans-serif}
+        .g{display:flex;gap:5px;padding:10px;overflow-x:auto;align-items:flex-start}
         </style></head><body>
         <div class="g">\(panelDivs)</div>
         </body></html>
