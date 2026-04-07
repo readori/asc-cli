@@ -7,15 +7,21 @@ import Foundation
 public struct GalleryTemplate: Sendable, Equatable, Identifiable {
     public let id: String
     public let name: String
+    public let description: String
+    public let background: String
     public let screens: [ScreenType: ScreenTemplate]
 
     public init(
         id: String,
         name: String,
+        description: String = "",
+        background: String = "",
         screens: [ScreenType: ScreenTemplate] = [:]
     ) {
         self.id = id
         self.name = name
+        self.description = description
+        self.background = background
         self.screens = screens
     }
 }
@@ -30,21 +36,21 @@ extension GalleryTemplate {
     /// Self-contained HTML preview using the feature screen template with wireframe phone.
     /// Used in the web UI template browser — same approach as ScreenshotTemplate.previewHTML.
     public var previewHTML: String {
-        let screenTemplate = screens[.feature] ?? screens[.hero] ?? screens.values.first
-        guard let st = screenTemplate else { return "" }
-        return GalleryHTMLRenderer.renderPreviewPage(name, screenTemplate: st)
+        GalleryHTMLRenderer.renderPreviewPage(self)
     }
 }
 
 extension GalleryTemplate: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, screens, previewHTML
+        case id, name, description, background, screens, previewHTML
     }
 
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
+        description = try c.decodeIfPresent(String.self, forKey: .description) ?? ""
+        background = try c.decodeIfPresent(String.self, forKey: .background) ?? ""
         let raw = try c.decode([String: ScreenTemplate].self, forKey: .screens)
         var mapped: [ScreenType: ScreenTemplate] = [:]
         for (key, value) in raw {
@@ -58,6 +64,8 @@ extension GalleryTemplate: Codable {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
+        try c.encode(description, forKey: .description)
+        try c.encode(background, forKey: .background)
         let raw = Dictionary(uniqueKeysWithValues: screens.map { ($0.key.rawValue, $0.value) })
         try c.encode(raw, forKey: .screens)
         try c.encode(previewHTML, forKey: .previewHTML)
