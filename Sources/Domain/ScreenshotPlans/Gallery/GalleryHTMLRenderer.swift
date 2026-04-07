@@ -16,19 +16,73 @@ public enum GalleryHTMLRenderer {
         palette: GalleryPalette
     ) -> String {
         let bg = palette.background
-
-        // Text — headline positioned absolute with cqi units
         let hl = screenTemplate.headline
         let hlSize = fmt(hl.size * 100)
-        let hlTop = fmt(hl.y * 100)
-        let hlText = (shot.headline ?? "").replacingOccurrences(of: "\n", with: "<br>")
+        let isLight = isLightBackground(bg)
+        let headlineColor = isLight ? "#000" : "#fff"
+        let taglineColor = isLight ? "rgba(0,0,0,0.40)" : "rgba(255,255,255,0.45)"
+        let bodyColor = isLight ? "#1a1a1a" : "rgba(255,255,255,0.7)"
+        let badgeBg = isLight ? "rgba(0,0,0,0.07)" : "rgba(255,255,255,0.12)"
+        let badgeColor = isLight ? "#1a1a1a" : "#fff"
+        let badgeBorder = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.15)"
+        let trustColor = isLight ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.6)"
 
+        let pad = 5.0  // padding %
+        var textTop = hl.y * 100
         var textHTML = ""
-        textHTML += "<div style=\"position:absolute;top:\(hlTop)%;left:5%;right:5%;z-index:4;"
-        textHTML += "font-weight:\(hl.weight);font-size:\(hlSize)cqi;"
-        textHTML += "color:#000;line-height:0.92;letter-spacing:-0.03em;"
-        textHTML += "text-align:\(hl.align);white-space:pre-line\">"
+
+        // Tagline (small caps above headline)
+        if let tagline = shot.tagline, !tagline.isEmpty {
+            let tgSize = fmt(hl.size * 100 * 0.45)
+            textHTML += "<div style=\"position:absolute;top:\(fmt(textTop))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
+            textHTML += "font-weight:700;font-size:\(tgSize)cqi;color:\(taglineColor);"
+            textHTML += "letter-spacing:0.1em;text-transform:uppercase;text-align:\(hl.align);white-space:pre-line\">"
+            textHTML += "\(tagline)</div>"
+            textTop += hl.size * 100 * 0.45 * 1.4 + 0.5
+        }
+
+        // Headline
+        let hlText = (shot.headline ?? "").replacingOccurrences(of: "\n", with: "<br>")
+        textHTML += "<div style=\"position:absolute;top:\(fmt(textTop))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
+        textHTML += "font-weight:\(hl.weight);font-size:\(hlSize)cqi;color:\(headlineColor);"
+        textHTML += "line-height:0.92;letter-spacing:-0.03em;text-align:\(hl.align);white-space:pre-line\">"
         textHTML += "\(hlText)</div>"
+
+        let hlLines = Double((shot.headline ?? "").components(separatedBy: "\n").count)
+        let afterHeading = textTop + hlLines * hl.size * 100 * 1.0 + 1
+
+        // Body text
+        if let body = shot.body, !body.isEmpty {
+            let bodySize = fmt(hl.size * 100 * 0.4)
+            let bodyText = body.replacingOccurrences(of: "\n", with: "<br>")
+            textHTML += "<div style=\"position:absolute;top:\(fmt(afterHeading))%;left:\(fmt(pad))%;right:\(fmt(pad + 3))%;z-index:4;"
+            textHTML += "font-weight:500;font-size:\(bodySize)cqi;color:\(bodyColor);line-height:1.4;text-align:\(hl.align)\">"
+            textHTML += "\(bodyText)</div>"
+        }
+
+        // Trust marks (hero)
+        if let marks = shot.trustMarks, !marks.isEmpty {
+            let markSize = fmt(hl.size * 100 * 0.28)
+            textHTML += "<div style=\"position:absolute;top:\(fmt(afterHeading))%;left:\(fmt(pad))%;z-index:4;display:flex;gap:4px;flex-wrap:wrap\">"
+            for mark in marks {
+                textHTML += "<span style=\"background:\(badgeBg);border-radius:5px;padding:0.3cqi 0.8cqi;font-size:\(markSize)cqi;font-weight:700;color:\(trustColor);letter-spacing:0.04em\">\(mark)</span>"
+            }
+            textHTML += "</div>"
+        }
+
+        // Floating badges
+        if !shot.badges.isEmpty {
+            for (i, badge) in shot.badges.enumerated() {
+                let bx = 60.0 + Double(i) * 14.0
+                let by = 4.0 + Double(i) * 8.0
+                let bSize = fmt(hl.size * 100 * 0.3)
+                textHTML += "<div style=\"position:absolute;left:\(fmt(bx))%;top:\(fmt(by))%;z-index:5;"
+                textHTML += "background:\(badgeBg);border:1px solid \(badgeBorder);border-radius:100px;"
+                textHTML += "padding:0.3cqi 0.8cqi;font-size:\(bSize)cqi;font-weight:700;color:\(badgeColor);"
+                textHTML += "backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap\">"
+                textHTML += "\(badge)</div>"
+            }
+        }
 
         // Device — iPhone frame with screenshot
         // Device — wireframe phone with screenshot
@@ -98,15 +152,31 @@ public enum GalleryHTMLRenderer {
     /// Render a gallery preview page — multiple panels side by side in a horizontal strip.
     /// Creates a mock Gallery with sample content and renders all panels.
     public static func renderPreviewPage(_ galleryTemplate: GalleryTemplate) -> String {
-        // Mock gallery with sample screenshots
+        // Mock gallery with realistic sample content
         let gallery = Gallery(
             appName: "MyApp",
             screenshots: ["s0.png", "s1.png", "s2.png", "s3.png"]
         )
-        gallery.appShots[0].headline = "YOUR\nAPP\nHERE"
-        gallery.appShots[1].headline = "FEATURE\nONE"
-        gallery.appShots[2].headline = "FEATURE\nTWO"
-        gallery.appShots[3].headline = "FEATURE\nTHREE"
+
+        gallery.appShots[0].tagline = "APPNAME"
+        gallery.appShots[0].headline = "PREMIUM\nDEVICE\nMOCKUPS."
+        gallery.appShots[0].badges = ["iPhone 17", "Ultra 3"]
+        gallery.appShots[0].trustMarks = ["4.9 STARS", "PRO QUALITY", "50K+ DESIGNERS"]
+
+        gallery.appShots[1].tagline = "BACKGROUNDS"
+        gallery.appShots[1].headline = "CUSTOMIZE\nEVERY DETAIL"
+        gallery.appShots[1].body = "Pick from solid colors, gradients, or mesh backgrounds. Precise color matching.\n\nProfessional-grade output."
+        gallery.appShots[1].badges = ["🎨 Mesh", "Gradient"]
+
+        gallery.appShots[2].tagline = "TEMPLATES"
+        gallery.appShots[2].headline = "TEMPLATES\nMADE EASY"
+        gallery.appShots[2].body = "Browse recently used, presets, and saved templates. App Store Ready preset included."
+        gallery.appShots[2].badges = ["📋 Presets", "App Store"]
+
+        gallery.appShots[3].tagline = "DIMENSIONS"
+        gallery.appShots[3].headline = "PERFECT\nDIMENSIONS"
+        gallery.appShots[3].body = "Common ratios at a tap — 1:1, 3:4, 4:5, 16:9, Golden, and more."
+        gallery.appShots[3].badges = ["📐 16:9", "4:5"]
 
         gallery.template = galleryTemplate
         gallery.palette = GalleryPalette(

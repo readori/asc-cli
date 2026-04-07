@@ -16,7 +16,9 @@ public final class AppShot: @unchecked Sendable, Identifiable {
     public let screenshot: String
     public private(set) var type: ScreenType
 
+    public var tagline: String?
     public var headline: String?
+    public var body: String?
     public var badges: [String]
     public var trustMarks: [String]?
 
