@@ -43,8 +43,8 @@ struct GalleryComposeTests {
 
         let html = shot.compose(screenTemplate: heroTemplate, palette: palette)
         #expect(html.contains("PREMIUM DEVICE MOCKUPS."))
-        // hero has no device frame img tag
-        #expect(!html.contains("<img"))
+        // hero still shows wireframe phone as placeholder
+        #expect(html.contains("9:41"))
     }
 
     @Test func `feature shot composes with device frame`() {
