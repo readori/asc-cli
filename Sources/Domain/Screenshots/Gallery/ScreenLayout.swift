@@ -195,6 +195,17 @@ public enum DecorationShape: Sendable, Equatable, Codable {
     case gem, orb, sparkle, arrow
     case label(String)
 
+    /// The display character for this shape.
+    public var displayCharacter: String {
+        switch self {
+        case .label(let text): text
+        case .gem: "◆"
+        case .orb: "●"
+        case .sparkle: "✦"
+        case .arrow: "›"
+        }
+    }
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         // Try string first (simple shapes: "gem", "orb", etc.)

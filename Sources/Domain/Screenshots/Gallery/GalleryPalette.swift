@@ -31,3 +31,18 @@ public struct GalleryPalette: Sendable, Equatable, Identifiable, Codable {
         textColor = try c.decodeIfPresent(String.self, forKey: .textColor)
     }
 }
+
+// MARK: - Theme Detection
+
+extension GalleryPalette {
+
+    /// Whether this palette has a light background (heuristic based on hex values).
+    public var isLight: Bool {
+        guard textColor == nil else { return false }
+        let lightHex = ["#f", "#F", "#e", "#E", "#d", "#D", "#c", "#C", "#b", "#B", "#a8", "#A8", "#9"]
+        return lightHex.contains(where: { background.contains($0) })
+    }
+
+    /// Primary text color — explicit or auto-detected from background.
+    public var headlineColor: String { textColor ?? (isLight ? "#000" : "#fff") }
+}
