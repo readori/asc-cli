@@ -1,4 +1,5 @@
-<div style="background:{{background}};position:relative;overflow:hidden;container-type:inline-size;width:100%;height:100%">
+<div data-theme="{{theme}}" style="background:{{background}};position:relative;overflow:hidden;container-type:inline-size;width:100%;height:100%">
+    {{themeVars}}
     {{#if tagline}}
     <div style="position:absolute;top:{{tagline.top}}%;left:{{tagline.pad}}%;right:{{tagline.pad}}%;z-index:4;font-weight:{{tagline.weight}};font-size:{{tagline.fontSize}}cqi;color:{{tagline.color}};letter-spacing:0.1em;text-transform:uppercase;text-align:{{tagline.align}};white-space:pre-line">
         {{tagline.content}}
@@ -8,16 +9,16 @@
         {{headline.content}}
     </div>
     {{/if}}{{#if subheading}}
-    <div style="position:absolute;top:{{subheading.top}}%;left:{{subheading.pad}}%;right:{{subheading.padRight}}%;z-index:4;font-weight:{{subheading.weight}};font-size:{{subheading.fontSize}}cqi;color:{{subheading.color}};line-height:1.4;text-align:{{subheading.align}}">
+    <div style="position:absolute;top:{{subheading.top}}%;left:{{subheading.pad}}%;right:{{subheading.padRight}}%;z-index:4;font-weight:{{subheading.weight}};font-size:{{subheading.fontSize}}cqi;color:var(--body-color);line-height:1.4;text-align:{{subheading.align}}">
         {{subheading.content}}
     </div>
     {{/if}}{{#if trustMarksHTML}}
     <div style="position:absolute;top:{{trustMarks.top}}%;left:{{trustMarks.pad}}%;z-index:4;display:flex;gap:4px;flex-wrap:wrap">
         {{#each trustMarks.items}}<span
-            style="background:{{badgeBg}};border-radius:5px;padding:0.3cqi 0.8cqi;font-size:{{fontSize}}cqi;font-weight:700;color:{{color}};letter-spacing:0.04em">{{text}}</span>{{/each}}
+            style="background:var(--badge-bg);border-radius:5px;padding:0.3cqi 0.8cqi;font-size:{{fontSize}}cqi;font-weight:700;color:var(--trust-color);letter-spacing:0.04em">{{text}}</span>{{/each}}
     </div>
     {{/if}}{{#each badges}}
-    <div style="position:absolute;left:{{left}}%;top:{{top}}%;z-index:5;background:{{badgeBg}};border:1px solid {{badgeBorder}};border-radius:100px;padding:0.3cqi 0.8cqi;font-size:{{fontSize}}cqi;font-weight:700;color:{{color}};backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap">
+    <div style="position:absolute;left:{{left}}%;top:{{top}}%;z-index:5;background:var(--badge-bg);border:1px solid var(--badge-border);border-radius:100px;padding:0.3cqi 0.8cqi;font-size:{{fontSize}}cqi;font-weight:700;color:var(--badge-color);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap">
         {{text}}
     </div>
     {{/each}}{{#each devices}}{{#if hasScreenshot}}
@@ -32,7 +33,7 @@
     <div style="position:absolute;left:{{left}}%;top:{{top}}%;z-index:3;font-size:{{fontSize}}cqi;opacity:{{opacity}};background:{{background}};color:{{color}};border-radius:{{borderRadius}};padding:0.3cqi 0.8cqi;pointer-events:none;white-space:nowrap;{{animStyle}}">
         {{content}}
     </div>
-    {{/each}}{{#if keyframeStyles}}
-    <style>{{keyframeStyles}}</style>
+    {{/each}}{{#if hasAnimations}}
+    {{keyframesHTML}}
     {{/if}}
 </div>

@@ -2,10 +2,11 @@ import Foundation
 
 /// Renders App Store screenshot screens as HTML.
 ///
-/// **SRP:** This renderer only maps domain model properties to template contexts.
-/// All HTML lives in external template files. All color logic lives on `GalleryPalette`.
-/// All display data lives on domain models (`DecorationShape.displayCharacter`,
-/// `DecorationAnimation.css`).
+/// **SRP:** Maps domain model data → template context dictionaries.
+/// **OCP:** All HTML, CSS colors, and keyframes live in external templates.
+///
+/// Color scheme (light/dark) is handled entirely by CSS custom properties
+/// defined in `theme-vars.html`. Swift only passes `data-theme="light|dark"`.
 public enum GalleryHTMLRenderer {
 
     /// The template repository. Plugins can replace to provide custom templates.
@@ -33,8 +34,13 @@ public enum GalleryHTMLRenderer {
     ) -> [String: Any] {
         let hl = screenLayout.headline
         let pad = 5.0
+        let theme = palette.isLight ? "light" : "dark"
 
-        var context: [String: Any] = ["background": palette.background]
+        var context: [String: Any] = [
+            "background": palette.background,
+            "theme": theme,
+            "themeVars": loadTemplate("theme-vars"),
+        ]
 
         // Tagline
         if let tgSlot = screenLayout.tagline {
@@ -54,7 +60,7 @@ public enum GalleryHTMLRenderer {
         if let subSlot = screenLayout.subheading {
             let subText = shot.body ?? subSlot.preview ?? ""
             if !subText.isEmpty {
-                var sub = textSlotContext(subSlot, content: subText.replacingOccurrences(of: "\n", with: "<br>"), color: palette.bodyColor, pad: pad)
+                var sub = textSlotContext(subSlot, content: subText.replacingOccurrences(of: "\n", with: "<br>"), color: "", pad: pad)
                 sub["padRight"] = fmt(pad + 3)
                 context["subheading"] = sub
             }
@@ -69,13 +75,13 @@ public enum GalleryHTMLRenderer {
             context["trustMarks"] = [
                 "top": fmt(afterHeading),
                 "pad": fmt(pad),
-                "items": marks.map { ["text": $0, "badgeBg": palette.badgeBackground, "fontSize": markSize, "color": palette.trustMarkColor] },
+                "items": marks.map { ["text": $0, "fontSize": markSize] },
             ] as [String: Any]
         }
 
         // Badges
         if !shot.badges.isEmpty {
-            context["badges"] = badgeContexts(shot.badges, headlineSlot: hl, palette: palette)
+            context["badges"] = badgeContexts(shot.badges, headlineSlot: hl)
         }
 
         // Devices
@@ -84,16 +90,16 @@ public enum GalleryHTMLRenderer {
             : screenLayout.devices
         context["devices"] = devSlots.enumerated().map { (devIndex, dev) in
             let screenshotFile = devIndex < shot.screenshots.count ? shot.screenshots[devIndex] : ""
-            return deviceContext(dev, screenshot: screenshotFile, palette: palette)
+            return deviceContext(dev, screenshot: screenshotFile)
         }
 
         // Decorations
         if !screenLayout.decorations.isEmpty {
-            context["decorations"] = decorationContexts(screenLayout.decorations, palette: palette)
-            let animations = Set(screenLayout.decorations.compactMap(\.animation))
-            if !animations.isEmpty {
-                context["keyframeStyles"] = animations.sorted(by: { $0.rawValue < $1.rawValue })
-                    .map(\.css).joined()
+            context["decorations"] = decorationContexts(screenLayout.decorations)
+            let hasAnimations = screenLayout.decorations.contains(where: { $0.animation != nil })
+            if hasAnimations {
+                context["hasAnimations"] = "1"
+                context["keyframesHTML"] = loadTemplate("keyframes")
             }
         }
 
@@ -124,22 +130,20 @@ public enum GalleryHTMLRenderer {
 
     public static func renderBadges(_ badges: [String], headlineSlot hl: TextSlot, isLight: Bool) -> String {
         guard !badges.isEmpty else { return "" }
-        let palette = GalleryPalette(id: "", name: "", background: isLight ? "#fff" : "#000")
         let template = loadTemplate("badge")
-        return badgeContexts(badges, headlineSlot: hl, palette: palette)
+        return badgeContexts(badges, headlineSlot: hl)
             .map { HTMLComposer.render(template, with: $0) }.joined()
     }
 
     public static func renderTrustMarks(_ marks: [String], headlineSlot hl: TextSlot, headlineContent: String, isLight: Bool) -> String {
         guard !marks.isEmpty else { return "" }
-        let palette = GalleryPalette(id: "", name: "", background: isLight ? "#fff" : "#000")
         let pad = 5.0
         let hlLines = Double(headlineContent.components(separatedBy: "\n").count)
         let afterHeading = hl.y * 100 + hlLines * hl.size * 100 * 1.0 + 1
         let markSize = fmt(hl.size * 100 * 0.28)
         let markTemplate = loadTemplate("trust-mark")
         let items = marks.map { mark in
-            HTMLComposer.render(markTemplate, with: ["text": mark, "badgeBg": palette.badgeBackground, "fontSize": markSize, "color": palette.trustMarkColor])
+            HTMLComposer.render(markTemplate, with: ["text": mark, "fontSize": markSize])
         }.joined()
         return HTMLComposer.render(loadTemplate("trust-marks-wrapper"), with: [
             "top": fmt(afterHeading), "pad": fmt(pad), "items": items,
@@ -147,22 +151,18 @@ public enum GalleryHTMLRenderer {
     }
 
     public static func renderDevice(_ slot: DeviceSlot, screenshot: String, isLight: Bool) -> String {
-        let palette = GalleryPalette(id: "", name: "", background: isLight ? "#fff" : "#000")
-        let ctx = deviceContext(slot, screenshot: screenshot, palette: palette)
+        let ctx = deviceContext(slot, screenshot: screenshot)
         let template = !screenshot.isEmpty ? "device-screenshot" : "device-wireframe"
         return HTMLComposer.render(loadTemplate(template), with: ctx)
     }
 
     public static func renderDecorations(_ decorations: [Decoration], isLight: Bool) -> String {
         guard !decorations.isEmpty else { return "" }
-        let palette = GalleryPalette(id: "", name: "", background: isLight ? "#fff" : "#000")
         let template = loadTemplate("decoration")
-        var html = decorationContexts(decorations, palette: palette)
+        var html = decorationContexts(decorations)
             .map { HTMLComposer.render(template, with: $0) }.joined()
-        let animations = Set(decorations.compactMap(\.animation))
-        if !animations.isEmpty {
-            let keyframes = animations.sorted(by: { $0.rawValue < $1.rawValue }).map(\.css).joined()
-            html += HTMLComposer.render(loadTemplate("keyframes"), with: ["keyframes": keyframes])
+        if decorations.contains(where: { $0.animation != nil }) {
+            html += loadTemplate("keyframes")
         }
         return html
     }
@@ -186,9 +186,7 @@ public enum GalleryHTMLRenderer {
         return "*{margin:0;padding:0;box-sizing:border-box}\(htmlHeight)body{\(bodyStyle)}.preview{\(previewStyle)}"
     }
 
-    public static func loadPageWrapperTemplate() -> String {
-        loadTemplate("page-wrapper")
-    }
+    public static func loadPageWrapperTemplate() -> String { loadTemplate("page-wrapper") }
 
     // MARK: - Preview
 
@@ -200,7 +198,7 @@ public enum GalleryHTMLRenderer {
         return HTMLComposer.render(loadTemplate("preview-page"), with: ["screenDivs": screenDivs])
     }
 
-    // MARK: - Context Builders (pure data mapping)
+    // MARK: - Context Builders (pure data mapping, no HTML, no colors)
 
     private static func textSlotContext(_ slot: TextSlot, content: String, color: String, pad: Double) -> [String: Any] {
         [
@@ -210,26 +208,25 @@ public enum GalleryHTMLRenderer {
         ]
     }
 
-    private static func badgeContexts(_ badges: [String], headlineSlot hl: TextSlot, palette: GalleryPalette) -> [[String: Any]] {
+    private static func badgeContexts(_ badges: [String], headlineSlot hl: TextSlot) -> [[String: Any]] {
         let badgeTop = hl.y * 100 + 1.0
         return badges.enumerated().map { (i, badge) in
             let bx = hl.align == "left" ? 65.0 + Double(i % 2) * 12.0 : 60.0 + Double(i % 2) * 15.0
             return [
                 "left": fmt(bx), "top": fmt(badgeTop + Double(i) * 7.0),
-                "badgeBg": palette.badgeBackground, "badgeBorder": palette.badgeBorder,
-                "fontSize": fmt(hl.size * 100 * 0.28),
-                "color": palette.badgeTextColor, "text": badge,
+                "fontSize": fmt(hl.size * 100 * 0.28), "text": badge,
             ]
         }
     }
 
-    private static func decorationContexts(_ decorations: [Decoration], palette: GalleryPalette) -> [[String: Any]] {
+    private static func decorationContexts(_ decorations: [Decoration]) -> [[String: Any]] {
         decorations.enumerated().map { (i, deco) in
             [
                 "left": fmt(deco.x * 100), "top": fmt(deco.y * 100),
                 "fontSize": fmt(deco.size * 100), "opacity": fmt(deco.opacity),
                 "background": deco.background ?? "transparent",
-                "color": deco.color ?? palette.decorationColor,
+                "color": deco.color ?? "",
+                "useDefaultColor": deco.color == nil ? "1" : "",
                 "borderRadius": deco.borderRadius ?? "50%",
                 "animStyle": deco.animation.map { "animation:td-\($0.rawValue) \(3 + i % 4)s ease-in-out infinite;" } ?? "",
                 "content": deco.shape.displayCharacter,
@@ -237,7 +234,7 @@ public enum GalleryHTMLRenderer {
         }
     }
 
-    private static func deviceContext(_ slot: DeviceSlot, screenshot: String, palette: GalleryPalette) -> [String: Any] {
+    private static func deviceContext(_ slot: DeviceSlot, screenshot: String) -> [String: Any] {
         let dl = fmt((slot.x - slot.width / 2) * 100)
         let dt = fmt(slot.y * 100)
         let dw = fmt(slot.width * 100)
@@ -245,22 +242,21 @@ public enum GalleryHTMLRenderer {
         if !screenshot.isEmpty {
             return ["left": dl, "top": dt, "width": dw, "hasScreenshot": "1", "screenshot": screenshot]
         } else {
-            let outerStyle: String
             let frameOverlay: String
+            let frameStyle: String
             if let dataURL = phoneFrameDataURL {
                 frameOverlay = HTMLComposer.render(loadTemplate("frame-overlay"), with: ["dataURL": dataURL])
-                outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(palette.shadowOpacity)))"
+                frameStyle = ""
             } else {
                 frameOverlay = ""
-                outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(palette.shadowOpacity)));background:\(palette.frameBackground);border-radius:12%/5.5%;border:1.5px solid \(palette.frameBorder);overflow:hidden"
+                frameStyle = "background:var(--frame-bg);border-radius:12%/5.5%;border:1.5px solid var(--frame-border);overflow:hidden"
             }
-            let wireframeHTML = HTMLComposer.render(loadTemplate("wireframe"), with: [
-                "scr": palette.wireframeScreen, "ui": palette.wireframeUI,
-                "ui2": palette.wireframeUIAccent, "uitx": palette.wireframeText,
-            ])
+            let wireframeHTML = loadTemplate("wireframe")
             return [
                 "left": dl, "top": dt, "width": dw, "hasWireframe": "1",
-                "outerStyle": outerStyle, "wireframeHTML": wireframeHTML, "frameOverlay": frameOverlay,
+                "frameStyle": frameStyle,
+                "wireframeHTML": wireframeHTML,
+                "frameOverlay": frameOverlay,
             ]
         }
     }
