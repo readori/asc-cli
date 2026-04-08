@@ -77,6 +77,31 @@ extension AppShot: Codable {
     }
 }
 
+// MARK: - Presentable
+
+extension AppShot: Presentable {
+    public static var tableHeaders: [String] {
+        ["Headline", "Screenshot", "Type", "Configured"]
+    }
+    public var tableRow: [String] {
+        [headline ?? "-", screenshot, type.rawValue, isConfigured ? "✓" : "✗"]
+    }
+}
+
+// MARK: - Affordances
+
+extension AppShot: AffordanceProviding {
+    public var affordances: [String: String] {
+        var cmds: [String: String] = [
+            "listTemplates": "asc app-shots templates list",
+        ]
+        if isConfigured {
+            cmds["preview"] = "asc app-shots templates apply --screenshot \(screenshot) --headline \"\(headline ?? "")\""
+        }
+        return cmds
+    }
+}
+
 /// The type of screen in an App Store screenshot gallery.
 public enum ScreenType: String, Sendable, Equatable, Codable {
     case hero       // first impression — branding, trust marks, big headline

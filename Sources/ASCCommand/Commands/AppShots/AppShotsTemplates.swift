@@ -178,12 +178,12 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             return template.apply(shot: shotForHTML)
         }
 
-        let screen = ScreenDesign(index: 0, template: template, screenshotFile: screenshot, heading: headline, subheading: subtitle ?? "")
+        // Return the shot as JSON output
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)
         return try formatter.formatAgentItems(
-            [screen],
-            headers: ["Heading", "Screenshot", "Template", "Complete"],
-            rowMapper: { [$0.heading, $0.screenshotFile, $0.template?.name ?? "-", $0.isComplete ? "✓" : "✗"] }
+            [shot],
+            headers: ["Headline", "Screenshot", "Template", "Configured"],
+            rowMapper: { [$0.headline ?? "-", $0.screenshot, template.name, $0.isConfigured ? "✓" : "✗"] }
         )
     }
 

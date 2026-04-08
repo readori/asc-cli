@@ -608,26 +608,6 @@ struct MockRepositoryFactory {
         AppShotsConfig(geminiApiKey: geminiApiKey)
     }
 
-    static func makeScreenDesign(
-        index: Int = 0,
-        screenshotFile: String = "screen1.png",
-        heading: String = "Work Smarter",
-        subheading: String = "Organize your tasks effortlessly",
-        layoutMode: LayoutMode = .center,
-        visualDirection: String = "Main dashboard with task list",
-        imagePrompt: String = "Clean dark UI with colorful task cards"
-    ) -> ScreenDesign {
-        ScreenDesign(
-            index: index,
-            screenshotFile: screenshotFile,
-            heading: heading,
-            subheading: subheading,
-            layoutMode: layoutMode,
-            visualDirection: visualDirection,
-            imagePrompt: imagePrompt
-        )
-    }
-
     // MARK: - Plugins
 
     static func makePlugin(
@@ -1240,10 +1220,10 @@ struct MockRepositoryFactory {
 
     static func makeScreenTemplate(
         headline: TextSlot = TextSlot(y: 0.02, size: 0.10),
-        device: DeviceSlot? = DeviceSlot(y: 0.15, width: 0.85),
+        devices: [DeviceSlot] = [DeviceSlot(y: 0.15, width: 0.85)],
         decorations: [Decoration] = []
     ) -> ScreenTemplate {
-        ScreenTemplate(headline: headline, device: device, decorations: decorations)
+        ScreenTemplate(headline: headline, devices: devices, decorations: decorations)
     }
 
     static func makeScreenshotTemplate(

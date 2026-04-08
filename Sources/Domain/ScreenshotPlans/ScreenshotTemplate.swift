@@ -65,7 +65,7 @@ public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
 extension ScreenshotTemplate {
     public var isPortrait: Bool { supportedSizes.contains(.portrait) }
     public var isLandscape: Bool { supportedSizes.contains(.landscape) }
-    public var deviceCount: Int { screenTemplate.device != nil ? 1 : 0 }
+    public var deviceCount: Int { screenTemplate.deviceCount }
 }
 
 // MARK: - Codable
