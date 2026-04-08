@@ -23,7 +23,7 @@ struct GalleryComposeTests {
 
         let html = shot.compose(screenTemplate: screenTemplate, palette: palette)
         #expect(html.contains("CUSTOMIZE EVERY DETAIL"))
-        #expect(html.contains("9:41"))  // wireframe phone status bar
+        #expect(html.contains("screen-0.png"))  // real screenshot in device
         #expect(html.contains("linear-gradient"))
     }
 
