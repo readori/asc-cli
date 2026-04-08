@@ -3,13 +3,10 @@ import Foundation
 /// Renders App Store screenshot screens as HTML.
 ///
 /// **SRP:** Builds context dictionaries from domain models. Nothing else.
-/// **OCP:** All HTML, CSS colors, keyframes, and theme logic live in templates.
+/// **OCP:** All HTML, CSS colors, keyframes, and theme logic live in `.mustache` templates.
 ///
-/// One entry point: `renderScreen()` → `buildScreenContext()` → `screen.html`.
+/// Templates are pre-compiled via `MustacheLibrary` at startup for performance.
 public enum GalleryHTMLRenderer {
-
-    /// The template repository. Plugins can replace to provide custom templates.
-    nonisolated(unsafe) public static var templateRepository: any HTMLTemplateRepository = BundledHTMLTemplateRepository()
 
     nonisolated(unsafe) public static var phoneFrameDataURL: String?
 
@@ -22,7 +19,7 @@ public enum GalleryHTMLRenderer {
         palette: GalleryPalette
     ) -> String {
         let context = buildScreenContext(shot, screenLayout: screenLayout, palette: palette)
-        return HTMLComposer.render(loadTemplate("screen"), with: context)
+        return HTMLComposer.render(template: "screen", with: context)
     }
 
     /// Build the full context dictionary for a screen template.
@@ -37,7 +34,7 @@ public enum GalleryHTMLRenderer {
         var context: [String: Any] = [
             "background": palette.background,
             "theme": palette.isLight ? "light" : "dark",
-            "themeVars": loadTemplate("theme-vars"),
+            "themeVars": HTMLComposer.render(template: "theme-vars", with: [:]),
         ]
 
         // Tagline
@@ -68,7 +65,6 @@ public enum GalleryHTMLRenderer {
         if let marks = shot.trustMarks, !marks.isEmpty {
             let hlLines = Double(hlContent.components(separatedBy: "\n").count)
             let afterHeading = hl.y * 100 + hlLines * hl.size * 100 * 1.0 + 1
-            context["trustMarksHTML"] = "1"
             context["trustMarks"] = [
                 "top": fmt(afterHeading),
                 "pad": fmt(pad),
@@ -94,8 +90,8 @@ public enum GalleryHTMLRenderer {
         if !screenLayout.decorations.isEmpty {
             context["decorations"] = decorationContexts(screenLayout.decorations)
             if screenLayout.decorations.contains(where: { $0.animation != nil }) {
-                context["hasAnimations"] = "1"
-                context["keyframesHTML"] = loadTemplate("keyframes")
+                context["hasAnimations"] = true
+                context["keyframesHTML"] = HTMLComposer.render(template: "keyframes", with: [:])
             }
         }
 
@@ -105,7 +101,7 @@ public enum GalleryHTMLRenderer {
     // MARK: - Page Wrapper
 
     public static func wrapPage(_ inner: String, fillViewport: Bool = false) -> String {
-        HTMLComposer.render(loadTemplate("page-wrapper"), with: pageContext(inner: inner, fillViewport: fillViewport))
+        HTMLComposer.render(template: "page-wrapper", with: pageContext(inner: inner, fillViewport: fillViewport))
     }
 
     /// Build page wrapper context. Shared with `ThemedPage`.
@@ -119,7 +115,7 @@ public enum GalleryHTMLRenderer {
             "inner": inner,
             "aspectRatio": "\(width)/\(height)",
         ]
-        if fillViewport { ctx["fillViewport"] = "1" }
+        if fillViewport { ctx["fillViewport"] = true }
         return ctx
     }
 
@@ -128,15 +124,14 @@ public enum GalleryHTMLRenderer {
     public static func renderPreviewPage(_ gallery: Gallery) -> String {
         let screens = gallery.renderAll()
         guard !screens.isEmpty else { return "" }
-        let screenTemplate = loadTemplate("preview-screen")
-        let screenDivs = screens.map { HTMLComposer.render(screenTemplate, with: ["screen": $0]) }.joined()
-        return HTMLComposer.render(loadTemplate("preview-page"), with: [
+        let screenDivs = screens.map { HTMLComposer.render(template: "preview-screen", with: ["screen": $0]) }.joined()
+        return HTMLComposer.render(template: "preview-page", with: [
             "screenDivs": screenDivs,
-            "themeVars": loadTemplate("theme-vars"),
+            "themeVars": HTMLComposer.render(template: "theme-vars", with: [:]),
         ])
     }
 
-    // MARK: - Context Builders (pure data mapping)
+    // MARK: - Context Builders
 
     private static func textSlotContext(_ slot: TextSlot, content: String, color: String, pad: Double) -> [String: Any] {
         [
@@ -164,7 +159,7 @@ public enum GalleryHTMLRenderer {
                 "fontSize": fmt(deco.size * 100), "opacity": fmt(deco.opacity),
                 "background": deco.background ?? "transparent",
                 "color": deco.color ?? "",
-                "useDefaultColor": deco.color == nil ? "1" : "",
+                "useDefaultColor": deco.color == nil,
                 "borderRadius": deco.borderRadius ?? "50%",
                 "animStyle": deco.animation.map { "animation:td-\($0.rawValue) \(3 + i % 4)s ease-in-out infinite;" } ?? "",
                 "content": deco.shape.displayCharacter,
@@ -178,27 +173,21 @@ public enum GalleryHTMLRenderer {
         let dw = fmt(slot.width * 100)
 
         if !screenshot.isEmpty {
-            return ["left": dl, "top": dt, "width": dw, "hasScreenshot": "1", "screenshot": screenshot]
+            return ["left": dl, "top": dt, "width": dw, "hasScreenshot": true, "screenshot": screenshot]
         } else {
-            var ctx: [String: Any] = ["left": dl, "top": dt, "width": dw, "hasWireframe": "1"]
-            ctx["wireframeHTML"] = loadTemplate("wireframe")
+            var ctx: [String: Any] = ["left": dl, "top": dt, "width": dw, "hasWireframe": true]
+            ctx["wireframeHTML"] = HTMLComposer.render(template: "wireframe", with: [:])
             if let dataURL = phoneFrameDataURL {
-                ctx["hasPhoneFrame"] = "1"
+                ctx["hasPhoneFrame"] = true
                 ctx["phoneFrameURL"] = dataURL
             } else {
-                ctx["noPhoneFrame"] = "1"
+                ctx["noPhoneFrame"] = true
             }
             return ctx
         }
     }
 
-    // MARK: - Helpers
-
     static func fmt(_ value: Double) -> String {
         String(format: "%.1f", value)
-    }
-
-    static func loadTemplate(_ name: String) -> String {
-        templateRepository.template(named: name) ?? ""
     }
 }

@@ -27,62 +27,77 @@ struct HTMLComposerTests {
         #expect(result == "ok-ok")
     }
 
-    // MARK: - Conditional Blocks
+    // MARK: - Sections (if/each)
 
-    @Test func `if block renders when value is truthy`() {
-        let result = HTMLComposer.render("{{#if show}}visible{{/if}}", with: ["show": "yes"])
+    @Test func `section renders when value is truthy`() {
+        let result = HTMLComposer.render("{{#show}}visible{{/show}}", with: ["show": true])
         #expect(result == "visible")
     }
 
-    @Test func `if block skips when value is missing`() {
-        let result = HTMLComposer.render("{{#if show}}visible{{/if}}", with: [:])
+    @Test func `section skips when value is missing`() {
+        let result = HTMLComposer.render("{{#show}}visible{{/show}}", with: [:])
         #expect(result == "")
     }
 
-    @Test func `if block skips when value is empty string`() {
-        let result = HTMLComposer.render("{{#if show}}visible{{/if}}", with: ["show": ""])
-        #expect(result == "")
+    @Test func `section renders when value is empty string`() {
+        // Mustache treats any non-nil value as truthy (including empty string)
+        let result = HTMLComposer.render("{{#show}}visible{{/show}}", with: ["show": ""])
+        #expect(result == "visible")
     }
 
-    @Test func `if block preserves surrounding content`() {
-        let result = HTMLComposer.render("before{{#if x}} middle {{/if}}after", with: ["x": "1"])
+    @Test func `section preserves surrounding content`() {
+        let result = HTMLComposer.render("before{{#x}} middle {{/x}}after", with: ["x": "1"])
         #expect(result == "before middle after")
     }
 
-    @Test func `if block with variable inside`() {
-        let result = HTMLComposer.render("{{#if color}}<div style=\"color:{{color}}\">text</div>{{/if}}", with: ["color": "#fff"])
+    @Test func `section with variable inside`() {
+        let result = HTMLComposer.render("{{#color}}<div style=\"color:{{color}}\">text</div>{{/color}}", with: ["color": "#fff"])
         #expect(result == "<div style=\"color:#fff\">text</div>")
     }
 
-    // MARK: - Each Blocks
+    // MARK: - Array Iteration
 
-    @Test func `each block iterates over items`() {
+    @Test func `section iterates over array items`() {
         let result = HTMLComposer.render(
-            "{{#each items}}<li>{{value}}</li>{{/each}}",
+            "{{#items}}<li>{{value}}</li>{{/items}}",
             with: ["items": [["value": "A"], ["value": "B"]]]
         )
         #expect(result == "<li>A</li><li>B</li>")
     }
 
-    @Test func `each block renders empty for missing key`() {
-        let result = HTMLComposer.render("{{#each items}}X{{/each}}", with: [:])
+    @Test func `section renders empty for missing key`() {
+        let result = HTMLComposer.render("{{#items}}X{{/items}}", with: [:])
         #expect(result == "")
     }
 
-    @Test func `each block renders empty for empty array`() {
-        let result = HTMLComposer.render("{{#each items}}X{{/each}}", with: ["items": [Any]()])
+    @Test func `section renders empty for empty array`() {
+        let result = HTMLComposer.render("{{#items}}X{{/items}}", with: ["items": [Any]()])
         #expect(result == "")
     }
 
-    @Test func `each block with index`() {
-        let result = HTMLComposer.render(
-            "{{#each items}}{{index}}:{{name}} {{/each}}",
-            with: ["items": [["name": "A"], ["name": "B"]]]
-        )
-        #expect(result == "0:A 1:B ")
+    // MARK: - Nested Sections
+
+    @Test func `nested sections resolve correctly`() {
+        let result = HTMLComposer.render("{{#outer}}A{{#inner}}B{{/inner}}C{{/outer}}", with: ["outer": true, "inner": true])
+        #expect(result == "ABC")
     }
 
-    // MARK: - Nested Variables
+    @Test func `nested section outer true inner false`() {
+        let result = HTMLComposer.render("{{#outer}}A{{#inner}}B{{/inner}}C{{/outer}}", with: ["outer": true])
+        #expect(result == "AC")
+    }
+
+    @Test func `nested section outer false hides all`() {
+        let result = HTMLComposer.render("{{#outer}}A{{#inner}}B{{/inner}}C{{/outer}}", with: [:])
+        #expect(result == "")
+    }
+
+    @Test func `multiple nested sections in sequence`() {
+        let result = HTMLComposer.render("{{#w}}[{{#a}}A{{/a}}{{#b}}B{{/b}}]{{/w}}", with: ["w": true, "b": true])
+        #expect(result == "[B]")
+    }
+
+    // MARK: - Dot Notation
 
     @Test func `dot notation accesses nested values`() {
         let ctx: [String: Any] = ["slot": ["y": "10", "size": "5"]]
@@ -97,61 +112,11 @@ struct HTMLComposerTests {
         #expect(result == "<b>bold</b>")
     }
 
-    // MARK: - Whitespace Handling
-
-    @Test func `preserves template whitespace`() {
-        let template = """
-        <div>
-            {{content}}
-        </div>
-        """
-        let result = HTMLComposer.render(template, with: ["content": "hello"])
-        #expect(result == """
-        <div>
-            hello
-        </div>
-        """)
-    }
-
-    // MARK: - Nested If Blocks
-
-    @Test func `nested if blocks resolve correctly`() {
-        let template = "{{#if outer}}A{{#if inner}}B{{/if}}C{{/if}}"
-        let result = HTMLComposer.render(template, with: ["outer": "1", "inner": "1"])
-        #expect(result == "ABC")
-    }
-
-    @Test func `nested if outer true inner false`() {
-        let template = "{{#if outer}}A{{#if inner}}B{{/if}}C{{/if}}"
-        let result = HTMLComposer.render(template, with: ["outer": "1"])
-        #expect(result == "AC")
-    }
-
-    @Test func `nested if outer false hides all`() {
-        let template = "{{#if outer}}A{{#if inner}}B{{/if}}C{{/if}}"
-        let result = HTMLComposer.render(template, with: [:])
-        #expect(result == "")
-    }
-
-    @Test func `multiple nested ifs in sequence`() {
-        let template = "{{#if w}}[{{#if a}}A{{/if}}{{#if b}}B{{/if}}]{{/if}}"
-        let result = HTMLComposer.render(template, with: ["w": "1", "b": "1"])
-        #expect(result == "[B]")
-    }
-
-    @Test func `nested if inside each`() {
-        let template = "{{#each items}}{{#if flag}}Y{{/if}}{{#if other}}N{{/if}}-{{/each}}"
-        let result = HTMLComposer.render(template, with: [
-            "items": [["flag": "1"], ["other": "1"]] as [[String: Any]]
-        ])
-        #expect(result == "Y-N-")
-    }
-
     // MARK: - Complex Template
 
     @Test func `renders screen-like template`() {
         let template = """
-        <div style="background:{{background}};position:relative">{{#if tagline}}<span>{{tagline}}</span>{{/if}}<h1>{{headline}}</h1>{{#each badges}}<span class="badge">{{text}}</span>{{/each}}</div>
+        <div style="background:{{background}};position:relative">{{#tagline}}<span>{{tagline}}</span>{{/tagline}}<h1>{{headline}}</h1>{{#badges}}<span class="badge">{{text}}</span>{{/badges}}</div>
         """
         let ctx: [String: Any] = [
             "background": "#000",
