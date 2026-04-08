@@ -54,7 +54,7 @@ struct ScreenDesignRichTests {
         )
         let html = screen.previewHTML
         #expect(html.contains("Ship Faster"))
-        #expect(html.contains("screen-1.png"))
+        #expect(html.contains("9:41"))  // wireframe phone
         #expect(html.contains("linear-gradient"))
     }
 
