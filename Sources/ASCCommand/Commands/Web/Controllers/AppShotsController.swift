@@ -147,24 +147,15 @@ struct AppShotsController: Sendable {
             do {
                 let screenshotPath = try writeTempScreenshot(screenshotBase64)
 
-                // Build AppShot
                 let shot = AppShot(screenshot: screenshotPath, type: .feature)
                 shot.headline = headline
                 shot.body = json["subtitle"] as? String
                 shot.tagline = json["tagline"] as? String
 
-                // Find template — try single templates first, then gallery templates
-                let fragment: String
-                if let tmpl = try await self.templateRepo.getTemplate(id: templateId) {
-                    fragment = tmpl.renderFragment(shot: shot)
-                } else if let gallery = try await self.galleryTemplateRepo.getGallery(templateId: templateId),
-                          let galleryTmpl = gallery.template,
-                          let screenLayout = galleryTmpl.screens[.feature] ?? galleryTmpl.screens[.hero],
-                          let palette = gallery.palette {
-                    fragment = GalleryHTMLRenderer.renderScreen(shot, screenLayout: screenLayout, palette: palette)
-                } else {
+                guard let tmpl = try await self.templateRepo.getTemplate(id: templateId) else {
                     return jsonError("Template not found", status: .notFound)
                 }
+                let fragment = tmpl.renderFragment(shot: shot)
 
                 let themedHTML = try await self.themeRepo.compose(themeId: themeId, html: fragment, canvasWidth: 1320, canvasHeight: 2868)
                 var html = ThemedPage(body: themedHTML, width: 1320, height: 2868).html
