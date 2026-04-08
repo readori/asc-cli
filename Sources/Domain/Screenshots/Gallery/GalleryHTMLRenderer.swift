@@ -105,23 +105,23 @@ public enum GalleryHTMLRenderer {
     // MARK: - Page Wrapper
 
     public static func wrapPage(_ inner: String, fillViewport: Bool = false) -> String {
-        let styles = buildPageStyles(fillViewport: fillViewport)
-        return HTMLComposer.render(loadTemplate("page-wrapper"), with: ["styles": styles, "inner": inner])
+        HTMLComposer.render(loadTemplate("page-wrapper"), with: pageContext(inner: inner, fillViewport: fillViewport))
     }
 
-    /// CSS construction stays in Swift — CSS `{` braces conflict with `{{` template syntax.
-    public static func buildPageStyles(fillViewport: Bool = false, width: Int = 1320, height: Int = 2868) -> String {
-        let previewStyle = fillViewport
-            ? "width:100%;height:100%;container-type:inline-size"
-            : "width:320px;aspect-ratio:\(width)/\(height);container-type:inline-size"
-        let bodyStyle = fillViewport
-            ? "margin:0;overflow:hidden"
-            : "display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111"
-        let htmlHeight = fillViewport ? "html,body{width:100%;height:100%}" : ""
-        return "*{margin:0;padding:0;box-sizing:border-box}\(htmlHeight)body{\(bodyStyle)}.preview{\(previewStyle)}"
+    /// Build page wrapper context. Shared with `ThemedPage`.
+    public static func pageContext(
+        inner: String,
+        fillViewport: Bool = false,
+        width: Int = 1320,
+        height: Int = 2868
+    ) -> [String: Any] {
+        var ctx: [String: Any] = [
+            "inner": inner,
+            "aspectRatio": "\(width)/\(height)",
+        ]
+        if fillViewport { ctx["fillViewport"] = "1" }
+        return ctx
     }
-
-    public static func loadPageWrapperTemplate() -> String { loadTemplate("page-wrapper") }
 
     // MARK: - Preview
 
