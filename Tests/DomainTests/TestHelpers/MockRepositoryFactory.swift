@@ -1252,24 +1252,21 @@ struct MockRepositoryFactory {
         category: TemplateCategory = .bold,
         supportedSizes: [ScreenSize] = [.portrait],
         description: String = "Indigo gradient with bold headline",
-        background: SlideBackground = .gradient(from: "#4338CA", to: "#6D28D9", angle: 150),
-        deviceCount: Int = 1
+        background: String = "linear-gradient(150deg,#4338CA,#6D28D9)",
+        hasDevice: Bool = true
     ) -> ScreenshotTemplate {
-        let textSlots = [
-            TemplateTextSlot(role: .heading, preview: "Your\nHeadline", x: 0.5, y: 0.04, fontSize: 0.10, color: "#FFFFFF")
-        ]
-        let deviceSlots = (0..<deviceCount).map { i in
-            TemplateDeviceSlot(x: 0.5, y: 0.18, scale: 0.85)
-        }
+        let device = hasDevice ? DeviceSlot(x: 0.5, y: 0.18, width: 0.85) : nil
         return ScreenshotTemplate(
             id: id,
             name: name,
             category: category,
             supportedSizes: supportedSizes,
             description: description,
-            background: background,
-            textSlots: textSlots,
-            deviceSlots: deviceSlots
+            screenTemplate: ScreenTemplate(
+                headline: TextSlot(y: 0.04, size: 0.10, weight: 700, align: "center"),
+                device: device
+            ),
+            palette: GalleryPalette(id: id, name: name, background: background)
         )
     }
 }

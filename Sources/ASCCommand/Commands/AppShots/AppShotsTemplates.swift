@@ -160,15 +160,22 @@ struct AppShotsTemplatesApply: AsyncParsableCommand {
             throw ValidationError("Template '\(id)' not found. Run `asc app-shots templates list` to see available templates.")
         }
 
+        let shot = AppShot(screenshot: screenshot, type: .feature)
+        shot.headline = headline
+        shot.body = subtitle
+        shot.tagline = tagline
+
         if preview == .image, let renderer {
-            let content = TemplateContent(headline: headline, subtitle: subtitle, tagline: tagline, screenshotFile: screenshot)
-            let html = template.apply(content: content, fillViewport: true)
+            let html = template.apply(shot: shot, fillViewport: true)
             return try await renderToImage(html: html, renderer: renderer)
         }
 
         if preview == .html {
-            let content = TemplateContent(headline: headline, subtitle: subtitle, tagline: tagline, screenshotFile: URL(fileURLWithPath: screenshot).lastPathComponent)
-            return template.apply(content: content)
+            let shotForHTML = AppShot(screenshot: URL(fileURLWithPath: screenshot).lastPathComponent, type: .feature)
+            shotForHTML.headline = headline
+            shotForHTML.body = subtitle
+            shotForHTML.tagline = tagline
+            return template.apply(shot: shotForHTML)
         }
 
         let screen = ScreenDesign(index: 0, template: template, screenshotFile: screenshot, heading: headline, subheading: subtitle ?? "")

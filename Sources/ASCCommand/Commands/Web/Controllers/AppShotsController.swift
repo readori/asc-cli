@@ -53,16 +53,18 @@ struct AppShotsController: Sendable {
                 guard let tmpl = try await self.templateRepo.getTemplate(id: templateId) else {
                     return jsonError("Template not found", status: .notFound)
                 }
-                let background = Self.parseBackground(json["background"])
-                let content = TemplateContent(headline: headline, subtitle: json["subtitle"] as? String, tagline: json["tagline"] as? String, screenshotFile: screenshotPath, background: background, textColor: json["textColor"] as? String)
+                let shot = AppShot(screenshot: screenshotPath, type: .feature)
+                shot.headline = headline
+                shot.body = json["subtitle"] as? String
+                shot.tagline = json["tagline"] as? String
 
                 if previewFormat == "image" {
-                    let html = tmpl.apply(content: content, fillViewport: true)
+                    let html = tmpl.apply(shot: shot, fillViewport: true)
                     let pngData = try await AppShotsExport.renderToPNG(html: html, renderer: self.htmlRenderer)
                     return restResponse(jsonEncode(["png": pngData.base64EncodedString(), "width": 1320, "height": 2868]))
                 }
 
-                var html = tmpl.apply(content: content)
+                var html = tmpl.apply(shot: shot)
                 html = Self.inlineBase64(html, screenshotPath: screenshotPath, base64: screenshotBase64)
                 return restResponse(jsonEncode(["html": html]))
             } catch {
@@ -87,9 +89,11 @@ struct AppShotsController: Sendable {
                 guard let tmpl = try await self.templateRepo.getTemplate(id: templateId) else {
                     return jsonError("Template not found", status: .notFound)
                 }
-                let background = Self.parseBackground(json["background"])
-                let content = TemplateContent(headline: headline, subtitle: json["subtitle"] as? String, tagline: json["tagline"] as? String, screenshotFile: screenshotPath, background: background, textColor: json["textColor"] as? String)
-                let fragment = tmpl.renderFragment(content: content)
+                let shot = AppShot(screenshot: screenshotPath, type: .feature)
+                shot.headline = headline
+                shot.body = json["subtitle"] as? String
+                shot.tagline = json["tagline"] as? String
+                let fragment = tmpl.renderFragment(shot: shot)
                 let themedHTML = try await self.themeRepo.compose(themeId: themeId, html: fragment, canvasWidth: 1320, canvasHeight: 2868)
                 var html = ThemedPage(body: themedHTML, width: 1320, height: 2868).html
                 html = Self.inlineBase64(html, screenshotPath: screenshotPath, base64: screenshotBase64)
@@ -161,22 +165,6 @@ struct AppShotsController: Sendable {
     }
 
     // MARK: - Helpers
-
-    /// Parse a background JSON object into a SlideBackground.
-    private static func parseBackground(_ value: Any?) -> SlideBackground? {
-        guard let dict = value as? [String: Any],
-              let type = dict["type"] as? String else { return nil }
-        if type == "gradient",
-           let from = dict["from"] as? String,
-           let to = dict["to"] as? String {
-            let angle = dict["angle"] as? Int ?? 180
-            return .gradient(from: from, to: to, angle: angle)
-        }
-        if let color = dict["color"] as? String {
-            return .solid(color)
-        }
-        return nil
-    }
 
     /// Replace temp file paths with data URLs for inline browser display.
     private static func inlineBase64(_ html: String, screenshotPath: String, base64: String?) -> String {

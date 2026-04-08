@@ -133,10 +133,13 @@ struct AppShotsThemesApply: AsyncParsableCommand {
         }
 
         let screenshotFile = (preview == .image) ? screenshot : URL(fileURLWithPath: screenshot).lastPathComponent
-        let content = TemplateContent(headline: headline, subtitle: subtitle, tagline: tagline, screenshotFile: screenshotFile)
+        let shot = AppShot(screenshot: screenshotFile, type: .feature)
+        shot.headline = headline
+        shot.body = subtitle
+        shot.tagline = tagline
 
         // Domain: template renders fragment, theme repo composes, ThemedPage wraps
-        let fragment = tmpl.renderFragment(content: content)
+        let fragment = tmpl.renderFragment(shot: shot)
         let themedHTML = try await themeRepo.compose(themeId: theme, html: fragment, canvasWidth: canvasWidth, canvasHeight: canvasHeight)
         let page = ThemedPage(body: themedHTML, width: canvasWidth, height: canvasHeight, fillViewport: preview == .image)
 

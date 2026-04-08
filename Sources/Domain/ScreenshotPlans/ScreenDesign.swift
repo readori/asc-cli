@@ -78,11 +78,10 @@ extension ScreenDesign {
     /// Returns empty string if no template is set.
     public var previewHTML: String {
         guard let template else { return "" }
-        return template.apply(content: TemplateContent(
-            headline: heading,
-            subtitle: subheading.isEmpty ? nil : subheading,
-            screenshotFile: screenshotFile
-        ))
+        let shot = AppShot(screenshot: screenshotFile, type: .feature)
+        shot.headline = heading
+        shot.body = subheading.isEmpty ? nil : subheading
+        return template.apply(shot: shot)
     }
 }
 

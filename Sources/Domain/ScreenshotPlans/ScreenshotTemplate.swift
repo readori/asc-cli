@@ -1,116 +1,79 @@
 import Foundation
 
-/// A reusable template for composing App Store screenshots.
+/// A single-screenshot template for App Store screenshots.
 ///
-/// Templates define the visual layout: background, text positions, and device placement.
-/// Users pick a template, fill in their content (headline, subtitle, screenshot),
-/// and produce a `ScreenshotDesign` ready for generation.
+/// Wraps the unified `ScreenTemplate` + `GalleryPalette` types
+/// with metadata for filtering (category, supportedSizes).
 ///
-/// Plugins (like Blitz) register their own templates via `TemplateRepository`.
+/// ```
+/// let tmpl = ScreenshotTemplate(id: "top-hero", name: "Top Hero",
+///     category: .bold, supportedSizes: [.portrait],
+///     screenTemplate: ScreenTemplate(headline: TextSlot(y: 0.04, size: 0.10),
+///                                     device: DeviceSlot(y: 0.18, width: 0.85)),
+///     palette: GalleryPalette(id: "top-hero", name: "Top Hero",
+///                              background: "linear-gradient(150deg,#4338CA,#6D28D9)"))
+/// ```
 public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
     public let id: String
     public let name: String
     public let category: TemplateCategory
     public let supportedSizes: [ScreenSize]
     public let description: String
-    public let background: SlideBackground
-    public let textSlots: [TemplateTextSlot]
-    public let deviceSlots: [TemplateDeviceSlot]
+    public let screenTemplate: ScreenTemplate
+    public let palette: GalleryPalette
 
     public init(
         id: String,
         name: String,
-        category: TemplateCategory,
-        supportedSizes: [ScreenSize],
-        description: String,
-        background: SlideBackground,
-        textSlots: [TemplateTextSlot],
-        deviceSlots: [TemplateDeviceSlot]
+        category: TemplateCategory = .custom,
+        supportedSizes: [ScreenSize] = [.portrait],
+        description: String = "",
+        screenTemplate: ScreenTemplate,
+        palette: GalleryPalette
     ) {
         self.id = id
         self.name = name
         self.category = category
         self.supportedSizes = supportedSizes
         self.description = description
-        self.background = background
-        self.textSlots = textSlots
-        self.deviceSlots = deviceSlots
+        self.screenTemplate = screenTemplate
+        self.palette = palette
     }
 
-    /// Convert to the unified ScreenTemplate layout type.
-    public func toScreenTemplate() -> ScreenTemplate {
-        let heading = textSlots.first { $0.role == .heading }
-        let hl = heading.map {
-            TextSlot(y: $0.y, size: $0.fontSize, weight: $0.fontWeight, align: $0.textAlign)
-        } ?? TextSlot(y: 0.04, size: 0.10)
-
-        let device = deviceSlots.first.map {
-            DeviceSlot(x: $0.x, y: $0.y, width: $0.scale)
-        }
-
-        return ScreenTemplate(headline: hl, device: device)
-    }
-
-    /// Convert background to a GalleryPalette.
-    public func toPalette() -> GalleryPalette {
-        let bg: String
-        switch background {
-        case .solid(let color): bg = color
-        case .gradient(let from, let to, let angle): bg = "linear-gradient(\(angle)deg,\(from),\(to))"
-        }
-        return GalleryPalette(id: id, name: name, background: bg)
-    }
-
-    /// Convert to an AppShot with preview content or user-provided content.
-    public func toAppShot(content: TemplateContent? = nil) -> AppShot {
-        let shot = AppShot(screenshot: content?.screenshotFile ?? "", type: .feature)
-        let heading = textSlots.first { $0.role == .heading }
-        let tagline = textSlots.first { $0.role == .tagline }
-        shot.headline = content?.headline ?? heading?.preview ?? name
-        shot.tagline = content?.tagline ?? tagline?.preview
-        shot.body = content?.subtitle
-        return shot
-    }
-
-    /// Self-contained HTML page previewing this template with default sample text.
+    /// Self-contained HTML preview with wireframe phone.
     public var previewHTML: String {
-        let shot = toAppShot()
-        let screen = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
-        return GalleryHTMLRenderer.wrapPage(screen)
+        let shot = AppShot(screenshot: "", type: .feature)
+        shot.headline = name
+        let html = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: screenTemplate, palette: palette)
+        return GalleryHTMLRenderer.wrapPage(html)
     }
 
-    /// Apply this template with the given content — returns a full HTML page.
-    public func apply(content: TemplateContent? = nil, fillViewport: Bool = false) -> String {
-        let shot = toAppShot(content: content)
-        let screen = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
-        return GalleryHTMLRenderer.wrapPage(screen, fillViewport: fillViewport)
+    /// Apply with user content — returns a full HTML page.
+    public func apply(shot: AppShot, fillViewport: Bool = false) -> String {
+        let html = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: screenTemplate, palette: palette)
+        return GalleryHTMLRenderer.wrapPage(html, fillViewport: fillViewport)
     }
 
-    /// Render the inner HTML fragment (no page wrapper) for composition pipelines.
-    public func renderFragment(content: TemplateContent? = nil) -> String {
-        let shot = toAppShot(content: content)
-        return GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
+    /// Render inner HTML fragment for composition pipelines.
+    public func renderFragment(shot: AppShot) -> String {
+        GalleryHTMLRenderer.renderScreen(shot, screenTemplate: screenTemplate, palette: palette)
     }
 }
 
 // MARK: - Semantic Booleans
 
 extension ScreenshotTemplate {
-    /// Whether this template supports portrait orientation.
     public var isPortrait: Bool { supportedSizes.contains(.portrait) }
-
-    /// Whether this template supports landscape orientation.
     public var isLandscape: Bool { supportedSizes.contains(.landscape) }
-
-    /// Number of device slots in this template.
-    public var deviceCount: Int { deviceSlots.count }
+    public var deviceCount: Int { screenTemplate.device != nil ? 1 : 0 }
 }
 
-// MARK: - Codable (includes computed properties for REST/JSON consumers)
+// MARK: - Codable
 
 extension ScreenshotTemplate: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, category, supportedSizes, description, background, textSlots, deviceSlots
+        case id, name, category, supportedSizes, description
+        case screenTemplate, palette
         case previewHTML, deviceCount
     }
 
@@ -118,12 +81,11 @@ extension ScreenshotTemplate: Codable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
-        category = try c.decode(TemplateCategory.self, forKey: .category)
-        supportedSizes = try c.decode([ScreenSize].self, forKey: .supportedSizes)
-        description = try c.decode(String.self, forKey: .description)
-        background = try c.decode(SlideBackground.self, forKey: .background)
-        textSlots = try c.decode([TemplateTextSlot].self, forKey: .textSlots)
-        deviceSlots = try c.decode([TemplateDeviceSlot].self, forKey: .deviceSlots)
+        category = try c.decodeIfPresent(TemplateCategory.self, forKey: .category) ?? .custom
+        supportedSizes = try c.decodeIfPresent([ScreenSize].self, forKey: .supportedSizes) ?? [.portrait]
+        description = try c.decodeIfPresent(String.self, forKey: .description) ?? ""
+        screenTemplate = try c.decode(ScreenTemplate.self, forKey: .screenTemplate)
+        palette = try c.decode(GalleryPalette.self, forKey: .palette)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -133,9 +95,8 @@ extension ScreenshotTemplate: Codable {
         try c.encode(category, forKey: .category)
         try c.encode(supportedSizes, forKey: .supportedSizes)
         try c.encode(description, forKey: .description)
-        try c.encode(background, forKey: .background)
-        try c.encode(textSlots, forKey: .textSlots)
-        try c.encode(deviceSlots, forKey: .deviceSlots)
+        try c.encode(screenTemplate, forKey: .screenTemplate)
+        try c.encode(palette, forKey: .palette)
         try c.encode(previewHTML, forKey: .previewHTML)
         try c.encode(deviceCount, forKey: .deviceCount)
     }
@@ -165,157 +126,12 @@ extension ScreenshotTemplate: AffordanceProviding {
     }
 }
 
-// MARK: - Supporting Types
+// MARK: - Supporting Types (kept for metadata)
 
-/// Template category for filtering and organization.
 public enum TemplateCategory: String, Sendable, Equatable, Codable, CaseIterable {
-    case bold
-    case minimal
-    case elegant
-    case professional
-    case playful
-    case showcase
-    case custom
+    case bold, minimal, elegant, professional, playful, showcase, custom
 }
 
-/// Screen size/orientation category for template compatibility.
 public enum ScreenSize: String, Sendable, Equatable, Codable, CaseIterable {
-    case portrait       // Tall phone (9:19+)
-    case portrait43     // iPad-like (3:4)
-    case landscape      // Wide (16:9, Mac)
-    case square         // 1:1
-}
-
-/// A text slot in a template — defines where text appears and its default content.
-public struct TemplateTextSlot: Sendable, Equatable, Codable {
-    /// The role this text plays (heading, subheading, tagline).
-    public let role: TextRole
-    /// Default preview text shown in template browser.
-    public let preview: String
-    /// Horizontal position (0–1, normalized to canvas width).
-    public let x: Double
-    /// Vertical position (0–1, normalized to canvas height).
-    public let y: Double
-    /// Font size relative to canvas width (0.1 = 10%).
-    public let fontSize: Double
-    /// Font weight (100–900).
-    public let fontWeight: Int
-    /// Text color (hex or rgba).
-    public let color: String
-    /// Text alignment.
-    public let textAlign: String
-    /// Optional font family override.
-    public let font: String?
-    /// Optional letter spacing.
-    public let letterSpacing: String?
-    /// Optional line height.
-    public let lineHeight: Double?
-    /// Optional text transform (uppercase, etc.).
-    public let textTransform: String?
-    /// Optional font style (italic, etc.).
-    public let fontStyle: String?
-
-    public init(
-        role: TextRole,
-        preview: String,
-        x: Double, y: Double,
-        fontSize: Double,
-        fontWeight: Int = 700,
-        color: String,
-        textAlign: String = "center",
-        font: String? = nil,
-        letterSpacing: String? = nil,
-        lineHeight: Double? = nil,
-        textTransform: String? = nil,
-        fontStyle: String? = nil
-    ) {
-        self.role = role
-        self.preview = preview
-        self.x = x
-        self.y = y
-        self.fontSize = fontSize
-        self.fontWeight = fontWeight
-        self.color = color
-        self.textAlign = textAlign
-        self.font = font
-        self.letterSpacing = letterSpacing
-        self.lineHeight = lineHeight
-        self.textTransform = textTransform
-        self.fontStyle = fontStyle
-    }
-}
-
-/// The role a text slot plays in a template.
-public enum TextRole: String, Sendable, Equatable, Codable {
-    case heading
-    case subheading
-    case tagline
-}
-
-/// Background style for a slide or template.
-public enum SlideBackground: Sendable, Equatable {
-    case solid(String)
-    case gradient(from: String, to: String, angle: Int)
-}
-
-extension SlideBackground: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case type, color, from, to, angle
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try c.decode(String.self, forKey: .type)
-        switch type {
-        case "gradient":
-            let from = try c.decode(String.self, forKey: .from)
-            let to = try c.decode(String.self, forKey: .to)
-            let angle = try c.decodeIfPresent(Int.self, forKey: .angle) ?? 180
-            self = .gradient(from: from, to: to, angle: angle)
-        default:
-            let color = try c.decode(String.self, forKey: .color)
-            self = .solid(color)
-        }
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case .solid(let color):
-            try c.encode("solid", forKey: .type)
-            try c.encode(color, forKey: .color)
-        case .gradient(let from, let to, let angle):
-            try c.encode("gradient", forKey: .type)
-            try c.encode(from, forKey: .from)
-            try c.encode(to, forKey: .to)
-            try c.encode(angle, forKey: .angle)
-        }
-    }
-}
-
-/// A device slot in a template — defines where a screenshot device appears.
-public struct TemplateDeviceSlot: Sendable, Equatable, Codable {
-    /// Center X position (0–1).
-    public let x: Double
-    /// Top Y position (0–1).
-    public let y: Double
-    /// Width relative to canvas (0–1).
-    public let scale: Double
-    /// Rotation in degrees.
-    public let rotation: Double?
-    /// Z-index for overlapping devices.
-    public let zIndex: Int?
-
-    public init(
-        x: Double, y: Double,
-        scale: Double,
-        rotation: Double? = nil,
-        zIndex: Int? = nil
-    ) {
-        self.x = x
-        self.y = y
-        self.scale = scale
-        self.rotation = rotation
-        self.zIndex = zIndex
-    }
+    case portrait, portrait43, landscape, square
 }
