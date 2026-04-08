@@ -65,6 +65,22 @@ struct AppShotsController: Sendable {
 
                 // Domain does the work
                 let gallery = sampleGallery.applyScreenshots(paths)
+
+                // Override with AI-generated headlines if provided
+                if let headlines = json["headlines"] as? [[String: Any]] {
+                    for (i, h) in headlines.enumerated() where i < gallery.appShots.count {
+                        if let headline = h["headline"] as? String, !headline.isEmpty {
+                            gallery.appShots[i].headline = headline
+                        }
+                        if let tagline = h["tagline"] as? String, !tagline.isEmpty {
+                            gallery.appShots[i].tagline = tagline
+                        }
+                        if let body = h["body"] as? String, !body.isEmpty {
+                            gallery.appShots[i].body = body
+                        }
+                    }
+                }
+
                 let pages = gallery.renderAll().map { html in
                     var inlined = html
                     for (path, url) in dataURLs { inlined = inlined.replacingOccurrences(of: path, with: url) }
