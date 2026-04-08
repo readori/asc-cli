@@ -196,11 +196,13 @@ Layout rules per screen type. A gallery template defines WHERE things go.
 
 ### `ScreenLayout`
 
-Layout for one screen type. Supports single, side-by-side, and triple-fan device arrangements.
+Layout for one screen type. Supports tagline/headline/subheading text slots, single/side-by-side/triple-fan device arrangements.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `headline` | `TextSlot` | Text position and style |
+| `tagline` | `TextSlot?` | Small caps text above headline |
+| `headline` | `TextSlot` | Main headline position and style |
+| `subheading` | `TextSlot?` | Supporting text below headline |
 | `devices` | `[DeviceSlot]` | Device positions (empty = no device) |
 | `decorations` | `[Decoration]` | Ambient shapes |
 
@@ -228,7 +230,7 @@ Convenience wrapper for single-shot templates. Wraps `ScreenLayout` + `GalleryPa
 ### Supporting Types
 
 ```swift
-public struct TextSlot { y, size, weight, align }
+public struct TextSlot { y, size, weight, align, preview? }
 public struct DeviceSlot { x, y, width }
 public struct Decoration { shape, x, y, size, opacity }
 public enum DecorationShape { gem, orb, sparkle, arrow }
