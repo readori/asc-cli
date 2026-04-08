@@ -24,15 +24,15 @@ public struct ThemedPage: Sendable, Equatable {
             ? "margin:0;overflow:hidden"
             : "display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111"
         let htmlHeight = fillViewport ? "html,body{width:100%;height:100%}" : ""
-        return """
-        <!DOCTYPE html><html><head><meta charset="utf-8">\
-        <meta name="viewport" content="width=device-width,initial-scale=1">\
-        <title>Themed Screenshot</title>\
-        <style>*{margin:0;padding:0;box-sizing:border-box}\
-        \(htmlHeight)\
-        body{\(bodyStyle)}\
-        .preview{\(previewStyle)}</style>\
-        </head><body><div class="preview">\(body)</div></body></html>
-        """
+
+        let template = GalleryHTMLRenderer.templateRepository.template(named: "page-wrapper")
+            ?? "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><style>*{margin:0;padding:0;box-sizing:border-box}{{htmlHeight}}body{{{bodyStyle}}}.preview{{{previewStyle}}}</style></head><body><div class=\"preview\">{{inner}}</div></body></html>"
+
+        return HTMLComposer.render(template, with: [
+            "previewStyle": previewStyle,
+            "bodyStyle": bodyStyle,
+            "htmlHeight": htmlHeight,
+            "inner": body,
+        ])
     }
 }

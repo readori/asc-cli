@@ -4,7 +4,15 @@ import Foundation
 ///
 /// Uses `cqi` units + `container-type:inline-size` for responsive scaling.
 /// Screen aspect ratio: 1320/2868 (iPhone App Store screenshot).
+///
+/// HTML structure is loaded from external template files via `HTMLTemplateRepository`.
+/// Set `templateRepository` to override the built-in templates.
 public enum GalleryHTMLRenderer {
+
+    /// The template repository used to load HTML templates.
+    /// Defaults to `BundledHTMLTemplateRepository` which reads from bundle resources.
+    /// Plugins can replace this to provide custom templates.
+    nonisolated(unsafe) public static var templateRepository: any HTMLTemplateRepository = BundledHTMLTemplateRepository()
 
     /// Render a single AppShot as an HTML fragment for one screen.
     public static func renderScreen(
@@ -14,7 +22,6 @@ public enum GalleryHTMLRenderer {
     ) -> String {
         let bg = palette.background
         let hl = screenLayout.headline
-        // Use explicit textColor if set, otherwise auto-detect from background
         let isLight = palette.textColor == nil ? isLightBackground(bg) : false
         let headlineColor = palette.textColor ?? (isLight ? "#000" : "#fff")
         let pad = 5.0
@@ -58,9 +65,13 @@ public enum GalleryHTMLRenderer {
         // Decorations (ambient shapes + text/emoji labels)
         let decoHTML = renderDecorations(screenLayout.decorations, isLight: isLight)
 
-        return "<div style=\"background:\(bg);position:relative;overflow:hidden;container-type:inline-size;width:100%;height:100%\">"
-            + "\(textHTML)\(devHTML)\(decoHTML)"
-            + "</div>"
+        let template = loadTemplate("screen")
+        return HTMLComposer.render(template, with: [
+            "background": bg,
+            "textHTML": textHTML,
+            "deviceHTML": devHTML,
+            "decorationHTML": decoHTML,
+        ])
     }
 
     // MARK: - Text Elements
@@ -69,34 +80,51 @@ public enum GalleryHTMLRenderer {
     public static func renderTagline(_ slot: TextSlot, content: String, isLight: Bool, pad: Double, headlineColor: String? = nil) -> String {
         guard !content.isEmpty else { return "" }
         let taglineColor = headlineColor ?? (isLight ? "rgba(0,0,0,0.40)" : "rgba(255,255,255,0.45)")
-        let tgSize = fmt(slot.size * 100)
-        return "<div style=\"position:absolute;top:\(fmt(slot.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
-            + "font-weight:\(slot.weight);font-size:\(tgSize)cqi;color:\(taglineColor);"
-            + "letter-spacing:0.1em;text-transform:uppercase;text-align:\(slot.align);white-space:pre-line\">"
-            + "\(content)</div>"
+        let template = loadTemplate("tagline")
+        return HTMLComposer.render(template, with: [
+            "top": fmt(slot.y * 100),
+            "pad": fmt(pad),
+            "weight": "\(slot.weight)",
+            "fontSize": fmt(slot.size * 100),
+            "color": taglineColor,
+            "align": slot.align,
+            "content": content,
+        ])
     }
 
     /// Render the headline text.
     public static func renderHeadline(_ slot: TextSlot, content: String, isLight: Bool, pad: Double, headlineColor: String? = nil) -> String {
         guard !content.isEmpty else { return "" }
         let headlineColor = headlineColor ?? (isLight ? "#000" : "#fff")
-        let hlSize = fmt(slot.size * 100)
         let hlText = content.replacingOccurrences(of: "\n", with: "<br>")
-        return "<div style=\"position:absolute;top:\(fmt(slot.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
-            + "font-weight:\(slot.weight);font-size:\(hlSize)cqi;color:\(headlineColor);"
-            + "line-height:0.92;letter-spacing:-0.03em;text-align:\(slot.align);white-space:pre-line\">"
-            + "\(hlText)</div>"
+        let template = loadTemplate("headline")
+        return HTMLComposer.render(template, with: [
+            "top": fmt(slot.y * 100),
+            "pad": fmt(pad),
+            "weight": "\(slot.weight)",
+            "fontSize": fmt(slot.size * 100),
+            "color": headlineColor,
+            "align": slot.align,
+            "content": hlText,
+        ])
     }
 
     /// Render subheading text below headline.
     public static func renderSubheading(_ slot: TextSlot, content: String, isLight: Bool, pad: Double) -> String {
         guard !content.isEmpty else { return "" }
         let bodyColor = isLight ? "#1a1a1a" : "rgba(255,255,255,0.7)"
-        let subSize = fmt(slot.size * 100)
         let subContent = content.replacingOccurrences(of: "\n", with: "<br>")
-        return "<div style=\"position:absolute;top:\(fmt(slot.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad + 3))%;z-index:4;"
-            + "font-weight:\(slot.weight);font-size:\(subSize)cqi;color:\(bodyColor);line-height:1.4;text-align:\(slot.align)\">"
-            + "\(subContent)</div>"
+        let template = loadTemplate("subheading")
+        return HTMLComposer.render(template, with: [
+            "top": fmt(slot.y * 100),
+            "pad": fmt(pad),
+            "padRight": fmt(pad + 3),
+            "weight": "\(slot.weight)",
+            "fontSize": fmt(slot.size * 100),
+            "color": bodyColor,
+            "align": slot.align,
+            "content": subContent,
+        ])
     }
 
     // MARK: - Badges & Trust Marks
@@ -108,16 +136,21 @@ public enum GalleryHTMLRenderer {
         let badgeColor = isLight ? "#1a1a1a" : "#fff"
         let badgeBorder = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.15)"
         let badgeTop = hl.y * 100 + 1.0
+        let template = loadTemplate("badge")
         var html = ""
         for (i, badge) in badges.enumerated() {
             let bx = hl.align == "left" ? 65.0 + Double(i % 2) * 12.0 : 60.0 + Double(i % 2) * 15.0
             let by = badgeTop + Double(i) * 7.0
             let bSize = fmt(hl.size * 100 * 0.28)
-            html += "<div style=\"position:absolute;left:\(fmt(bx))%;top:\(fmt(by))%;z-index:5;"
-            html += "background:\(badgeBg);border:1px solid \(badgeBorder);border-radius:100px;"
-            html += "padding:0.3cqi 0.8cqi;font-size:\(bSize)cqi;font-weight:700;color:\(badgeColor);"
-            html += "backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap\">"
-            html += "\(badge)</div>"
+            html += HTMLComposer.render(template, with: [
+                "left": fmt(bx),
+                "top": fmt(by),
+                "badgeBg": badgeBg,
+                "badgeBorder": badgeBorder,
+                "fontSize": bSize,
+                "color": badgeColor,
+                "text": badge,
+            ])
         }
         return html
     }
@@ -136,12 +169,15 @@ public enum GalleryHTMLRenderer {
         let hlLines = Double(headlineContent.components(separatedBy: "\n").count)
         let afterHeading = hl.y * 100 + hlLines * hl.size * 100 * 1.0 + 1
         let markSize = fmt(hl.size * 100 * 0.28)
-        var html = "<div style=\"position:absolute;top:\(fmt(afterHeading))%;left:\(fmt(pad))%;z-index:4;display:flex;gap:4px;flex-wrap:wrap\">"
-        for mark in marks {
-            html += "<span style=\"background:\(badgeBg);border-radius:5px;padding:0.3cqi 0.8cqi;font-size:\(markSize)cqi;font-weight:700;color:\(trustColor);letter-spacing:0.04em\">\(mark)</span>"
+        let markItems = marks.map { mark in
+            ["text": mark, "badgeBg": badgeBg, "fontSize": markSize, "color": trustColor]
         }
-        html += "</div>"
-        return html
+        let template = loadTemplate("trust-marks")
+        return HTMLComposer.render(template, with: [
+            "top": fmt(afterHeading),
+            "pad": fmt(pad),
+            "marks": markItems,
+        ])
     }
 
     // MARK: - Device
@@ -152,19 +188,20 @@ public enum GalleryHTMLRenderer {
         let dw = fmt(slot.width * 100)
         let dl = fmt((slot.x - slot.width / 2) * 100)
         let dt = fmt(slot.y * 100)
-        let shadow = isLight ? "0.12" : "0.35"
-        let frameBg = isLight ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.08)"
-        let frameBorder2 = isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.15)"
-        let scr = isLight ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.06)"
-        let ui = isLight ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)"
-        let ui2 = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.09)"
-        let uitx = isLight ? "rgba(0,0,0,0.30)" : "rgba(255,255,255,0.25)"
-
-        var devHTML = "<div style=\"position:absolute;left:\(dl)%;top:\(dt)%;width:\(dw)%;z-index:2\">"
 
         if hasScreenshot {
-            devHTML += "<img src=\"\(screenshot)\" style=\"width:100%;display:block\" alt=\"\">"
+            let template = loadTemplate("device-screenshot")
+            return HTMLComposer.render(template, with: [
+                "left": dl,
+                "top": dt,
+                "width": dw,
+                "screenshot": screenshot,
+            ])
         } else {
+            let shadow = isLight ? "0.12" : "0.35"
+            let frameBg = isLight ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.08)"
+            let frameBorder2 = isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.15)"
+
             let outerStyle: String
             let frameOverlay: String
             if let dataURL = phoneFrameDataURL {
@@ -174,13 +211,18 @@ public enum GalleryHTMLRenderer {
                 frameOverlay = ""
                 outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)));background:\(frameBg);border-radius:12%/5.5%;border:1.5px solid \(frameBorder2);overflow:hidden"
             }
-            devHTML += "<div style=\"\(outerStyle)\">"
-            devHTML += renderWireframe(isLight: isLight, scr: scr, ui: ui, ui2: ui2, uitx: uitx)
-            devHTML += "\(frameOverlay)</div>"
-        }
 
-        devHTML += "</div>"
-        return devHTML
+            let wireframeHTML = renderWireframe(isLight: isLight)
+            let template = loadTemplate("device-wireframe")
+            return HTMLComposer.render(template, with: [
+                "left": dl,
+                "top": dt,
+                "width": dw,
+                "outerStyle": outerStyle,
+                "wireframeHTML": wireframeHTML,
+                "frameOverlay": frameOverlay,
+            ])
+        }
     }
 
     // MARK: - Decorations
@@ -192,11 +234,9 @@ public enum GalleryHTMLRenderer {
         var html = ""
         let defaultColor = isLight ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.25)"
         let animations = Set(decorations.compactMap(\.animation))
+        let template = loadTemplate("decoration")
 
         for (i, deco) in decorations.enumerated() {
-            let left = fmt(deco.x * 100)
-            let top = fmt(deco.y * 100)
-            let fontSize = fmt(deco.size * 100)
             let color = deco.color ?? defaultColor
             let bg = deco.background ?? "transparent"
             let radius = deco.borderRadius ?? "50%"
@@ -204,24 +244,24 @@ public enum GalleryHTMLRenderer {
 
             let content: String
             switch deco.shape {
-            case .label(let text):
-                content = text
-            case .gem:
-                content = "◆"
-            case .orb:
-                content = "●"
-            case .sparkle:
-                content = "✦"
-            case .arrow:
-                content = "›"
+            case .label(let text): content = text
+            case .gem: content = "◆"
+            case .orb: content = "●"
+            case .sparkle: content = "✦"
+            case .arrow: content = "›"
             }
 
-            html += "<div style=\"position:absolute;left:\(left)%;top:\(top)%;z-index:3;"
-            html += "font-size:\(fontSize)cqi;opacity:\(fmt(deco.opacity));"
-            html += "background:\(bg);color:\(color);"
-            html += "border-radius:\(radius);padding:0.3cqi 0.8cqi;"
-            html += "pointer-events:none;white-space:nowrap;\(animStyle)\">"
-            html += "\(content)</div>"
+            html += HTMLComposer.render(template, with: [
+                "left": fmt(deco.x * 100),
+                "top": fmt(deco.y * 100),
+                "fontSize": fmt(deco.size * 100),
+                "opacity": fmt(deco.opacity),
+                "background": bg,
+                "color": color,
+                "borderRadius": radius,
+                "animStyle": animStyle,
+                "content": content,
+            ])
         }
 
         // Keyframes for animated decorations
@@ -262,13 +302,13 @@ public enum GalleryHTMLRenderer {
             ? "margin:0;overflow:hidden"
             : "display:flex;justify-content:center;align-items:center;min-height:100vh;background:#111"
         let htmlHeight = fillViewport ? "html,body{width:100%;height:100%}" : ""
-        return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
-            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
-            "<style>*{margin:0;padding:0;box-sizing:border-box}" +
-            "\(htmlHeight)" +
-            "body{\(bodyStyle)}" +
-            ".preview{\(previewStyle)}</style>" +
-            "</head><body><div class=\"preview\">\(inner)</div></body></html>"
+        let template = loadTemplate("page-wrapper")
+        return HTMLComposer.render(template, with: [
+            "previewStyle": previewStyle,
+            "bodyStyle": bodyStyle,
+            "htmlHeight": htmlHeight,
+            "inner": inner,
+        ])
     }
 
     // MARK: - Preview
@@ -278,19 +318,13 @@ public enum GalleryHTMLRenderer {
         let screens = gallery.renderAll()
         guard !screens.isEmpty else { return "" }
 
+        let screenTemplate = loadTemplate("preview-screen")
         let screenDivs = screens.map { screen in
-            "<div style=\"width:120px;aspect-ratio:1320/2868;border-radius:6px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)\">\(screen)</div>"
+            HTMLComposer.render(screenTemplate, with: ["screen": screen])
         }.joined()
 
-        return """
-        <!DOCTYPE html><html><head><meta charset="utf-8">
-        <style>*{margin:0;padding:0;box-sizing:border-box}
-        body{background:#dfe2e8;display:flex;align-items:flex-start;height:100vh;overflow:hidden;font-family:system-ui,-apple-system,sans-serif}
-        .g{display:flex;gap:5px;padding:10px;align-items:flex-start}
-        </style></head><body>
-        <div class="g">\(screenDivs)</div>
-        </body></html>
-        """
+        let template = loadTemplate("preview-page")
+        return HTMLComposer.render(template, with: ["screenDivs": screenDivs])
     }
 
     // MARK: - Internal Helpers
@@ -306,37 +340,22 @@ public enum GalleryHTMLRenderer {
         String(format: "%.1f", value)
     }
 
-    /// Adjust a hex color to reduced opacity for secondary text.
-    private static func adjustOpacity(_ hex: String, _ alpha: Double) -> String {
-        // Simple approach: return the color with alpha for CSS
-        "\(hex)"  // For now, just use the color as-is — tagline uses its own opacity via letter-spacing
+    private static func renderWireframe(isLight: Bool) -> String {
+        let scr = isLight ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.06)"
+        let ui = isLight ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)"
+        let ui2 = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.09)"
+        let uitx = isLight ? "rgba(0,0,0,0.30)" : "rgba(255,255,255,0.25)"
+        let template = loadTemplate("wireframe")
+        return HTMLComposer.render(template, with: [
+            "scr": scr,
+            "ui": ui,
+            "ui2": ui2,
+            "uitx": uitx,
+        ])
     }
 
-    private static func renderWireframe(isLight: Bool, scr: String, ui: String, ui2: String, uitx: String) -> String {
-        var html = "<div style=\"position:absolute;inset:2.6% 2.2%;background:\(scr);border-radius:8%/4%;overflow:hidden;z-index:1\">"
-        html += "<div style=\"padding:5% 5% 0;display:flex;justify-content:space-between\">"
-        html += "<div style=\"font-size:max(3.5px,1.6cqi);font-weight:600;color:\(uitx);font-family:system-ui\">9:41</div>"
-        html += "<div style=\"display:flex;gap:1px;align-items:center\">"
-        html += "<div style=\"width:max(3px,1.2cqi);height:max(3px,1.2cqi);border-radius:50%;background:\(uitx)\"></div>"
-        html += "<div style=\"width:max(5px,2cqi);height:max(3px,1.2cqi);border-radius:1px;background:\(uitx)\"></div>"
-        html += "</div></div>"
-        html += "<div style=\"padding:3% 4% 0\">"
-        html += "<div style=\"background:\(ui);border-radius:max(3px,1.5cqi);padding:4% 5%;margin-bottom:2%\">"
-        html += "<div style=\"display:flex;gap:3%;align-items:center;margin-bottom:3%\">"
-        html += "<div style=\"width:max(6px,3cqi);height:max(6px,3cqi);border-radius:50%;background:\(ui2)\"></div>"
-        html += "<div><div style=\"height:max(1.5px,0.7cqi);width:max(14px,7cqi);background:\(ui2);border-radius:1px;margin-bottom:2px\"></div>"
-        html += "<div style=\"height:max(1px,0.5cqi);width:max(9px,4.5cqi);background:\(ui2);border-radius:1px\"></div></div></div>"
-        html += "<div style=\"aspect-ratio:16/9;background:\(ui2);border-radius:max(2px,1cqi);margin-bottom:3%\"></div>"
-        html += "<div style=\"height:max(1.5px,0.7cqi);width:80%;background:\(ui2);border-radius:1px;margin-bottom:2%\"></div>"
-        html += "<div style=\"height:max(1px,0.5cqi);width:55%;background:\(ui2);border-radius:1px\"></div></div>"
-        html += "<div style=\"background:\(ui);border-radius:max(3px,1.5cqi);padding:4% 5%;margin-bottom:2%\">"
-        html += "<div style=\"display:flex;gap:3%\">"
-        html += "<div style=\"flex:1;aspect-ratio:1;background:\(ui2);border-radius:max(2px,1cqi)\"></div>"
-        html += "<div style=\"flex:1;aspect-ratio:1;background:\(ui2);border-radius:max(2px,1cqi)\"></div>"
-        html += "<div style=\"flex:1;aspect-ratio:1;background:\(ui2);border-radius:max(2px,1cqi)\"></div></div></div>"
-        html += "</div>"
-        html += "<div style=\"position:absolute;bottom:1.2%;left:30%;right:30%;height:max(1.5px,0.6cqi);background:\(uitx);border-radius:4px\"></div>"
-        html += "</div>"
-        return html
+    /// Load an HTML template by name, falling back to empty string.
+    private static func loadTemplate(_ name: String) -> String {
+        templateRepository.template(named: name) ?? ""
     }
 }
