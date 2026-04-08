@@ -36,15 +36,14 @@ struct ScreenshotTemplateTests {
         #expect(template.isLandscape)
     }
 
-    @Test func `template reports device count`() {
-        let single = MockRepositoryFactory.makeScreenshotTemplate(deviceCount: 1)
-        #expect(single.deviceCount == 1)
+    @Test func `template with device has deviceCount 1`() {
+        let template = MockRepositoryFactory.makeScreenshotTemplate()
+        #expect(template.deviceCount == 1)
+    }
 
-        let duo = MockRepositoryFactory.makeScreenshotTemplate(
-            id: "duo",
-            deviceCount: 2
-        )
-        #expect(duo.deviceCount == 2)
+    @Test func `template without device has deviceCount 0`() {
+        let template = MockRepositoryFactory.makeScreenshotTemplate(hasDevice: false)
+        #expect(template.deviceCount == 0)
     }
 
     @Test func `template affordances include preview, apply, and list`() {
@@ -55,12 +54,11 @@ struct ScreenshotTemplateTests {
         #expect(template.affordances["preview"] == "asc app-shots templates get --id top-hero --preview")
     }
 
-    @Test func `previewHTML contains background and text`() {
+    @Test func `previewHTML contains background and template name`() {
         let template = MockRepositoryFactory.makeScreenshotTemplate()
         let html = template.previewHTML
         #expect(html.contains("linear-gradient"))
-        #expect(html.contains("Your"))
-        #expect(html.contains("Headline"))
+        #expect(html.contains("Top Hero"))
     }
 
     @Test func `template is codable`() throws {

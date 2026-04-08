@@ -87,8 +87,8 @@ struct PresentableTests {
     }
 
     @Test func `screenshot template table row`() {
-        let tmpl = MockRepositoryFactory.makeScreenshotTemplate(id: "hero", name: "Hero", category: .bold, deviceCount: 2)
-        #expect(tmpl.tableRow == ["hero", "Hero", "bold", "2"])
+        let tmpl = MockRepositoryFactory.makeScreenshotTemplate(id: "hero", name: "Hero", category: .bold)
+        #expect(tmpl.tableRow == ["hero", "Hero", "bold", "1"])
     }
 
     // MARK: - ScreenTheme
