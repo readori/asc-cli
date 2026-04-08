@@ -13,7 +13,7 @@ import Foundation
 ///     palette: GalleryPalette(id: "top-hero", name: "Top Hero",
 ///                              background: "linear-gradient(150deg,#4338CA,#6D28D9)"))
 /// ```
-public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
+public struct ScreenshotTemplate: Sendable, Identifiable {
     public let id: String
     public let name: String
     public let category: TemplateCategory
@@ -21,7 +21,6 @@ public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
     public let description: String
     public let screenTemplate: ScreenTemplate
     public let palette: GalleryPalette
-
     public init(
         id: String,
         name: String,
@@ -40,10 +39,10 @@ public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
         self.palette = palette
     }
 
-    /// Self-contained HTML preview with wireframe phone.
+    /// Self-contained HTML preview — renders with TextSlot.preview placeholders.
     public var previewHTML: String {
         let shot = AppShot(screenshot: "", type: .feature)
-        shot.headline = name
+        // Don't set any content — renderer falls back to TextSlot.preview
         let html = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: screenTemplate, palette: palette)
         return GalleryHTMLRenderer.wrapPage(html)
     }
@@ -68,6 +67,15 @@ extension ScreenshotTemplate {
     public var deviceCount: Int { screenTemplate.deviceCount }
 }
 
+// MARK: - Equatable
+
+extension ScreenshotTemplate: Equatable {
+    public static func == (lhs: ScreenshotTemplate, rhs: ScreenshotTemplate) -> Bool {
+        lhs.id == rhs.id && lhs.name == rhs.name && lhs.category == rhs.category
+            && lhs.screenTemplate == rhs.screenTemplate && lhs.palette == rhs.palette
+    }
+}
+
 // MARK: - Codable
 
 extension ScreenshotTemplate: Codable {
@@ -86,6 +94,7 @@ extension ScreenshotTemplate: Codable {
         description = try c.decodeIfPresent(String.self, forKey: .description) ?? ""
         screenTemplate = try c.decode(ScreenTemplate.self, forKey: .screenTemplate)
         palette = try c.decode(GalleryPalette.self, forKey: .palette)
+        sampleShot = try c.decodeIfPresent(AppShot.self, forKey: .sampleShot)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -97,6 +106,7 @@ extension ScreenshotTemplate: Codable {
         try c.encode(description, forKey: .description)
         try c.encode(screenTemplate, forKey: .screenTemplate)
         try c.encode(palette, forKey: .palette)
+        try c.encodeIfPresent(sampleShot, forKey: .sampleShot)
         try c.encode(previewHTML, forKey: .previewHTML)
         try c.encode(deviceCount, forKey: .deviceCount)
     }

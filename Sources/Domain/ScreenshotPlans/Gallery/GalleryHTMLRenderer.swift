@@ -25,40 +25,46 @@ public enum GalleryHTMLRenderer {
         let trustColor = isLight ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.6)"
 
         let pad = 5.0
-        var textTop = hl.y * 100
         var textHTML = ""
 
-        // Tagline
-        if let tagline = shot.tagline, !tagline.isEmpty {
-            let tgSize = fmt(hl.size * 100 * 0.45)
-            textHTML += "<div style=\"position:absolute;top:\(fmt(textTop))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
-            textHTML += "font-weight:700;font-size:\(tgSize)cqi;color:\(taglineColor);"
-            textHTML += "letter-spacing:0.1em;text-transform:uppercase;text-align:\(hl.align);white-space:pre-line\">"
-            textHTML += "\(tagline)</div>"
-            textTop += hl.size * 100 * 0.45 * 1.4 + 0.5
+        // Tagline — from slot position, content from AppShot or TextSlot.preview
+        if let tgSlot = screenTemplate.tagline {
+            let tgText = shot.tagline ?? tgSlot.preview ?? ""
+            if !tgText.isEmpty {
+                let tgSize = fmt(tgSlot.size * 100)
+                textHTML += "<div style=\"position:absolute;top:\(fmt(tgSlot.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
+                textHTML += "font-weight:\(tgSlot.weight);font-size:\(tgSize)cqi;color:\(taglineColor);"
+                textHTML += "letter-spacing:0.1em;text-transform:uppercase;text-align:\(tgSlot.align);white-space:pre-line\">"
+                textHTML += "\(tgText)</div>"
+            }
         }
 
-        // Headline
-        let hlText = (shot.headline ?? "").replacingOccurrences(of: "\n", with: "<br>")
-        textHTML += "<div style=\"position:absolute;top:\(fmt(textTop))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
-        textHTML += "font-weight:\(hl.weight);font-size:\(hlSize)cqi;color:\(headlineColor);"
-        textHTML += "line-height:0.92;letter-spacing:-0.03em;text-align:\(hl.align);white-space:pre-line\">"
-        textHTML += "\(hlText)</div>"
+        // Headline — from slot position, content from AppShot or TextSlot.preview
+        let hlContent = shot.headline ?? hl.preview ?? ""
+        if !hlContent.isEmpty {
+            let hlText = hlContent.replacingOccurrences(of: "\n", with: "<br>")
+            textHTML += "<div style=\"position:absolute;top:\(fmt(hl.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad))%;z-index:4;"
+            textHTML += "font-weight:\(hl.weight);font-size:\(hlSize)cqi;color:\(headlineColor);"
+            textHTML += "line-height:0.92;letter-spacing:-0.03em;text-align:\(hl.align);white-space:pre-line\">"
+            textHTML += "\(hlText)</div>"
+        }
 
-        let hlLines = Double((shot.headline ?? "").components(separatedBy: "\n").count)
-        let afterHeading = textTop + hlLines * hl.size * 100 * 1.0 + 1
-
-        // Body text
-        if let body = shot.body, !body.isEmpty {
-            let bodySize = fmt(hl.size * 100 * 0.4)
-            let bodyText = body.replacingOccurrences(of: "\n", with: "<br>")
-            textHTML += "<div style=\"position:absolute;top:\(fmt(afterHeading))%;left:\(fmt(pad))%;right:\(fmt(pad + 3))%;z-index:4;"
-            textHTML += "font-weight:500;font-size:\(bodySize)cqi;color:\(bodyColor);line-height:1.4;text-align:\(hl.align)\">"
-            textHTML += "\(bodyText)</div>"
+        // Subheading — from slot position, content from AppShot.body or TextSlot.preview
+        if let subSlot = screenTemplate.subheading {
+            let subText = shot.body ?? subSlot.preview ?? ""
+            if !subText.isEmpty {
+                let subSize = fmt(subSlot.size * 100)
+                let subContent = subText.replacingOccurrences(of: "\n", with: "<br>")
+                textHTML += "<div style=\"position:absolute;top:\(fmt(subSlot.y * 100))%;left:\(fmt(pad))%;right:\(fmt(pad + 3))%;z-index:4;"
+                textHTML += "font-weight:\(subSlot.weight);font-size:\(subSize)cqi;color:\(bodyColor);line-height:1.4;text-align:\(subSlot.align)\">"
+                textHTML += "\(subContent)</div>"
+            }
         }
 
         // Trust marks (hero)
         if let marks = shot.trustMarks, !marks.isEmpty {
+            let hlLines = Double(hlContent.components(separatedBy: "\n").count)
+            let afterHeading = hl.y * 100 + hlLines * hl.size * 100 * 1.0 + 1
             let markSize = fmt(hl.size * 100 * 0.28)
             textHTML += "<div style=\"position:absolute;top:\(fmt(afterHeading))%;left:\(fmt(pad))%;z-index:4;display:flex;gap:4px;flex-wrap:wrap\">"
             for mark in marks {
@@ -67,13 +73,13 @@ public enum GalleryHTMLRenderer {
             textHTML += "</div>"
         }
 
-        // Floating badges — positioned top-right, stacking down
+        // Floating badges — positioned top-right area
         if !shot.badges.isEmpty {
-            let badgeTop = hl.y * 100
+            let badgeTop = hl.y * 100 + 1.0
             for (i, badge) in shot.badges.enumerated() {
-                let bx = hl.align == "left" ? 62.0 + Double(i % 2) * 16.0 : 55.0 + Double(i % 2) * 20.0
-                let by = badgeTop + Double(i) * 9.0
-                let bSize = fmt(hl.size * 100 * 0.3)
+                let bx = hl.align == "left" ? 65.0 + Double(i % 2) * 12.0 : 60.0 + Double(i % 2) * 15.0
+                let by = badgeTop + Double(i) * 7.0
+                let bSize = fmt(hl.size * 100 * 0.28)
                 textHTML += "<div style=\"position:absolute;left:\(fmt(bx))%;top:\(fmt(by))%;z-index:5;"
                 textHTML += "background:\(badgeBg);border:1px solid \(badgeBorder);border-radius:100px;"
                 textHTML += "padding:0.3cqi 0.8cqi;font-size:\(bSize)cqi;font-weight:700;color:\(badgeColor);"
