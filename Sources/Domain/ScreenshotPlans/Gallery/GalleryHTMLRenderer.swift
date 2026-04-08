@@ -103,23 +103,27 @@ public enum GalleryHTMLRenderer {
 
             let frameOverlay: String
             let outerStyle: String
-            if let dataURL = phoneFrameDataURL {
+            if hasScreenshot {
+                // Real screenshot: always use CSS frame (no bezel PNG)
+                frameOverlay = ""
+                outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)));border-radius:12%/5.5%;overflow:hidden"
+            } else if let dataURL = phoneFrameDataURL {
+                // Wireframe preview with bezel PNG
                 frameOverlay = "<img src=\"\(dataURL)\" style=\"position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none\" alt=\"\">"
                 outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)))"
             } else {
+                // Wireframe preview without bezel PNG (CSS fallback)
                 frameOverlay = ""
                 outerStyle = "aspect-ratio:1470/3000;position:relative;filter:drop-shadow(0 4px 20px rgba(0,0,0,\(shadow)));background:\(frameBg);border-radius:12%/5.5%;border:1.5px solid \(frameBorder2);overflow:hidden"
             }
 
             devHTML += "<div style=\"position:absolute;left:\(dl)%;top:\(dt)%;width:\(dw)%;z-index:2\">"
-            devHTML += "<div style=\"\(outerStyle)\">"
 
             if hasScreenshot {
-                // Real screenshot inside device frame
-                devHTML += "<div style=\"position:absolute;inset:2.6% 2.2%;border-radius:8%/4%;overflow:hidden;z-index:1;background:#000\">"
-                devHTML += "<img src=\"\(screenshotFile)\" style=\"width:100%;height:100%;object-fit:cover;display:block\" alt=\"\">"
-                devHTML += "</div>"
+                // Real screenshot — just the image, no frame
+                devHTML += "<img src=\"\(screenshotFile)\" style=\"width:100%;display:block\" alt=\"\">"
             } else {
+            devHTML += "<div style=\"\(outerStyle)\">"
                 // Wireframe mock UI
                 devHTML += "<div style=\"position:absolute;inset:2.6% 2.2%;background:\(scr);border-radius:8%/4%;overflow:hidden;z-index:1\">"
                 devHTML += "<div style=\"padding:5% 5% 0;display:flex;justify-content:space-between\">"
@@ -147,9 +151,11 @@ public enum GalleryHTMLRenderer {
                 devHTML += "</div>"
             }
 
-            // Bezel overlay only for wireframe preview, not real screenshots
-            if !hasScreenshot { devHTML += frameOverlay }
-            devHTML += "</div></div>"
+            if hasScreenshot {
+                devHTML += "</div>"
+            } else {
+                devHTML += "\(frameOverlay)</div></div>"
+            }
         }
 
         return "<div style=\"background:\(bg);position:relative;overflow:hidden;container-type:inline-size;width:100%;height:100%\">"
