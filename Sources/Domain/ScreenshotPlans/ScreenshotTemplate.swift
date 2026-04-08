@@ -37,23 +37,59 @@ public struct ScreenshotTemplate: Sendable, Equatable, Identifiable {
         self.deviceSlots = deviceSlots
     }
 
+    /// Convert to the unified ScreenTemplate layout type.
+    public func toScreenTemplate() -> ScreenTemplate {
+        let heading = textSlots.first { $0.role == .heading }
+        let hl = heading.map {
+            TextSlot(y: $0.y, size: $0.fontSize, weight: $0.fontWeight, align: $0.textAlign)
+        } ?? TextSlot(y: 0.04, size: 0.10)
+
+        let device = deviceSlots.first.map {
+            DeviceSlot(x: $0.x, y: $0.y, width: $0.scale)
+        }
+
+        return ScreenTemplate(headline: hl, device: device)
+    }
+
+    /// Convert background to a GalleryPalette.
+    public func toPalette() -> GalleryPalette {
+        let bg: String
+        switch background {
+        case .solid(let color): bg = color
+        case .gradient(let from, let to, let angle): bg = "linear-gradient(\(angle)deg,\(from),\(to))"
+        }
+        return GalleryPalette(id: id, name: name, background: bg)
+    }
+
+    /// Convert to an AppShot with preview content or user-provided content.
+    public func toAppShot(content: TemplateContent? = nil) -> AppShot {
+        let shot = AppShot(screenshot: content?.screenshotFile ?? "", type: .feature)
+        let heading = textSlots.first { $0.role == .heading }
+        let tagline = textSlots.first { $0.role == .tagline }
+        shot.headline = content?.headline ?? heading?.preview ?? name
+        shot.tagline = content?.tagline ?? tagline?.preview
+        shot.body = content?.subtitle
+        return shot
+    }
+
     /// Self-contained HTML page previewing this template with default sample text.
     public var previewHTML: String {
-        TemplateHTMLRenderer.renderPage(self)
+        let shot = toAppShot()
+        let screen = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
+        return GalleryHTMLRenderer.wrapPage(screen)
     }
 
     /// Apply this template with the given content — returns a full HTML page.
-    ///
-    /// This is the core domain operation. Both CLI and REST call this.
     public func apply(content: TemplateContent? = nil, fillViewport: Bool = false) -> String {
-        TemplateHTMLRenderer.renderPage(self, content: content, fillViewport: fillViewport)
+        let shot = toAppShot(content: content)
+        let screen = GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
+        return GalleryHTMLRenderer.wrapPage(screen, fillViewport: fillViewport)
     }
 
     /// Render the inner HTML fragment (no page wrapper) for composition pipelines.
-    ///
-    /// Used when the output will be further processed (e.g. theme compose).
     public func renderFragment(content: TemplateContent? = nil) -> String {
-        TemplateHTMLRenderer.render(self, content: content)
+        let shot = toAppShot(content: content)
+        return GalleryHTMLRenderer.renderScreen(shot, screenTemplate: toScreenTemplate(), palette: toPalette())
     }
 }
 
