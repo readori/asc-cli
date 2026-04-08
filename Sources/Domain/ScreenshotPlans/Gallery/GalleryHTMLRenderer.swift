@@ -147,7 +147,9 @@ public enum GalleryHTMLRenderer {
                 devHTML += "</div>"
             }
 
-            devHTML += "\(frameOverlay)</div></div>"
+            // Bezel overlay only for wireframe preview, not real screenshots
+            if !hasScreenshot { devHTML += frameOverlay }
+            devHTML += "</div></div>"
         }
 
         return "<div style=\"background:\(bg);position:relative;overflow:hidden;container-type:inline-size;width:100%;height:100%\">"
