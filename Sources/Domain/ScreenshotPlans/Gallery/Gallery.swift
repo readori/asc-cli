@@ -38,6 +38,27 @@ public final class Gallery: @unchecked Sendable, Identifiable {
         }
     }
 
+    // MARK: - Apply Screenshots
+
+    /// Create a new Gallery from a sample gallery template, replacing screenshots with user's files.
+    /// Copies template, palette, and content (headline, badges, etc.) from the sample.
+    public func applyScreenshots(_ screenshots: [String]) -> Gallery {
+        let gallery = Gallery(appName: appName, screenshots: screenshots)
+        gallery.template = template
+        gallery.palette = palette
+        for (i, shot) in gallery.appShots.enumerated() {
+            if i < appShots.count {
+                let sample = appShots[i]
+                shot.headline = sample.headline
+                shot.tagline = sample.tagline
+                shot.body = sample.body
+                shot.badges = sample.badges
+                shot.trustMarks = sample.trustMarks
+            }
+        }
+        return gallery
+    }
+
     // MARK: - Screenshot Distribution
 
     /// Distribute screenshots across screens based on device count per screen.

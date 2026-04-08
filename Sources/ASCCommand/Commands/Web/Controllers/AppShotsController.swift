@@ -47,56 +47,29 @@ struct AppShotsController: Sendable {
             }
 
             do {
-                // Find gallery template
                 guard let sampleGallery = try await self.galleryTemplateRepo.getGallery(templateId: templateId) else {
                     return jsonError("Gallery template not found", status: .notFound)
                 }
-                guard let template = sampleGallery.template, let palette = sampleGallery.palette else {
-                    return jsonError("Gallery template missing template or palette")
-                }
 
-                // Write screenshots to temp files and create Gallery
-                var screenshotPaths: [String] = []
-                var dataURLs: [String: String] = [:] // path → data URL
+                // Write screenshots to temp and build data URL map
+                var paths: [String] = []
+                var dataURLs: [String: String] = [:]
                 for (i, b64) in screenshotsB64.enumerated() {
                     guard let data = Data(base64Encoded: b64) else { continue }
                     let path = FileManager.default.temporaryDirectory
                         .appendingPathComponent("gallery-\(UUID().uuidString)-\(i).png")
                     try data.write(to: path)
-                    screenshotPaths.append(path.path)
+                    paths.append(path.path)
                     dataURLs[path.path] = "data:image/png;base64,\(b64)"
                 }
 
-                let gallery = Gallery(appName: sampleGallery.appName, screenshots: screenshotPaths)
-                gallery.template = template
-                gallery.palette = palette
-
-                // Copy content from sample gallery to the new gallery
-                for (i, shot) in gallery.appShots.enumerated() {
-                    if i < sampleGallery.appShots.count {
-                        let sample = sampleGallery.appShots[i]
-                        shot.headline = sample.headline
-                        shot.tagline = sample.tagline
-                        shot.body = sample.body
-                        shot.badges = sample.badges
-                        shot.trustMarks = sample.trustMarks
-                    }
+                // Domain does the work
+                let gallery = sampleGallery.applyScreenshots(paths)
+                let pages = gallery.renderAll().map { html in
+                    var inlined = html
+                    for (path, url) in dataURLs { inlined = inlined.replacingOccurrences(of: path, with: url) }
+                    return GalleryHTMLRenderer.wrapPage(inlined)
                 }
-
-                // Render all screens
-                let htmls = gallery.renderAll()
-
-                // Replace temp file paths with data URLs for browser display
-                let inlinedHTMLs = htmls.map { html in
-                    var result = html
-                    for (path, dataURL) in dataURLs {
-                        result = result.replacingOccurrences(of: path, with: dataURL)
-                    }
-                    return result
-                }
-
-                // Wrap each in a page
-                let pages = inlinedHTMLs.map { GalleryHTMLRenderer.wrapPage($0) }
 
                 return restResponse(jsonEncode(["screens": pages]))
             } catch {
