@@ -82,10 +82,12 @@ public enum GalleryHTMLRenderer {
             }
         }
 
-        // Device — wireframe phone (use template position or default for hero)
+        // Devices — wireframe phones (supports multi-device side-by-side)
         var devHTML = ""
-        let dev = screenTemplate.device ?? (shot.type == .hero ? DeviceSlot(x: 0.5, y: 0.42, width: 0.65) : nil)
-        if let dev {
+        let devSlots = screenTemplate.devices.isEmpty && shot.type == .hero
+            ? [DeviceSlot(x: 0.5, y: 0.42, width: 0.65)]
+            : screenTemplate.devices
+        for dev in devSlots {
             let dw = fmt(dev.width * 100)
             let dl = fmt((dev.x - dev.width / 2) * 100)
             let dt = fmt(dev.y * 100)
