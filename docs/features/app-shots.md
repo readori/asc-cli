@@ -71,6 +71,67 @@ asc app-shots templates apply \
   --preview image --image-output marketing.png
 ```
 
+### `asc app-shots gallery-templates list`
+
+List gallery templates (multi-screen sets with sample content).
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--output` | `json` | Output format: `json`, `table`, `markdown` |
+| `--pretty` | — | Pretty-print JSON |
+
+```bash
+asc app-shots gallery-templates list
+asc app-shots gallery-templates list --output table
+```
+
+### `asc app-shots gallery-templates get`
+
+Get a specific gallery template.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--id` | *(required)* | Gallery template ID |
+| `--preview` | — | Output self-contained HTML gallery preview page |
+
+```bash
+asc app-shots gallery-templates get --id neon-pop --pretty
+asc app-shots gallery-templates get --id neon-pop --preview > preview.html && open preview.html
+```
+
+### `asc app-shots themes design`
+
+Generate a ThemeDesign (palette + decorations) from AI — one call, reusable across slides.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--id` | *(required)* | Theme ID |
+
+```bash
+asc app-shots themes design --id luxury > design.json
+```
+
+### `asc app-shots themes apply-design`
+
+Apply a cached ThemeDesign deterministically — no AI call.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--design` | *(required)* | Path to ThemeDesign JSON file |
+| `--template` | *(required)* | Template ID |
+| `--screenshot` | *(required)* | Path to screenshot file |
+| `--headline` | `Your Headline` | Headline text |
+| `--preview` | — | Preview format: `html` or `image` |
+| `--image-output` | `.asc/app-shots/output/screen-0.png` | Output PNG path |
+
+```bash
+# Two-step workflow: generate once, apply many
+asc app-shots themes design --id luxury > design.json
+asc app-shots themes apply-design --design design.json \
+  --template top-hero --screenshot screen.png --headline "Ship Faster" \
+  --preview html > themed.html
+```
+
 ### `asc app-shots generate`
 
 Enhance a screenshot with Gemini AI.
@@ -370,8 +431,10 @@ Sources/
 │   └── FileAppShotsConfigStorage.swift      # ~/.asc/app-shots-config.json
 └── ASCCommand/Commands/AppShots/
     ├── AppShotsCommand.swift                # Entry point
+    ├── AppShotsTemplates.swift              # templates: list, get, apply
+    ├── AppShotsGalleryTemplates.swift       # gallery-templates: list, get
+    ├── AppShotsThemes.swift                 # themes: list, get, design, apply-design, apply
     ├── AppShotsGenerate.swift               # Gemini AI enhancement
-    ├── AppShotsTemplates.swift              # list, get, apply
     ├── AppShotsConfig.swift                 # Key management
     ├── AppShotsDisplayType.swift            # Device dimensions
     └── AppShotsExport.swift                 # HTML → PNG rendering
