@@ -168,6 +168,32 @@ extension Gallery: Codable {
     }
 }
 
+// MARK: - Presentable
+
+extension Gallery: Presentable {
+    public static var tableHeaders: [String] {
+        ["App Name", "Shots", "Template", "Ready"]
+    }
+    public var tableRow: [String] {
+        [appName, "\(shotCount)", template?.name ?? "-", isReady ? "✓" : "✗"]
+    }
+}
+
+// MARK: - Affordances
+
+extension Gallery: AffordanceProviding {
+    public var affordances: [String: String] {
+        var cmds: [String: String] = [
+            "listAll": "asc app-shots gallery-templates list",
+        ]
+        if let t = template {
+            cmds["detail"] = "asc app-shots gallery-templates get --id \(t.id)"
+            cmds["preview"] = "asc app-shots gallery-templates get --id \(t.id) --preview"
+        }
+        return cmds
+    }
+}
+
 /// Progress check for a gallery.
 public struct GalleryReadiness: Sendable, Equatable {
     public let hasPalette: Bool
