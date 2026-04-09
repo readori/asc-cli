@@ -399,7 +399,7 @@ HTMLComposer.render("Hello {{name}}!", with: ["name": "World"])
 
 ```
 Sources/
-├── Domain/ScreenshotPlans/
+├── Domain/Screenshots/
 │   ├── Gallery/
 │   │   ├── AppShot.swift                    # Content unit (headline, badges, trustMarks)
 │   │   ├── Gallery.swift                    # Aggregate (appShots + template + palette)
@@ -425,7 +425,7 @@ Sources/
 │   ├── ThemedPage.swift                     # Themed HTML page wrapper
 │   ├── AppShotsConfig.swift                 # Gemini API key model
 │   └── AppShotsConfigStorage.swift          # Config storage protocol
-├── Infrastructure/ScreenshotPlans/
+├── Infrastructure/Screenshots/
 │   ├── AggregateTemplateRepository.swift    # Single template aggregator
 │   ├── AggregateGalleryTemplateRepository.swift  # Gallery aggregator
 │   └── FileAppShotsConfigStorage.swift      # ~/.asc/app-shots-config.json
@@ -444,7 +444,7 @@ Sources/
 
 ```
 Tests/
-├── DomainTests/ScreenshotPlans/
+├── DomainTests/Screenshots/
 │   ├── Gallery/
 │   │   ├── AppShotTests.swift               # 11 tests
 │   │   ├── GalleryTests.swift               # 11 tests

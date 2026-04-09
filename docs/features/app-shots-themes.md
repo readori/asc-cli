@@ -439,15 +439,15 @@ IMPORTANT: Integrate the floating elements naturally — they should enhance the
 
 | File | Purpose |
 |------|---------|
-| `Sources/Domain/ScreenshotPlans/ScreenTheme.swift` | `ScreenTheme` + `ThemeAIHints` + `ThemeProvider` + `ThemeRepository` + `buildContext()` + `buildDesignContext()` |
-| `Sources/Domain/ScreenshotPlans/ThemeDesign.swift` | `ThemeDesign` + `ThemeBackground` + `ThemeFloat` + `ThemeFloatAnimation` |
-| `Sources/Domain/ScreenshotPlans/ThemeDesignApplier.swift` | Deterministic applier: applies ThemeDesign to HTML using `cqi` units |
-| `Sources/Infrastructure/ScreenshotPlans/AggregateThemeRepository.swift` | Actor that aggregates themes from all registered providers |
+| `Sources/Domain/Screenshots/ScreenTheme.swift` | `ScreenTheme` + `ThemeAIHints` + `ThemeProvider` + `ThemeRepository` + `buildContext()` + `buildDesignContext()` |
+| `Sources/Domain/Screenshots/ThemeDesign.swift` | `ThemeDesign` + `ThemeBackground` + `ThemeFloat` + `ThemeFloatAnimation` |
+| `Sources/Domain/Screenshots/ThemeDesignApplier.swift` | Deterministic applier: applies ThemeDesign to HTML using `cqi` units |
+| `Sources/Infrastructure/Screenshots/AggregateThemeRepository.swift` | Actor that aggregates themes from all registered providers |
 | `Sources/ASCCommand/Commands/AppShots/AppShotsThemes.swift` | `themes list` / `get` / `apply` commands with `--design-only` and `--apply-design` |
-| `Tests/DomainTests/ScreenshotPlans/ScreenThemeTests.swift` | Domain model tests (11 tests) |
-| `Tests/DomainTests/ScreenshotPlans/ThemeDesignTests.swift` | ThemeDesign model tests (9 tests) |
-| `Tests/DomainTests/ScreenshotPlans/ThemeDesignApplierTests.swift` | Applier tests: cqi sizing, float positions, preservation (10 tests) |
-| `Tests/InfrastructureTests/ScreenshotPlans/AggregateThemeRepositoryTests.swift` | Repository aggregation + compose delegation tests |
+| `Tests/DomainTests/Screenshots/ScreenThemeTests.swift` | Domain model tests (11 tests) |
+| `Tests/DomainTests/Screenshots/ThemeDesignTests.swift` | ThemeDesign model tests (9 tests) |
+| `Tests/DomainTests/Screenshots/ThemeDesignApplierTests.swift` | Applier tests: cqi sizing, float positions, preservation (10 tests) |
+| `Tests/InfrastructureTests/Screenshots/AggregateThemeRepositoryTests.swift` | Repository aggregation + compose delegation tests |
 | `Tests/ASCCommandTests/Commands/AppShots/AppShotsThemesTests.swift` | Command tests (11 tests) |
 
 ### Modified Files
