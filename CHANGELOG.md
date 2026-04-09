@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **REST endpoints** — `POST /app-shots/themes/design` and `POST /app-shots/themes/apply-design`
 
 ### Changed
+- **`GalleryHTMLRenderer` now uses external HTML templates** — HTML structure extracted from Swift into 13 `.html` template files in `Sources/Domain/Screenshots/Gallery/Resources/`. Rendering uses `HTMLComposer` (lightweight template engine with `{{var}}`, `{{#if}}`, `{{#each}}` syntax) and `HTMLTemplateRepository` protocol. Plugins can override templates via `GalleryHTMLRenderer.templateRepository`. Public API is unchanged.
 - **`GalleryHTMLRenderer` extracted into testable functions** — `renderHeadline()`, `renderTagline()`, `renderSubheading()`, `renderBadges()`, `renderTrustMarks()`, `renderDevice()`, `renderDecorations()` are now public and independently testable
 - **`Decoration` extended** — new optional fields: `color`, `background`, `borderRadius`, `animation`
 
