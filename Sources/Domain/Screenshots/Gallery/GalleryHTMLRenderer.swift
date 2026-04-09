@@ -10,6 +10,47 @@ public enum GalleryHTMLRenderer {
 
     nonisolated(unsafe) public static var phoneFrameDataURL: String?
 
+    // MARK: - Preview Cache
+
+    /// Caches rendered `previewHTML` keyed by template/gallery ID.
+    /// Templates are immutable data — preview only changes when `phoneFrameDataURL` changes.
+    private static let previewCache = PreviewCache()
+
+    /// Get or compute a cached preview.
+    public static func cachedPreview(id: String, compute: () -> String) -> String {
+        previewCache.get(id: id, compute: compute)
+    }
+
+    /// Clear all cached previews (e.g. when phone frame loads after templates).
+    public static func clearPreviewCache() {
+        previewCache.clear()
+    }
+
+    private final class PreviewCache: @unchecked Sendable {
+        private var store: [String: String] = [:]
+        private let lock = NSLock()
+
+        func get(id: String, compute: () -> String) -> String {
+            lock.lock()
+            if let cached = store[id] {
+                lock.unlock()
+                return cached
+            }
+            lock.unlock()
+            let value = compute()
+            lock.lock()
+            store[id] = value
+            lock.unlock()
+            return value
+        }
+
+        func clear() {
+            lock.lock()
+            store.removeAll()
+            lock.unlock()
+        }
+    }
+
     // MARK: - Screen Rendering
 
     /// Render a single AppShot as an HTML fragment for one screen.

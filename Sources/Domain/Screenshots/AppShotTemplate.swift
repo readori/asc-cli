@@ -40,11 +40,13 @@ public struct AppShotTemplate: Sendable, Identifiable {
     }
 
     /// Self-contained HTML preview — renders with TextSlot.preview placeholders.
+    /// Cached after first computation — templates are immutable.
     public var previewHTML: String {
-        let shot = AppShot(screenshot: "", type: .feature)
-        // Don't set any content — renderer falls back to TextSlot.preview
-        let html = GalleryHTMLRenderer.renderScreen(shot, screenLayout: screenLayout, palette: palette)
-        return GalleryHTMLRenderer.wrapPage(html)
+        GalleryHTMLRenderer.cachedPreview(id: "tmpl-\(id)") {
+            let shot = AppShot(screenshot: "", type: .feature)
+            let html = GalleryHTMLRenderer.renderScreen(shot, screenLayout: screenLayout, palette: palette)
+            return GalleryHTMLRenderer.wrapPage(html)
+        }
     }
 
     /// Apply with user content — returns a full HTML page.

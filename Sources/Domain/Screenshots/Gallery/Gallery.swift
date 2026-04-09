@@ -123,8 +123,11 @@ public final class Gallery: @unchecked Sendable, Identifiable {
     }
 
     /// Self-contained HTML preview showing all panels as a horizontal gallery strip.
+    /// Cached after first computation — gallery template data is immutable.
     public var previewHTML: String {
-        GalleryHTMLRenderer.renderPreviewPage(self)
+        GalleryHTMLRenderer.cachedPreview(id: "gallery-\(id)") {
+            GalleryHTMLRenderer.renderPreviewPage(self)
+        }
     }
 
     public var readiness: GalleryReadiness {
