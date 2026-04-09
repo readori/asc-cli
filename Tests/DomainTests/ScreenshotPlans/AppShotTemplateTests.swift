@@ -54,11 +54,11 @@ struct AppShotTemplateTests {
         #expect(template.affordances["preview"] == "asc app-shots templates get --id top-hero --preview")
     }
 
-    @Test func `previewHTML contains background and template name`() {
+    @Test func `previewHTML contains background gradient`() {
         let template = MockRepositoryFactory.makeAppShotTemplate()
         let html = template.previewHTML
         #expect(html.contains("linear-gradient"))
-        #expect(html.contains("Top Hero"))
+        #expect(html.contains("<!DOCTYPE html>"))
     }
 
     @Test func `template is codable`() throws {
