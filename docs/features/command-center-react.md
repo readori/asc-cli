@@ -1260,26 +1260,26 @@ describe('AffordanceBar', () => {
 ### TDD Cycle Per Slice
 
 ```
-1. Write __tests__/Version.test.ts       → RED   (class doesn't exist)
-2. Write Version.ts                      → GREEN (semantic booleans + capability checks pass)
-3. Write __tests__/VersionBadge.test.tsx  → RED   (component doesn't exist)
-4. Write components/VersionBadge.tsx      → GREEN (renders based on model)
-5. Wire Version.hooks.ts                  → connects model to React lifecycle
-6. Wire pages/VersionList.tsx             → page uses hook + components
-7. npx vitest                             → ALL GREEN
+1. Write tests/version/Version.test.ts        → RED   (class doesn't exist)
+2. Write src/version/Version.ts               → GREEN (semantic booleans + capability checks pass)
+3. Write tests/version/VersionBadge.test.tsx   → RED   (component doesn't exist)
+4. Write src/version/components/VersionBadge.tsx → GREEN (renders based on model)
+5. Wire src/version/Version.hooks.ts           → connects model to React lifecycle
+6. Wire src/version/pages/VersionList.tsx      → page uses hook + components
+7. npx vitest                                  → ALL GREEN
 ```
 
 ### What Gets Tested Where
 
 | What | Test file | React needed? |
 |------|-----------|---------------|
-| `isLive`, `isEditable`, `isPending` | `version/__tests__/Version.test.ts` | No |
-| `canSubmit`, `canRelease` (from affordances) | `version/__tests__/Version.test.ts` | No |
-| `canTransitionTo()` | `version/__tests__/Version.test.ts` | No |
-| `fromJSON()` hydration | `version/__tests__/Version.test.ts` | No |
-| Plugin registration, slot resolution | `plugin/__tests__/PluginRegistry.test.ts` | No |
-| Badge renders correctly per state | `version/__tests__/VersionBadge.test.tsx` | Yes |
-| Affordance buttons appear/disappear | `shared/__tests__/AffordanceBar.test.tsx` | Yes |
+| `isLive`, `isEditable`, `isPending` | `tests/version/Version.test.ts` | No |
+| `canSubmit`, `canRelease` (from affordances) | `tests/version/Version.test.ts` | No |
+| `canTransitionTo()` | `tests/version/Version.test.ts` | No |
+| `fromJSON()` hydration | `tests/version/Version.test.ts` | No |
+| Plugin registration, slot resolution | `tests/plugin/PluginRegistry.test.ts` | No |
+| Badge renders correctly per state | `tests/version/VersionBadge.test.tsx` | Yes |
+| Affordance buttons appear/disappear | `tests/shared/AffordanceBar.test.tsx` | Yes |
 | Data fetching lifecycle | `Version.hooks.ts` | Tested via page integration |
 
 **Most tests are pure TypeScript.** The rich domain model concentrates logic where it can be tested without React, DOM, or mocking. Component tests are thin — they just verify the component asks the model correctly.
