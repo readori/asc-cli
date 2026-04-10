@@ -97,6 +97,7 @@ pages/        →  components/  →  Feature.hooks.ts  →  infrastructure/
 apps/asc-web/command-center/
 ├── package.json
 ├── vite.config.ts
+├── vitest.config.ts
 ├── tsconfig.json
 ├── index.html                              # Vite entry HTML (minimal)
 │
@@ -107,33 +108,36 @@ apps/asc-web/command-center/
     │── ── ── ── Domain Slices ── ── ── ──
     │
     ├── app/                                # 🍰 App
-    │   ├── App.ts                          # interface App, appAffordances()
-    │   ├── App.hooks.ts                    # useApps(), useApp(id)
+    │   ├── App.ts                          # class App — rich domain model
+    │   ├── App.test.ts                     # Domain tests (pure, no React)
+    │   ├── App.hooks.ts                    # useApps(), useApp(id) — thin lifecycle
     │   ├── infrastructure/
-    │   │   ├── App.api.ts                  # GET /api/v1/apps, /api/v1/apps/:id
+    │   │   ├── App.api.ts                  # GET /api/v1/apps — hydrates App class
     │   │   └── App.mock.ts                 # Static mock data
     │   ├── components/
-    │   │   └── AppCard.tsx                 # Reusable card (used by dashboard)
+    │   │   ├── AppCard.tsx                  # Reusable card (used by dashboard)
+    │   │   └── AppCard.test.tsx             # Component test
     │   └── pages/
     │       ├── AppList.tsx                  # Route: /apps
     │       └── AppDetail.tsx               # Route: /apps/:id
     │
     ├── version/                            # 🍰 Version
-    │   ├── Version.ts                      # interface Version, VersionState enum
-    │   │                                   # semantic booleans: isLive, isEditable, isPending
-    │   ├── Version.hooks.ts                # useVersions(appId), useVersionState()
+    │   ├── Version.ts                      # class Version — state machine, semantic booleans
+    │   ├── Version.test.ts                 # Domain tests
+    │   ├── Version.hooks.ts
     │   ├── infrastructure/
-    │   │   ├── Version.api.ts              # GET /api/v1/apps/:appId/versions
+    │   │   ├── Version.api.ts
     │   │   └── Version.mock.ts
     │   ├── components/
-    │   │   ├── VersionBadge.tsx            # State badge with color
+    │   │   ├── VersionBadge.tsx
     │   │   └── VersionRow.tsx
     │   └── pages/
-    │       ├── VersionList.tsx              # Route: /apps/:appId/versions
-    │       └── VersionDetail.tsx           # Route: /versions/:id
+    │       ├── VersionList.tsx
+    │       └── VersionDetail.tsx
     │
     ├── build/                              # 🍰 Build
     │   ├── Build.ts
+    │   ├── Build.test.ts
     │   ├── Build.hooks.ts
     │   ├── infrastructure/
     │   │   ├── Build.api.ts
@@ -144,7 +148,8 @@ apps/asc-web/command-center/
     │       └── BuildList.tsx
     │
     ├── screenshot/                         # 🍰 Screenshot
-    │   ├── Screenshot.ts                   # Screenshot, ScreenshotSet, DisplayType
+    │   ├── Screenshot.ts
+    │   ├── Screenshot.test.ts
     │   ├── Screenshot.hooks.ts
     │   ├── infrastructure/
     │   │   ├── Screenshot.api.ts
@@ -156,6 +161,7 @@ apps/asc-web/command-center/
     │
     ├── review/                             # 🍰 Review
     │   ├── Review.ts
+    │   ├── Review.test.ts
     │   ├── Review.hooks.ts
     │   ├── infrastructure/
     │   │   ├── Review.api.ts
@@ -168,6 +174,7 @@ apps/asc-web/command-center/
     ├── testflight/                         # 🍰 TestFlight
     │   ├── BetaGroup.ts
     │   ├── BetaTester.ts
+    │   ├── TestFlight.test.ts
     │   ├── TestFlight.hooks.ts
     │   ├── infrastructure/
     │   │   ├── TestFlight.api.ts
@@ -183,6 +190,7 @@ apps/asc-web/command-center/
     │   ├── Profile.ts
     │   ├── BundleID.ts
     │   ├── Device.ts
+    │   ├── CodeSigning.test.ts
     │   ├── CodeSigning.hooks.ts
     │   ├── infrastructure/
     │   │   ├── CodeSigning.api.ts
@@ -194,6 +202,7 @@ apps/asc-web/command-center/
     │
     ├── submission/                         # 🍰 Submission
     │   ├── Submission.ts
+    │   ├── Submission.test.ts
     │   ├── Submission.hooks.ts
     │   ├── infrastructure/
     │   │   ├── Submission.api.ts
@@ -204,6 +213,7 @@ apps/asc-web/command-center/
     ├── xcode-cloud/                        # 🍰 Xcode Cloud
     │   ├── CiWorkflow.ts
     │   ├── CiBuildRun.ts
+    │   ├── XcodeCloud.test.ts
     │   ├── XcodeCloud.hooks.ts
     │   ├── infrastructure/
     │   │   ├── XcodeCloud.api.ts
@@ -215,6 +225,7 @@ apps/asc-web/command-center/
     │
     ├── report/                             # 🍰 Reports
     │   ├── Report.ts
+    │   ├── Report.test.ts
     │   ├── Report.hooks.ts
     │   ├── infrastructure/
     │   │   ├── Report.api.ts
@@ -232,6 +243,7 @@ apps/asc-web/command-center/
     ├── plugin/                             # 🍰 Plugin System
     │   ├── Plugin.ts                       # PluginRegistration, PluginPage, PluginWidget
     │   ├── PluginRegistry.ts               # Singleton: register/query extensions
+    │   ├── PluginRegistry.test.ts          # Registry tests
     │   ├── PluginLoader.ts                 # Discover from /api/plugins, dynamic import
     │   ├── PluginContext.tsx                # React context providing registry
     │   ├── infrastructure/
@@ -249,6 +261,7 @@ apps/asc-web/command-center/
         ├── types.ts                        # PaginatedResponse, OutputFormat
         ├── components/
         │   ├── AffordanceBar.tsx            # Renders affordances as action buttons
+        │   ├── AffordanceBar.test.tsx        # Component test
         │   ├── DataTable.tsx                # Generic sortable table
         │   ├── Toast.tsx
         │   ├── Modal.tsx
@@ -266,22 +279,29 @@ Every domain slice follows the same internal structure:
 
 ```
 feature/
-├── Feature.ts                 # Domain — WHAT it is
-│                              #   TypeScript interface mirroring Swift struct
-│                              #   Affordance generator function
-│                              #   State enum with semantic booleans
+├── Feature.ts                 # Domain — WHAT it is (rich model class)
+│                              #   Class with semantic booleans
+│                              #   Capability checks derived from affordances
+│                              #   State enum
+│                              #   static fromJSON() factory
 │
-├── Feature.hooks.ts           # Domain — HOW to use it in React
+├── Feature.test.ts            # Domain tests — pure, no React, no HTTP
+│                              #   Test semantic booleans
+│                              #   Test capability checks
+│                              #   Test fromJSON hydration
+│
+├── Feature.hooks.ts           # React lifecycle — THIN wrapper
 │                              #   useFeatures(), useFeature(id)
-│                              #   Manages loading/error/data state
-│                              #   Calls infrastructure internally
+│                              #   Only manages loading/error/data state
+│                              #   No domain logic — the model owns that
 │
 ├── infrastructure/            # HOW to get/send data
-│   ├── Feature.api.ts         #   REST calls to Hummingbird backend
+│   ├── Feature.api.ts         #   REST calls → hydrates into rich model class
 │   └── Feature.mock.ts        #   Static data for offline/demo mode
 │
 ├── components/                # Reusable pieces (importable by other slices)
-│   └── FeatureCard.tsx        #   e.g. AppCard used by dashboard/
+│   ├── FeatureCard.tsx        #   Components ASK the model, never decide
+│   └── FeatureCard.test.tsx   #   Component rendering tests
 │
 └── pages/                     # Route-level (only referenced by router)
     ├── FeatureList.tsx
@@ -292,45 +312,25 @@ feature/
 
 ---
 
-## Domain Model Design
+## Rich Domain Model Design
 
-### TypeScript ↔ Swift Model Parity
+### Design Principles
 
-Each TypeScript interface mirrors its Swift counterpart, including `parentId` and affordances:
+The domain model is a **rich class**, not an anemic data bag. The key distinction:
 
-```typescript
-// app/App.ts
-export interface App {
-  id: string;
-  name: string;
-  bundleId: string;
-  sku: string;
-  primaryLocale: string;
-  contentRightsDeclaration?: string;
-  isAvailableInNewTerritories: boolean;
-  affordances: Record<string, string>;
-}
+| Concern | Where it lives | Source of truth |
+|---------|---------------|-----------------|
+| **Affordances** (available actions) | API response → `this.affordances` | **Server** — knows full state, auth, permissions |
+| **Semantic booleans** (`isLive`, `isEditable`) | Model class as getters | **Model** — UI display logic (badge colors, show/hide) |
+| **Capability checks** (`canSubmit`, `canRelease`) | Model class, derived from affordances | **Model** — reads what server decided, exposes it cleanly |
+| **State transitions** (`canTransitionTo`) | Model class | **Model** — knows the state machine |
 
-export function appAffordances(app: App): Record<string, string> {
-  return {
-    getVersions: `asc versions list --app-id ${app.id}`,
-    getBuilds: `asc builds list --app-id ${app.id}`,
-    getReviews: `asc reviews list --app-id ${app.id}`,
-    getTestFlight: `asc beta-groups list --app-id ${app.id}`,
-  };
-}
-```
+The server is the **source of truth** for what you can do. The model is the **source of truth** for how to interpret state. The component just asks both.
+
+### Version — Full Rich Domain Model
 
 ```typescript
 // version/Version.ts
-export interface Version {
-  id: string;
-  appId: string;                        // parentId — injected by backend
-  versionString: string;
-  state: VersionState;
-  platform: string;
-  affordances: Record<string, string>;
-}
 
 export enum VersionState {
   ReadyForSale = "READY_FOR_SALE",
@@ -340,35 +340,177 @@ export enum VersionState {
   Rejected = "REJECTED",
   DeveloperRejected = "DEVELOPER_REJECTED",
   PendingDeveloperRelease = "PENDING_DEVELOPER_RELEASE",
-  // ...
 }
 
-// Semantic booleans — mirrors Swift's VersionState extensions
-export function isLive(state: VersionState): boolean {
-  return state === VersionState.ReadyForSale;
-}
+export class Version {
+  constructor(
+    readonly id: string,
+    readonly appId: string,
+    readonly versionString: string,
+    readonly state: VersionState,
+    readonly platform: string,
+    readonly affordances: Record<string, string>,  // from API — not computed
+  ) {}
 
-export function isEditable(state: VersionState): boolean {
-  return state === VersionState.PrepareForSubmission;
-}
+  // ── Semantic Booleans — the model KNOWS its own state ──
 
-export function isPending(state: VersionState): boolean {
-  return [
-    VersionState.WaitingForReview,
-    VersionState.InReview,
-    VersionState.PendingDeveloperRelease,
-  ].includes(state);
+  get isLive(): boolean {
+    return this.state === VersionState.ReadyForSale;
+  }
+
+  get isEditable(): boolean {
+    return this.state === VersionState.PrepareForSubmission;
+  }
+
+  get isPending(): boolean {
+    return [
+      VersionState.WaitingForReview,
+      VersionState.InReview,
+    ].includes(this.state);
+  }
+
+  get isRejected(): boolean {
+    return this.state === VersionState.Rejected;
+  }
+
+  // ── Capability Checks — derived from server affordances ──
+  // The server decided what's possible. The model just exposes it.
+
+  get canSubmit(): boolean {
+    return "submitForReview" in this.affordances;
+  }
+
+  get canRelease(): boolean {
+    return "releaseVersion" in this.affordances;
+  }
+
+  get canEdit(): boolean {
+    return "updateVersion" in this.affordances;
+  }
+
+  // ── Domain Knowledge — state machine ──
+
+  canTransitionTo(target: VersionState): boolean {
+    const transitions: Partial<Record<VersionState, VersionState[]>> = {
+      [VersionState.PrepareForSubmission]: [VersionState.WaitingForReview],
+      [VersionState.Rejected]: [VersionState.PrepareForSubmission],
+      [VersionState.PendingDeveloperRelease]: [VersionState.ReadyForSale],
+    };
+    return transitions[this.state]?.includes(target) ?? false;
+  }
+
+  // ── Factory — hydrates from API JSON ──
+
+  static fromJSON(json: Record<string, unknown>): Version {
+    return new Version(
+      json.id as string,
+      json.appId as string,
+      json.versionString as string,
+      json.state as VersionState,
+      json.platform as string,
+      (json.affordances as Record<string, string>) ?? {},
+    );
+  }
 }
 ```
 
-### Hooks Encapsulate Domain Logic
+### App — Rich Domain Model
+
+```typescript
+// app/App.ts
+
+export class App {
+  constructor(
+    readonly id: string,
+    readonly name: string,
+    readonly bundleId: string,
+    readonly sku: string,
+    readonly primaryLocale: string,
+    readonly isAvailableInNewTerritories: boolean,
+    readonly affordances: Record<string, string>,  // from API
+    readonly contentRightsDeclaration?: string,
+  ) {}
+
+  // ── Semantic Booleans ──
+
+  get hasContentRights(): boolean {
+    return this.contentRightsDeclaration !== undefined;
+  }
+
+  // ── Capability Checks — from server affordances ──
+
+  get canViewVersions(): boolean {
+    return "getVersions" in this.affordances;
+  }
+
+  get canViewBuilds(): boolean {
+    return "getBuilds" in this.affordances;
+  }
+
+  // ── Display ──
+
+  get displayName(): string {
+    return `${this.name} (${this.bundleId})`;
+  }
+
+  // ── Factory ──
+
+  static fromJSON(json: Record<string, unknown>): App {
+    return new App(
+      json.id as string,
+      json.name as string,
+      json.bundleId as string,
+      json.sku as string,
+      json.primaryLocale as string,
+      json.isAvailableInNewTerritories as boolean,
+      (json.affordances as Record<string, string>) ?? {},
+      json.contentRightsDeclaration as string | undefined,
+    );
+  }
+}
+```
+
+### How Components Use Rich Models
+
+Components **ask** the model. They never decide.
+
+```tsx
+// version/components/VersionRow.tsx
+
+import { Version } from '../Version';
+import { AffordanceBar } from '../../shared/components/AffordanceBar';
+
+export function VersionRow({ version }: { version: Version }) {
+  return (
+    <tr>
+      <td>{version.versionString}</td>
+      <td>{version.platform}</td>
+      <td>
+        {version.isLive && <Badge color="green">Live</Badge>}
+        {version.isPending && <Badge color="yellow">Pending</Badge>}
+        {version.isRejected && <Badge color="red">Rejected</Badge>}
+        {version.isEditable && <Badge color="blue">Editable</Badge>}
+      </td>
+      <td>
+        {version.canSubmit && <Button>Submit for Review</Button>}
+        {version.canRelease && <Button>Release</Button>}
+      </td>
+      <td>
+        <AffordanceBar affordances={version.affordances} />
+      </td>
+    </tr>
+  );
+}
+```
+
+### Hooks Are THIN — No Domain Logic
 
 ```typescript
 // version/Version.hooks.ts
+
 import { useState, useEffect } from 'react';
-import type { Version } from './Version';
+import { Version } from './Version';
 import { fetchVersions } from './infrastructure/Version.api';
-import { mockVersions } from './infrastructure/Version.mock';
 import { useDataMode } from '../shared/api-client';
 
 export function useVersions(appId: string) {
@@ -379,8 +521,7 @@ export function useVersions(appId: string) {
 
   useEffect(() => {
     setLoading(true);
-    const fetcher = mode === 'mock' ? mockVersions : fetchVersions;
-    fetcher(appId)
+    fetchVersions(appId, mode)
       .then(setVersions)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -388,62 +529,50 @@ export function useVersions(appId: string) {
 
   return { versions, loading, error };
 }
+
+// No useVersionState() — the model HAS that.
+// No useVersionAffordances() — the model HAS that.
+// The hook is ONLY a lifecycle wrapper.
 ```
 
-### Infrastructure — API Layer
+### Infrastructure Hydrates Rich Models
 
 ```typescript
 // version/infrastructure/Version.api.ts
-import { apiClient } from '../../shared/api-client';
-import type { Version } from '../Version';
 
-export async function fetchVersions(appId: string): Promise<Version[]> {
-  const response = await apiClient.get<{ data: Version[] }>(
+import { Version } from '../Version';
+import { apiClient } from '../../shared/api-client';
+
+export async function fetchVersions(appId: string, mode: string): Promise<Version[]> {
+  if (mode === 'mock') {
+    const { mockVersions } = await import('./Version.mock');
+    return mockVersions(appId);
+  }
+  const json = await apiClient.get<{ data: Record<string, unknown>[] }>(
     `/api/v1/apps/${appId}/versions`
   );
-  return response.data;
-}
-
-export async function fetchVersion(versionId: string): Promise<Version> {
-  const response = await apiClient.get<{ data: Version }>(
-    `/api/v1/versions/${versionId}`
-  );
-  return response.data;
+  return json.data.map(Version.fromJSON);  // ← hydrate into rich model
 }
 ```
 
-### Infrastructure — Mock Layer
+### The Responsibility Split
 
-```typescript
-// version/infrastructure/Version.mock.ts
-import type { Version } from '../Version';
-import { VersionState } from '../Version';
+```
+ANEMIC (wrong)                       RICH (correct)
+──────────────                       ──────────────
 
-export async function mockVersions(appId: string): Promise<Version[]> {
-  return [
-    {
-      id: "v-1",
-      appId,
-      versionString: "1.2.0",
-      state: VersionState.PrepareForSubmission,
-      platform: "IOS",
-      affordances: {
-        getLocalizations: `asc version-localizations list --version-id v-1`,
-        submitForReview: `asc versions submit --id v-1`,
-      },
-    },
-    {
-      id: "v-2",
-      appId,
-      versionString: "1.1.0",
-      state: VersionState.ReadyForSale,
-      platform: "IOS",
-      affordances: {
-        getLocalizations: `asc version-localizations list --version-id v-2`,
-      },
-    },
-  ];
-}
+  interface Version { }              class Version {
+        │                              get isLive         ← semantic boolean
+        ▼                              get canSubmit      ← reads affordances
+  isLive(v) ← scattered               canTransitionTo()  ← state machine
+  canSubmit(v) ← scattered            static fromJSON()  ← hydration
+  affordances(v) ← scattered        }
+        │                              │
+        ▼                              ▼
+  hook gathers logic                 hook is THIN (just fetch + loading)
+        │                              │
+        ▼                              ▼
+  component decides                  component ASKS the model
 ```
 
 ---
@@ -505,7 +634,9 @@ export interface PluginWidget {
 ```typescript
 // plugin/PluginRegistry.ts
 
-class PluginRegistry {
+import type { PluginRegistration, PluginPage, PluginSidebarItem, PluginWidget } from './Plugin';
+
+export class PluginRegistry {
   private plugins: Map<string, PluginRegistration> = new Map();
 
   register(plugin: PluginRegistration): void {
@@ -525,6 +656,14 @@ class PluginRegistry {
       .flatMap(p => p.widgets ?? [])
       .filter(w => w.slot === slot)
       .sort((a, b) => (a.priority ?? 100) - (b.priority ?? 100));
+  }
+
+  getAll(): PluginRegistration[] {
+    return [...this.plugins.values()];
+  }
+
+  has(id: string): boolean {
+    return this.plugins.has(id);
   }
 }
 
@@ -567,7 +706,7 @@ export async function loadPlugins(): Promise<void> {
 
 ### Plugin Slot Component
 
-```typescript
+```tsx
 // plugin/components/PluginSlot.tsx
 import { Suspense, lazy } from 'react';
 import { usePluginRegistry } from '../PluginContext';
@@ -659,6 +798,21 @@ Only truly cross-cutting concerns live in `shared/`. If something is used by 1-2
 
 ```typescript
 // shared/api-client.ts
+
+import { createContext, useContext } from 'react';
+
+export type DataMode = 'rest' | 'mock';
+
+const DataModeContext = createContext<DataMode>('rest');
+export const DataModeProvider = DataModeContext.Provider;
+export const useDataMode = () => useContext(DataModeContext);
+
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+  }
+}
+
 const BASE_URL = `https://localhost:8421`;
 
 export const apiClient = {
@@ -687,7 +841,7 @@ export const apiClient = {
 
 ### Affordance Bar Component
 
-```typescript
+```tsx
 // shared/components/AffordanceBar.tsx
 import { apiClient } from '../api-client';
 
@@ -700,7 +854,6 @@ export function AffordanceBar({ affordances }: Props) {
   if (entries.length === 0) return null;
 
   const handleClick = async (command: string) => {
-    // If it's an "asc ..." command, execute via backend
     if (command.startsWith('asc ')) {
       const result = await apiClient.runCommand(command.replace(/^asc /, ''));
       // Toast or navigate based on result
@@ -724,7 +877,6 @@ export function AffordanceBar({ affordances }: Props) {
 }
 
 function formatLabel(key: string): string {
-  // "getVersions" → "Get Versions"
   return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
 }
 ```
@@ -738,7 +890,9 @@ React Router wires core pages and dynamically adds plugin pages:
 ```typescript
 // App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import { PluginProvider } from './plugin/PluginContext';
+import { pluginRegistry } from './plugin/PluginRegistry';
 import { Sidebar } from './shared/layout/Sidebar';
 import { PageLayout } from './shared/layout/PageLayout';
 
@@ -805,28 +959,344 @@ export function App() {
 
 ---
 
+## TDD Workflow
+
+**Write tests first, then implement. Every test must fail (red) before writing implementation.**
+
+### Tech Stack
+
+| Tool | Purpose |
+|------|---------|
+| **Vitest** | Test runner — fast, Vite-native, same config |
+| **React Testing Library** | Component tests — renders real DOM, tests behavior not internals |
+| **jsdom** | DOM environment for Vitest |
+
+```bash
+# Run all tests
+npx vitest
+
+# Run tests for one slice
+npx vitest version
+
+# Watch mode
+npx vitest --watch
+```
+
+### Test Layers
+
+Each slice has up to 3 test layers, written in this order:
+
+```
+1. Domain tests    (Feature.test.ts)       — pure TypeScript, no React, no HTTP
+2. Infrastructure  (tested via domain)     — fromJSON hydration tested in domain tests
+3. Component tests (Component.test.tsx)    — React rendering, user interactions
+```
+
+### Layer 1: Domain Model Tests (Pure — No React)
+
+Test the rich model class in isolation. No HTTP, no React, no DOM.
+
+```typescript
+// version/Version.test.ts
+import { describe, it, expect } from 'vitest';
+import { Version, VersionState } from './Version';
+
+describe('Version', () => {
+
+  // ── Semantic Booleans ──
+
+  it('is live when state is READY_FOR_SALE', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.ReadyForSale, 'IOS', {});
+    expect(version.isLive).toBe(true);
+    expect(version.isEditable).toBe(false);
+    expect(version.isPending).toBe(false);
+  });
+
+  it('is editable when state is PREPARE_FOR_SUBMISSION', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {});
+    expect(version.isEditable).toBe(true);
+    expect(version.isLive).toBe(false);
+  });
+
+  it('is pending when waiting for review', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.WaitingForReview, 'IOS', {});
+    expect(version.isPending).toBe(true);
+  });
+
+  it('is pending when in review', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.InReview, 'IOS', {});
+    expect(version.isPending).toBe(true);
+  });
+
+  // ── Capability Checks (from API affordances) ──
+
+  it('can submit when server provides submitForReview affordance', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {
+      submitForReview: 'asc versions submit --id v-1',
+    });
+    expect(version.canSubmit).toBe(true);
+  });
+
+  it('cannot submit when server does not provide submitForReview affordance', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {});
+    expect(version.canSubmit).toBe(false);
+  });
+
+  it('can release when server provides releaseVersion affordance', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PendingDeveloperRelease, 'IOS', {
+      releaseVersion: 'asc versions release --id v-1',
+    });
+    expect(version.canRelease).toBe(true);
+  });
+
+  // ── State Transitions ──
+
+  it('can transition from prepare to waiting for review', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {});
+    expect(version.canTransitionTo(VersionState.WaitingForReview)).toBe(true);
+    expect(version.canTransitionTo(VersionState.ReadyForSale)).toBe(false);
+  });
+
+  it('can transition from rejected back to prepare', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.Rejected, 'IOS', {});
+    expect(version.canTransitionTo(VersionState.PrepareForSubmission)).toBe(true);
+  });
+
+  it('live version cannot transition anywhere', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.ReadyForSale, 'IOS', {});
+    expect(version.canTransitionTo(VersionState.PrepareForSubmission)).toBe(false);
+  });
+
+  // ── Hydration ──
+
+  it('hydrates from API JSON', () => {
+    const json = {
+      id: 'v-1',
+      appId: 'app-1',
+      versionString: '2.0',
+      state: 'PREPARE_FOR_SUBMISSION',
+      platform: 'IOS',
+      affordances: { submitForReview: 'asc versions submit --id v-1' },
+    };
+
+    const version = Version.fromJSON(json);
+
+    expect(version.id).toBe('v-1');
+    expect(version.appId).toBe('app-1');
+    expect(version.isEditable).toBe(true);
+    expect(version.canSubmit).toBe(true);
+  });
+
+  it('hydrates with empty affordances when missing from JSON', () => {
+    const json = {
+      id: 'v-1',
+      appId: 'app-1',
+      versionString: '2.0',
+      state: 'READY_FOR_SALE',
+      platform: 'IOS',
+    };
+
+    const version = Version.fromJSON(json);
+
+    expect(version.affordances).toEqual({});
+    expect(version.canSubmit).toBe(false);
+  });
+});
+```
+
+### Layer 2: Plugin Registry Tests (Pure — No React)
+
+```typescript
+// plugin/PluginRegistry.test.ts
+import { describe, it, expect, beforeEach } from 'vitest';
+import { PluginRegistry } from './PluginRegistry';
+
+describe('PluginRegistry', () => {
+  let registry: PluginRegistry;
+
+  beforeEach(() => {
+    registry = new PluginRegistry();
+  });
+
+  it('registers a plugin and retrieves its pages', () => {
+    registry.register({
+      id: 'test-plugin',
+      name: 'Test',
+      version: '1.0.0',
+      pages: [{ path: '/test', title: 'Test', component: () => Promise.resolve({ default: () => null }) }],
+    });
+
+    expect(registry.getPages()).toHaveLength(1);
+    expect(registry.getPages()[0].path).toBe('/test');
+  });
+
+  it('returns widgets for a specific slot sorted by priority', () => {
+    const widgetA = { slot: 'dashboard.top', component: () => Promise.resolve({ default: () => null }), priority: 50 };
+    const widgetB = { slot: 'dashboard.top', component: () => Promise.resolve({ default: () => null }), priority: 10 };
+    const widgetC = { slot: 'other.slot', component: () => Promise.resolve({ default: () => null }) };
+
+    registry.register({ id: 'p1', name: 'P1', version: '1.0', widgets: [widgetA, widgetC] });
+    registry.register({ id: 'p2', name: 'P2', version: '1.0', widgets: [widgetB] });
+
+    const dashboardWidgets = registry.getWidgets('dashboard.top');
+    expect(dashboardWidgets).toHaveLength(2);
+    expect(dashboardWidgets[0].priority).toBe(10);   // B first (lower priority)
+    expect(dashboardWidgets[1].priority).toBe(50);   // A second
+  });
+
+  it('returns empty array for slot with no widgets', () => {
+    expect(registry.getWidgets('nonexistent')).toEqual([]);
+  });
+
+  it('aggregates sidebar items from all plugins', () => {
+    registry.register({
+      id: 'p1', name: 'P1', version: '1.0',
+      sidebarItems: [{ id: 's1', label: 'Item 1', section: 'plugins', path: '/p1' }],
+    });
+    registry.register({
+      id: 'p2', name: 'P2', version: '1.0',
+      sidebarItems: [{ id: 's2', label: 'Item 2', section: 'plugins', path: '/p2' }],
+    });
+
+    expect(registry.getSidebarItems()).toHaveLength(2);
+  });
+
+  it('does not duplicate when registering same plugin id twice', () => {
+    registry.register({ id: 'p1', name: 'P1', version: '1.0', pages: [{ path: '/a', title: 'A', component: () => Promise.resolve({ default: () => null }) }] });
+    registry.register({ id: 'p1', name: 'P1 Updated', version: '2.0', pages: [{ path: '/b', title: 'B', component: () => Promise.resolve({ default: () => null }) }] });
+
+    expect(registry.getAll()).toHaveLength(1);
+    expect(registry.getPages()[0].path).toBe('/b');  // latest wins
+  });
+});
+```
+
+### Layer 3: Component Tests (React + DOM)
+
+```tsx
+// version/components/VersionBadge.test.tsx
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { VersionBadge } from './VersionBadge';
+import { Version, VersionState } from '../Version';
+
+describe('VersionBadge', () => {
+
+  it('shows green Live badge for ready for sale version', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.ReadyForSale, 'IOS', {});
+
+    render(<VersionBadge version={version} />);
+
+    expect(screen.getByText('Live')).toBeInTheDocument();
+  });
+
+  it('shows Submit button when version can submit', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {
+      submitForReview: 'asc versions submit --id v-1',
+    });
+
+    render(<VersionBadge version={version} />);
+
+    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
+  });
+
+  it('does not show Submit button when server omits affordance', () => {
+    const version = new Version('v-1', 'app-1', '2.0', VersionState.PrepareForSubmission, 'IOS', {});
+
+    render(<VersionBadge version={version} />);
+
+    expect(screen.queryByRole('button', { name: /submit/i })).not.toBeInTheDocument();
+  });
+});
+```
+
+### Layer 4: AffordanceBar Tests
+
+```tsx
+// shared/components/AffordanceBar.test.tsx
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { AffordanceBar } from './AffordanceBar';
+
+describe('AffordanceBar', () => {
+
+  it('renders nothing when affordances are empty', () => {
+    const { container } = render(<AffordanceBar affordances={{}} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders a button for each affordance', () => {
+    render(<AffordanceBar affordances={{
+      getVersions: 'asc versions list --app-id app-1',
+      getBuilds: 'asc builds list --app-id app-1',
+    }} />);
+
+    expect(screen.getByText('Get Versions')).toBeInTheDocument();
+    expect(screen.getByText('Get Builds')).toBeInTheDocument();
+  });
+
+  it('shows the full command as tooltip', () => {
+    render(<AffordanceBar affordances={{
+      submitForReview: 'asc versions submit --id v-1',
+    }} />);
+
+    expect(screen.getByTitle('asc versions submit --id v-1')).toBeInTheDocument();
+  });
+});
+```
+
+### TDD Cycle Per Slice
+
+```
+1. Write Version.test.ts          → RED   (class doesn't exist)
+2. Write Version.ts               → GREEN (semantic booleans + capability checks pass)
+3. Write VersionBadge.test.tsx     → RED   (component doesn't exist)
+4. Write VersionBadge.tsx          → GREEN (renders based on model)
+5. Wire Version.hooks.ts           → connects model to React lifecycle
+6. Wire VersionList.tsx            → page uses hook + components
+7. npx vitest                      → ALL GREEN
+```
+
+### What Gets Tested Where
+
+| What | Test file | React needed? |
+|------|-----------|---------------|
+| `isLive`, `isEditable`, `isPending` | `Version.test.ts` | No |
+| `canSubmit`, `canRelease` (from affordances) | `Version.test.ts` | No |
+| `canTransitionTo()` | `Version.test.ts` | No |
+| `fromJSON()` hydration | `Version.test.ts` | No |
+| Plugin registration, slot resolution | `PluginRegistry.test.ts` | No |
+| Badge renders correctly per state | `VersionBadge.test.tsx` | Yes |
+| Affordance buttons appear/disappear | `AffordanceBar.test.tsx` | Yes |
+| Data fetching lifecycle | `Version.hooks.ts` | Tested via page integration |
+
+**Most tests are pure TypeScript.** The rich domain model concentrates logic where it can be tested without React, DOM, or mocking. Component tests are thin — they just verify the component asks the model correctly.
+
+---
+
 ## Migration Strategy
 
 Progressive migration — React app runs alongside the existing vanilla JS during transition. Both are served by the same Hummingbird backend.
 
-### Phase 1: Scaffold (Week 1)
+### Phase 1: Scaffold
 
-- Set up Vite + React + TypeScript project in `command-center/`
+- Set up Vite + React + TypeScript + Vitest project in `command-center/`
 - Configure Vite proxy to forward `/api/*` to Hummingbird backend
 - Implement `shared/` kernel: `api-client.ts`, `AffordanceBar`, layout components
 - Implement `plugin/` slice: registry, loader, context, slot component
 - Port the CSS theme (reuse existing CSS variables)
+- **Tests:** `AffordanceBar.test.tsx`, `PluginRegistry.test.ts`
 
-### Phase 2: First Slices (Week 2)
+### Phase 2: First Slices
 
-- Implement `app/` slice end-to-end (model, hooks, api, mock, components, pages)
-- Implement `dashboard/` slice
+- TDD `app/` slice: `App.test.ts` → `App.ts` → `AppCard.test.tsx` → `AppCard.tsx` → hooks → pages
+- TDD `dashboard/` slice
 - Verify data flow: React → api-client → Hummingbird → REST API
 
-### Phase 3: Remaining Slices (Week 3-4)
+### Phase 3: Remaining Slices
 
-- Port slices one by one in priority order:
-  1. `version/` — most complex (state machine, semantic booleans, affordances)
+- TDD slices one by one in priority order:
+  1. `version/` — most complex (state machine, semantic booleans, capability checks)
   2. `build/`
   3. `review/`
   4. `testflight/`
@@ -836,7 +1306,7 @@ Progressive migration — React app runs alongside the existing vanilla JS durin
   8. `xcode-cloud/`
   9. `report/`
 
-### Phase 4: Cleanup (Week 5)
+### Phase 4: Cleanup
 
 - Remove old vanilla JS files
 - Update `ASCWebServer.swift` static file serving to point to Vite build output
@@ -858,10 +1328,12 @@ Progressive migration — React app runs alongside the existing vanilla JS durin
 | **React 19** | UI framework | Component model, ecosystem, plugin lazy loading |
 | **TypeScript 5** | Type safety | Mirrors Swift domain models at compile time |
 | **Vite 6** | Build tool | Fast HMR, ESM-native, simple config |
+| **Vitest** | Test runner | Vite-native, fast, same config |
+| **React Testing Library** | Component tests | Tests behavior, not implementation |
 | **React Router 7** | Routing | Dynamic route registration for plugins |
 | **CSS Modules** or **vanilla CSS** | Styling | Reuse existing CSS variables and theme system |
 
-No state management library (Redux, Zustand) — hooks + context are sufficient for this app's complexity. Each slice manages its own state via hooks.
+No state management library (Redux, Zustand) — hooks + context are sufficient. Each slice manages its own state via hooks. The domain model owns the logic.
 
 ---
 
@@ -882,24 +1354,17 @@ The `ASCWebServer.swift` static file middleware already serves from `apps/asc-we
 
 ## Adding a New Feature (Checklist)
 
-To add a new domain feature (e.g. "In-App Purchases"):
+To add a new domain slice (e.g. "In-App Purchases"):
 
-1. Create `src/iap/` directory
-2. `IAP.ts` — define `InAppPurchase` interface + affordances
-3. `IAP.hooks.ts` — `useInAppPurchases(appId)`
-4. `infrastructure/IAP.api.ts` — REST calls
-5. `infrastructure/IAP.mock.ts` — mock data
-6. `components/IAPRow.tsx` — reusable component
-7. `pages/IAPPage.tsx` — route-level page
-8. Register route in `App.tsx`
-9. Add sidebar item in `Sidebar.tsx`
+1. **Write `IAP.test.ts`** — test semantic booleans, capability checks, fromJSON
+2. **Write `IAP.ts`** — rich model class (make tests pass)
+3. **Write `IAPRow.test.tsx`** — test component renders based on model
+4. **Write `IAPRow.tsx`** — component that asks the model
+5. `infrastructure/IAP.api.ts` — REST calls, hydrate via `IAP.fromJSON()`
+6. `infrastructure/IAP.mock.ts` — mock data
+7. `IAP.hooks.ts` — thin lifecycle wrapper
+8. `pages/IAPPage.tsx` — route-level page
+9. Register route in `App.tsx` + sidebar item in `Sidebar.tsx`
+10. `npx vitest` — all green
 
-That's it. One folder, self-contained, no cross-file coordination.
-
----
-
-## Open Questions
-
-1. **CSS approach** — Reuse existing CSS files directly, or migrate to CSS Modules for per-component scoping?
-2. **Testing** — Vitest for unit tests? React Testing Library for component tests?
-3. **Monorepo** — Should plugins be packages in a monorepo (pnpm workspaces), or standalone repos?
+One folder. Self-contained. Tests first.
