@@ -15,6 +15,10 @@ Initialise project context. Priority: `--app-id` > `--name` > auto-detect from `
 | `--app-id` | One of three | App Store Connect app ID (direct, no API list call) |
 | `--name` | One of three | App name to search for (case-insensitive) |
 | _(none)_ | One of three | Auto-detect from `PRODUCT_BUNDLE_IDENTIFIER` in `.xcodeproj/project.pbxproj` |
+| `--contact-first-name` | No | Review contact first name |
+| `--contact-last-name` | No | Review contact last name |
+| `--contact-phone` | No | Review contact phone number |
+| `--contact-email` | No | Review contact email address |
 | `--output` | No | Output format: `json` (default), `table`, `markdown` |
 | `--pretty` | No | Pretty-print JSON output |
 
@@ -29,9 +33,17 @@ asc init --name "My App" --pretty
 
 # Auto-detect — scans *.xcodeproj in the current directory
 asc init --pretty
+
+# With review contact info
+asc init --app-id 1234567890 \
+  --contact-first-name Jane \
+  --contact-last-name Smith \
+  --contact-email jane@example.com \
+  --contact-phone "+1-555-0100" \
+  --pretty
 ```
 
-**Output (JSON):**
+**Output (JSON, without contact):**
 
 ```json
 {
@@ -41,11 +53,37 @@ asc init --pretty
         "checkReadiness": "asc versions check-readiness --version-id <id>",
         "listAppInfos":   "asc app-infos list --app-id 1234567890",
         "listBuilds":     "asc builds list --app-id 1234567890",
-        "listVersions":   "asc versions list --app-id 1234567890"
+        "listVersions":   "asc versions list --app-id 1234567890",
+        "setReviewContact": "asc init --app-id 1234567890 --contact-email ... --contact-phone ..."
       },
       "appId":    "1234567890",
       "appName":  "My App",
       "bundleId": "com.example.myapp"
+    }
+  ]
+}
+```
+
+**Output (JSON, with contact):**
+
+```json
+{
+  "data": [
+    {
+      "affordances": {
+        "checkReadiness": "asc versions check-readiness --version-id <id>",
+        "listAppInfos":   "asc app-infos list --app-id 1234567890",
+        "listBuilds":     "asc builds list --app-id 1234567890",
+        "listVersions":   "asc versions list --app-id 1234567890",
+        "updateReviewContact": "asc init --app-id 1234567890 --contact-email ... --contact-phone ..."
+      },
+      "appId":    "1234567890",
+      "appName":  "My App",
+      "bundleId": "com.example.myapp",
+      "contactEmail": "jane@example.com",
+      "contactFirstName": "Jane",
+      "contactLastName": "Smith",
+      "contactPhone": "+1-555-0100"
     }
   ]
 }
@@ -63,13 +101,17 @@ App ID      Name    Bundle ID
 
 ## Saved File
 
-`./.asc/project.json` (relative to cwd):
+`./.asc/project.json` (relative to cwd). Contact fields are omitted when not set:
 
 ```json
 {
   "appId":    "1234567890",
   "appName":  "My App",
-  "bundleId": "com.example.myapp"
+  "bundleId": "com.example.myapp",
+  "contactEmail": "jane@example.com",
+  "contactFirstName": "Jane",
+  "contactLastName": "Smith",
+  "contactPhone": "+1-555-0100"
 }
 ```
 
@@ -104,7 +146,7 @@ Infrastructure/Projects/
 └── FileProjectConfigStorage.swift  [saves/loads .asc/project.json via JSONEncoder]
          ↓
 Domain/Projects/
-├── ProjectConfig.swift        [struct: appId, appName, bundleId + AffordanceProviding]
+├── ProjectConfig.swift        [struct: appId, appName, bundleId, contact fields + AffordanceProviding]
 └── ProjectConfigStorage.swift [@Mockable protocol: save/load/delete]
 ```
 
@@ -117,23 +159,31 @@ Domain/Projects/
 ### `ProjectConfig`
 
 ```swift
-public struct ProjectConfig: Sendable, Equatable, Codable, AffordanceProviding {
+public struct ProjectConfig: Sendable, Equatable, AffordanceProviding {
     public let appId: String
     public let appName: String
     public let bundleId: String
+    public let contactFirstName: String?
+    public let contactLastName: String?
+    public let contactPhone: String?
+    public let contactEmail: String?
+
+    public var hasReviewContact: Bool  // true when both email and phone are set
 }
 ```
 
 **Affordances:**
 
-| Key | Command |
-|-----|---------|
-| `listVersions` | `asc versions list --app-id <appId>` |
-| `listBuilds` | `asc builds list --app-id <appId>` |
-| `listAppInfos` | `asc app-infos list --app-id <appId>` |
-| `checkReadiness` | `asc versions check-readiness --version-id <id>` |
+| Key | Command | Condition |
+|-----|---------|-----------|
+| `listVersions` | `asc versions list --app-id <appId>` | Always |
+| `listBuilds` | `asc builds list --app-id <appId>` | Always |
+| `listAppInfos` | `asc app-infos list --app-id <appId>` | Always |
+| `checkReadiness` | `asc versions check-readiness --version-id <id>` | Always |
+| `setReviewContact` | `asc init --app-id <appId> --contact-email ... --contact-phone ...` | When `hasReviewContact == false` |
+| `updateReviewContact` | `asc init --app-id <appId> --contact-email ... --contact-phone ...` | When `hasReviewContact == true` |
 
-Uses synthesised `Codable` (all fields non-optional). JSON encoding omits no fields.
+Custom `Codable`: contact fields use `encodeIfPresent` / `decodeIfPresent` to omit nil values from JSON. Backward-compatible with existing `project.json` files that lack contact fields.
 
 ### `ProjectConfigStorage` (protocol)
 
@@ -180,10 +230,12 @@ Sources/
 
 ```
 Tests/
+├── DomainTests/Projects/
+│   └── ProjectConfigTests.swift             [10 tests: contact fields, affordances, Codable]
 ├── InfrastructureTests/Projects/
-│   └── FileProjectConfigStorageTests.swift  [new — 5 round-trip tests]
+│   └── FileProjectConfigStorageTests.swift  [7 tests: round-trip + backward compat]
 └── ASCCommandTests/Commands/Init/
-    └── InitCommandTests.swift               [new — 6 tests: 3 modes + error cases]
+    └── InitCommandTests.swift               [8 tests: 3 modes + contact flags + error cases]
 ```
 
 ---
@@ -243,13 +295,13 @@ if appId == nil {
 }
 ```
 
-**Store active version ID** — extend `ProjectConfig` with an optional `activeVersionId` that `asc versions create` or `asc versions list` can update automatically:
+**Auto-apply review contact** — when running `asc version-review-detail update`, read contact info from `.asc/project.json` as defaults:
 
 ```swift
-public struct ProjectConfig: ... {
-    public let appId: String
-    public let appName: String
-    public let bundleId: String
-    public let activeVersionId: String?   // ← future
+let storage = FileProjectConfigStorage()
+if let config = try? storage.load(), config.hasReviewContact {
+    // Use config.contactEmail, config.contactPhone, etc. as defaults
 }
 ```
+
+**Store active version ID** — extend `ProjectConfig` with an optional `activeVersionId` that `asc versions create` or `asc versions list` can update automatically.
