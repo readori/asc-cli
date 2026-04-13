@@ -17,6 +17,18 @@ struct InitCommand: AsyncParsableCommand {
     @Option(name: .long, help: "App name to search for")
     var name: String?
 
+    @Option(name: .long, help: "Review contact first name")
+    var contactFirstName: String?
+
+    @Option(name: .long, help: "Review contact last name")
+    var contactLastName: String?
+
+    @Option(name: .long, help: "Review contact phone number")
+    var contactPhone: String?
+
+    @Option(name: .long, help: "Review contact email address")
+    var contactEmail: String?
+
     func run() async throws {
         let repo = try ClientProvider.makeAppRepository()
         let storage = FileProjectConfigStorage()
@@ -30,26 +42,36 @@ struct InitCommand: AsyncParsableCommand {
     ) async throws -> String {
         let config: ProjectConfig
 
+        let app: App
         if let appId {
-            let app = try await repo.getApp(id: appId)
-            config = ProjectConfig(appId: app.id, appName: app.name, bundleId: app.bundleId)
+            app = try await repo.getApp(id: appId)
         } else if let name {
             let apps = try await repo.listApps(limit: nil).data
-            guard let app = apps.first(where: { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) else {
+            guard let found = apps.first(where: { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) else {
                 throw ValidationError("No app named '\(name)'. Run `asc apps list` to see available apps.")
             }
-            config = ProjectConfig(appId: app.id, appName: app.name, bundleId: app.bundleId)
+            app = found
         } else {
             let bundleIds = bundleIdScanner(FileManager.default.currentDirectoryPath)
             guard !bundleIds.isEmpty else {
                 throw ValidationError("No Xcode project found. Use --app-id or --name.")
             }
             let apps = try await repo.listApps(limit: nil).data
-            guard let app = apps.first(where: { bundleIds.contains($0.bundleId) }) else {
+            guard let found = apps.first(where: { bundleIds.contains($0.bundleId) }) else {
                 throw ValidationError("No ASC app matched bundle IDs: \(bundleIds.joined(separator: ", "))")
             }
-            config = ProjectConfig(appId: app.id, appName: app.name, bundleId: app.bundleId)
+            app = found
         }
+
+        config = ProjectConfig(
+            appId: app.id,
+            appName: app.name,
+            bundleId: app.bundleId,
+            contactFirstName: contactFirstName,
+            contactLastName: contactLastName,
+            contactPhone: contactPhone,
+            contactEmail: contactEmail
+        )
 
         try storage.save(config)
         let formatter = OutputFormatter(format: globals.outputFormat, pretty: globals.pretty)

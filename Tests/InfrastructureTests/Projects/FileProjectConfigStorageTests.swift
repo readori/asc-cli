@@ -47,4 +47,33 @@ struct FileProjectConfigStorageTests {
         // Should not throw
         try storage.delete()
     }
+
+    // MARK: - Review contact fields
+
+    @Test func `save and load roundtrips config with review contact`() throws {
+        let storage = makeTempStorage()
+        let config = ProjectConfig(
+            appId: "app-1", appName: "App", bundleId: "com.example",
+            contactFirstName: "Jane",
+            contactLastName: "Smith",
+            contactPhone: "+1-555-0100",
+            contactEmail: "jane@example.com"
+        )
+        try storage.save(config)
+        let loaded = try storage.load()
+        #expect(loaded == config)
+        #expect(loaded?.contactEmail == "jane@example.com")
+        #expect(loaded?.contactPhone == "+1-555-0100")
+    }
+
+    @Test func `loading old project json without contact fields succeeds`() throws {
+        let storage = makeTempStorage()
+        // Save a config without contact, simulating old format
+        let config = ProjectConfig(appId: "app-1", appName: "App", bundleId: "com.example")
+        try storage.save(config)
+        let loaded = try storage.load()
+        #expect(loaded?.contactEmail == nil)
+        #expect(loaded?.contactPhone == nil)
+        #expect(loaded?.hasReviewContact == false)
+    }
 }
